@@ -1,78 +1,6 @@
-@extends('auth.layouts.app')
+{{-- @extends('auth.layouts.app')
 @section('content')
-{{-- <div class="container">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card">
-                <div class="card-header">{{ __('Register') }}</div>
 
-                <div class="card-body">
-                    <form method="POST" action="{{ route('register') }}">
-                        @csrf
-
-                        <div class="row mb-3">
-                            <label for="name" class="col-md-4 col-form-label text-md-end">{{ __('Name') }}</label>
-
-                            <div class="col-md-6">
-                                <input id="name" type="text" class="form-control @error('name') is-invalid @enderror" name="name" value="{{ old('name') }}" required autocomplete="name" autofocus>
-
-                                @error('name')
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
-                                @enderror
-                            </div>
-                        </div>
-
-                        <div class="row mb-3">
-                            <label for="email" class="col-md-4 col-form-label text-md-end">{{ __('Email Address') }}</label>
-
-                            <div class="col-md-6">
-                                <input id="email" type="email" class="form-control @error('email') is-invalid @enderror" name="email" value="{{ old('email') }}" required autocomplete="email">
-
-                                @error('email')
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
-                                @enderror
-                            </div>
-                        </div>
-
-                        <div class="row mb-3">
-                            <label for="password" class="col-md-4 col-form-label text-md-end">{{ __('Password') }}</label>
-
-                            <div class="col-md-6">
-                                <input id="password" type="password" class="form-control @error('password') is-invalid @enderror" name="password" required autocomplete="new-password">
-
-                                @error('password')
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
-                                @enderror
-                            </div>
-                        </div>
-
-                        <div class="row mb-3">
-                            <label for="password-confirm" class="col-md-4 col-form-label text-md-end">{{ __('Confirm Password') }}</label>
-
-                            <div class="col-md-6">
-                                <input id="password-confirm" type="password" class="form-control" name="password_confirmation" required autocomplete="new-password">
-                            </div>
-                        </div>
-
-                        <div class="row mb-0">
-                            <div class="col-md-6 offset-md-4">
-                                <button type="submit" class="btn btn-primary">
-                                    {{ __('Register') }}
-                                </button>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-</div> --}}
 <div class="text-center mb-4">
     <p class="mb-0">Please fill the below details to create your account</p>
 </div>
@@ -134,9 +62,82 @@
         </div>
     </form>
 </div>
+@endsection						 --}}
+@extends('front.layouts.app')
+@section('content')
+ <div class="breadcrumb-wrapper section-padding bg-cover" style="background-image: url('{{asset('front/assets/img/breadcrumb.png')}}');">
+        <div class="container">
+            <div class="page-heading">
+                <div class="breadcrumb-sub-title text-center">
+                    <h1 class="wow fadeInUp" data-wow-delay=".3s">Sign Up</h1>
+                    <ul class="breadcrumb-items wow fadeInUp" data-wow-delay=".5s">
+                        <li>
+                            <a href="{{url('/')}}}">
+                            Home
+                            </a>
+                        </li>
+                        <li>
+                            <i class="fal fa-minus"></i>
+                        </li>
+                        <li>
+                            Sign up
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+      <section class="signup-area fix section-paddings">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-xxl-7">
+                    <div class="signin-item">
+                        <h3>Sign Up to Your Account</h3>
+                        <form  method="POST" action="{{ route('register') }}">
+                        @csrf
+                            <label for="first-name">Username</label>
+                            <input id="first-name" type="text" placeholder="Enter your  name "name="name" value="{{ old('name') }}" required autocomplete="name" autofocus>
+                              @error('name')
+                <span class="invalid-feedback" role="alert">
+                    <strong>{{ $message }}</strong>
+                </span>
+            @enderror
+                            <label for="email">Email</label>
+                            <input id="email" type="email" placeholder="Enter your email" name="email" value="{{ old('email') }}" required autocomplete="email">
+                             @error('email')
+                <span class="invalid-feedback" role="alert">
+                    <strong>{{ $message }}</strong>
+                </span>
+            @enderror
+                          <label for =" phone_number">Phone Number</label>
+                            <input id="phone_number" type="text" placeholder="Enter your phone number" name="phone_number" value="{{ old('phone_number') }}" required autocomplete="phone_number" autofocus>
+                             @error('phone_number')
+                <span class="invalid-feedback" role="alert">
+                    <strong>{{ $message }}</strong>
+                </span>
+            @enderror
+                            <label for="password">Password</label>
+                            <input id="password" type="password" placeholder="Enter your password" name="password" required autocomplete="new-password">
+                             @error('password')
+                <span class="invalid-feedback" role="alert">
+                    <strong>{{ $message }}</strong>
+                </span>
+            @enderror
+                            <label for="confirm-password">Confirm Password</label>
+                            <input id="confirm-password" type="password" placeholder="Enter your password" name="password_confirmation" required autocomplete="new-password">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
+                                <label class="form-check-label ps-2" for="flexCheckDefault">
+                                    I agree to <a href="#0">Terms</a> and <a href="#0">policy</a>
+                                </label>
+                            </div>
+                          <button type="submit" style="color: white; font-weight: bold;"  class="theme-btn mt-40 w-100 text-center">Sign up</button>
+                            <span class="fs-18 text-center d-block my-4">Already have an account? <a href="{{ route('login') }}">Login here</a></span>
+                           
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 @endsection
-
-
-
-
-									

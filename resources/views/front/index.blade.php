@@ -25,13 +25,14 @@
                             <div class="col-lg-5">
                                 <div class="hero-image">
                                     <div class="hero-img">
-                                        <img src="{{asset('front/assets/img/hero/t-shirt.png')}}" alt="img">
+                                        <img src="{{asset('front/assets/img/serum.webp')}}" alt="img" style="height: 400px; width:400px; border-top-left-radius: 50px;
+    border-bottom-right-radius: 50px;">
                                         <div class="circle-shape">
                                             <img src="{{asset('front/assets/img/hero/t-shirt-bg.png')}}" alt="img">
                                         </div>
                                     </div>
                                     <div class="mockup-shape">
-                                        <img src="{{asset('front/assets/img/hero/mockup-shape.png')}}" alt="img">
+                                     <img src="{{asset('front/assets/img/images.jpg')}}" alt="img" style="width: 250px; height: 200px; border-radius: 10px;">
                                     </div>
                                     <div class="cup-shape">
                                         <img src="{{asset('front/assets/img/hero/cup-shape.png')}}" alt="img">
@@ -64,13 +65,14 @@
                             <div class="col-lg-5">
                                 <div class="hero-image">
                                     <div class="hero-img">
-                                        <img src="{{asset('front/assets/img/hero/t-shirt.png')}}" alt="img">
+                                          <img src="{{asset('front/assets/img/serum.webp')}}" alt="img" style="height: 400px; width:400px; border-top-left-radius: 50px;
+    border-bottom-right-radius: 50px;">
                                         <div class="circle-shape">
                                             <img src="{{asset('front/assets/img/hero/t-shirt-bg.png')}}" alt="img">
                                         </div>
                                     </div>
                                     <div class="mockup-shape">
-                                        <img src="{{asset('front/assets/img/hero/mockup-shape.png')}}" alt="img">
+                                        <img src="{{asset('front/assets/img/images.jpg')}}" alt="img" style="width: 250px; height: 200px; border-radius: 10px;">
                                     </div>
                                     <div class="cup-shape">
                                         <img src="{{asset('front/assets/img/hero/cup-shape.png')}}" alt="img">
@@ -103,13 +105,14 @@
                             <div class="col-lg-5">
                                 <div class="hero-image">
                                     <div class="hero-img">
-                                        <img src="{{asset('front/assets/img/hero/t-shirt.png')}}" alt="img">
+                                         <img src="{{asset('front/assets/img/serum.webp')}}" alt="img" style="height: 400px; width:400px; border-top-left-radius: 50px;
+    border-bottom-right-radius: 50px;">
                                         <div class="circle-shape">
                                             <img src="{{asset('front/assets/img/hero/t-shirt-bg.png')}}" alt="img">
                                         </div>
                                     </div>
                                     <div class="mockup-shape">
-                                        <img src="{{asset('front/assets/img/hero/mockup-shape.png')}}" alt="img">
+                                        <img src="{{asset('front/assets/img/images.jpg')}}" alt="img" style="width: 250px; height: 200px; border-radius: 10px;">
                                     </div>
                                     <div class="cup-shape">
                                         <img src="{{asset('front/assets/img/hero/cup-shape.png')}}" alt="img">
@@ -224,7 +227,7 @@
                             <div class="row g-4">
                                 <div class="col-lg-6">
                                     <div class="thumb-image-1">
-                                        <img src="{{asset('front/assets/img/about/about-1.jpg')}}" alt="img">
+                                        <img src="{{asset('front/assets/img/cards_image.webp')}}" alt="img" style="height: 350px;">
                                     </div>
                                     <div class="thumb-image-1 style-2">
                                         <img src="{{asset('front/assets/img/about/about-2.jpg')}}" alt="img">
@@ -286,7 +289,7 @@
                             <div class="col-xl-8 col-lg-5 col-md-8">
                                 <div class="product-right-wrapper">
                                     <div class="product-right-img-2">
-                                        <img src="{{asset('front/assets/img/product/product-2.png')}}" alt="img">
+                                        <img src="{{asset('front/assets/img/pen.png')}}" alt="img" style="height: 360px;width:400px;"> 
                                         <div class="product-right-img-shape-2">
                                             <img src="{{asset('front/assets/img/product/product-box-shape2.png')}}" alt="img">
                                         </div>
@@ -438,7 +441,7 @@
                         </div>
                         <div class="swiper-slide">
                             <div class="service-image">
-                                <img src="{{asset('front/assets/img/service/04.jpg')}}" alt="img">
+                                <img src="{{asset('front/assets/img/pen.png')}}" alt="img">
                                 <a href="service-details.html" class="icon">
                                     <i class="far fa-long-arrow-right"></i>
                                 </a>
@@ -551,7 +554,7 @@
                 <div class="col-xl-3 col-lg-4 col-md-6 wow fadeInUp" data-wow-delay=".8s">
                     <div class="feature-product-items">
                         <div class="product-thumb">
-                            <img src="{{asset('front/assets/img/feature-product/04.png')}}" alt="img">
+                            <img src="{{asset('front/assets/img/ball-mug-420.jpg')}}" alt="img">
                             <ul class="product-icon d-flex justify-content-center align-items-center">
                                 <li>
                                     <a href="shop-details.html"><i class="fal fa-heart"></i></a>
@@ -583,7 +586,7 @@
                 <div class="col-xl-3 col-lg-4 col-md-6 wow fadeInUp" data-wow-delay=".2s">
                     <div class="feature-product-items">
                         <div class="product-thumb">
-                            <img src="{{asset('front/assets/img/feature-product/05.png')}}" alt="img">
+                            <img src="{{asset('front/assets/img/feature-product/05.webp')}}" alt="img">
                             <ul class="product-icon d-flex justify-content-center align-items-center">
                                 <li>
                                     <a href="shop-details.html"><i class="fal fa-heart"></i></a>
@@ -650,7 +653,7 @@
                             <div class="swiper-wrapper">
                                 <div class="swiper-slide">
                                     <div class="feature-product-banner-image">
-                                        <img src="{{asset('front/assets/img/feature-product/banner-image.jpg')}}" alt="img">
+                                        <img src="{{asset('front/assets/img/feature-product/banner-image-2.jpg')}}" alt="img">
                                         <div class="discount-tag">
                                             <div class="inner-text text-center">
                                                 <span>Save</span>
@@ -658,14 +661,14 @@
                                             </div>
                                         </div>
                                         <div class="content">
-                                            <h3><a href="shop-details-2.html">Blue & yellow Shirt</a></h3>
+                                            <h3><a href="shop-details-2.html">Multicoloure Printing</a></h3>
                                             <h4>$570.00</h4>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="swiper-slide">
                                     <div class="feature-product-banner-image">
-                                        <img src="{{asset('front/assets/img/feature-product/banner-image.jpg')}}" alt="img">
+                                        <img src="{{asset('front/assets/img/feature-product/banner-image-2.jpg')}}" alt="img">
                                         <div class="discount-tag">
                                             <div class="inner-text text-center">
                                                 <span>Save</span>
@@ -673,14 +676,14 @@
                                             </div>
                                         </div>
                                         <div class="content">
-                                            <h3><a href="shop-details-2.html">Blue & yellow Shirt</a></h3>
+                                            <h3><a href="shop-details-2.html">Multicoloure Printing</a></h3>
                                             <h4>$570.00</h4>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="swiper-slide">
                                     <div class="feature-product-banner-image">
-                                        <img src="{{asset('front/assets/img/feature-product/banner-image.jpg')}}" alt="img">
+                                        <img src="{{asset('front/assets/img/feature-product/banner-image-2.jpg')}}" alt="img">
                                         <div class="discount-tag">
                                             <div class="inner-text text-center">
                                                 <span>Save</span>
@@ -688,7 +691,7 @@
                                             </div>
                                         </div>
                                         <div class="content">
-                                            <h3><a href="shop-details-2.html">Blue & yellow Shirt</a></h3>
+                                            <h3><a href="shop-details-2.html">Multicoloure Printing</a></h3>
                                             <h4>$570.00</h4>
                                         </div>
                                     </div>
@@ -929,11 +932,11 @@
                     <div class="swiper-slide">
                         <div class="products-box-items">
                             <ul class="product-top">
-                                <li>Hoodie</li>
+                                <li>pens</li>
                                 <li>$70.00</li>
                             </ul>
                             <div class="product-thumb">
-                                <img src="{{asset('front/assets/img/product/p-4.jpg')}}" alt="img">
+                                <img src="{{asset('front/assets/img/ball-mug-420.jpg')}}" alt="img" style="height: 320px;">
                                 <ul class="product-icon d-grid justify-content-center align-items-center">
                                     <li>
                                         <a href="shop-cart.html"><i class="far fa-heart"></i></a>
@@ -950,7 +953,7 @@
                                 <a href="shop-cart.html" class="theme-btn">Add To cart</a>
                             </div>
                             <div class="product-content">
-                                <h4><a href="shop-details.html">Stylish Hoodie</a></h4>
+                                <h4><a href="javascript:void(0)">Stylish Hoodie</a></h4>
                                 <div class="star">
                                     <i class="fas fa-star"></i>
                                     <i class="fas fa-star"></i>

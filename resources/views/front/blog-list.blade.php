@@ -1,104 +1,195 @@
 @extends('front.layouts.app')
 
 @section('content')
-	<!-- Page Header Start -->
-	<div class="page-header parallaxie">
-		<div class="container">
-			<div class="row">
-				<div class="col-md-12">
-					<!-- Page Header Box Start -->
-					<div class="page-header-box">
-						<h1 class="text-anime">Our Blog</h1>
-						<nav class="wow fadeInUp" data-wow-delay="0.25s">
-							<ol class="breadcrumb">
-								<li class="breadcrumb-item"><a href="{{ route('home') }}">Home</a></li>
-								<li class="breadcrumb-item"><a href="javascript:;">></a></li>
-								<li class="breadcrumb-item active" aria-current="page">Blog</li>
-							</ol>
-						</nav>
-					</div>
-					<!-- Page Header Box End -->
-				</div>
-			</div>
-		</div>
-	</div>
-	<!-- Page Header End -->
-
-	<!-- Blog Archive Page Start -->
-	<div class="page-blog-archive">
-		<div class="container">
-			<div class="row">
-                @foreach ($data as $item)
-                <div class="col-lg-4 col-md-6">
-                    <!-- Blog Item Start -->
-                    <div class="blog-item wow fadeInUp" data-wow-delay="0.25s">
-
-                        <div class="post-featured-image">
-                            <figure class="image-anime">
-                                <img src="{{ asset('images/blog/' . $item->image) }}" onerror="this.onerror=null;this.src='{{ asset('images/image-not-found.png') }}';" alt="{{ $item->title }}">
-                            </figure>
-                        </div>
-
-                        <div class="post-item-body">
-                            <h2>
-                                <a href="{{ route('blog-details', $item->slug) }}">
-                                    {{ $item->title }}
-                                </a>
-                            </h2>
-
-                            <div class="post-meta">
-                                <ul>
-                                    <li>
-                                        <a href="#">
-                                            <i class="fa-regular fa-calendar-days"></i>
-                                            {{ \Carbon\Carbon::parse($item->created_at)->format('d M Y') }}
-                                        </a>
-                                    </li>
-
-                                    <li>
-                                        <a href="#">
-                                            <i class="fa-solid fa-tag"></i>
-                                            {{ $item->category->name ?? 'No Category' }}
-                                        </a>
-                                    </li>
-                                </ul>
-                            </div>
-
-                            <div class="btn-readmore">
-                                <a href="{{ route('blog-details', $item->slug) }}" class="btn-default">Read More</a>
-                            </div>
-                        </div>
-
-                    </div>
-                    <!-- Blog Item End -->
+  <div class="breadcrumb-wrapper section-padding bg-cover" style="background-image: url({{asset('front/assets/img/breadcrumb.png')}});">
+        <div class="container">
+            <div class="page-heading">
+                <div class="breadcrumb-sub-title text-center">
+                    <h1 class="wow fadeInUp" data-wow-delay=".3s">Blog Grid</h1>
+                    <ul class="breadcrumb-items wow fadeInUp" data-wow-delay=".5s">
+                        <li>
+                            <a href="{{url('/')}}">
+                            Home
+                            </a>
+                        </li>
+                        <li>
+                            <i class="fal fa-minus"></i>
+                        </li>
+                        <li>
+                            Blog Grid
+                        </li>
+                    </ul>
                 </div>
-                @endforeach
+            </div>
+        </div>
+    </div>
 
-			</div>
-
-			<div class="row">
-				<div class="col-md-12">
-					<!-- Post Pagination Start -->
-                    <div class="post-pagination wow fadeInUp" data-wow-delay="1.50s">
-                        {{ $data->links('pagination::bootstrap-4') }}
+    <!-- News Section Start -->
+    <section class="news-section-section section-padding fix">
+        <div class="container">
+            <div class="row g-4">
+                <div class="col-xl-4 col-lg-6 col-md-6 wow fadeInUp" data-wow-delay=".3s">
+                    <div class="news-card-items mt-0">
+                        <div class="news-thumb">
+                            <img src="{{asset('front/assets/img/news/04.jpg')}}" alt="img">
+                            <div class="news-date">
+                                <span>15</span>
+                                <span>Mar</span>
+                            </div>
+                        </div>
+                        <div class="news-content">
+                            <div class="news-tag d-flex">
+                                <a href="{{url('blog-details')}}">Printing</a>
+                                <a href="{{url('blog-details')}}">Agency</a>
+                            </div>
+                            <h3><a href="{{url('blog-details')}}">What’s the Main Challange of Printing Service</a></h3>
+                            <div class="client-info">
+                                <div class="client-img bg-cover" style="background-image: url({{asset('front/assets/img/testimonial/01.png')}});"></div>
+                                <div class="content">
+                                    <h5>Shikhon Islam</h5>
+                                    <p>June 29, 2025</p>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-					{{-- <div class="post-pagination wow fadeInUp" data-wow-delay="1.50s">
-						<ul class="pagination">
-							<li><a href="#"><i class="fa-solid fa-arrow-left-long"></i></a></li>
-							<li class="active"><a href="#">1</a></li>
-							<li><a href="#">2</a></li>
-							<li><a href="#">3</a></li>
-							<li><a href="#"><i class="fa-solid fa-arrow-right-long"></i></a></li>
-						</ul>
-					</div> --}}
-					<!-- Post Pagination End -->
-				</div>
-			</div>
-		</div>
-	</div>
-	<!-- Blog Archive Page End -->
-	
+                </div>
+                <div class="col-xl-4 col-lg-6 col-md-6 wow fadeInUp" data-wow-delay=".5s">
+                    <div class="news-card-items mt-0">
+                        <div class="news-thumb">
+                            <img src="{{asset('front/assets/img/news/05.jpg')}}" alt="img">
+                            <div class="news-date">
+                                <span>15</span>
+                                <span>Mar</span>
+                            </div>
+                        </div>
+                        <div class="news-content">
+                            <div class="news-tag d-flex">
+                                <a href="{{url('blog-details')}}">Printing</a>
+                                <a href="{{url('blog-details')}}">Agency</a>
+                            </div>
+                            <h3><a href="{{url('blog-details')}}">Best 3D Printing Modern Equipment Team</a></h3>
+                            <div class="client-info">
+                                <div class="client-img bg-cover" style="background-image: url({{asset('front/assets/img/testimonial/02.png')}});"></div>
+                                <div class="content">
+                                    <h5>Salman Ahmed</h5>
+                                    <p>June 29, 2025</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-4 col-lg-6 col-md-6 wow fadeInUp" data-wow-delay=".7s">
+                    <div class="news-card-items mt-0">
+                        <div class="news-thumb">
+                            <img src="{{asset('front/assets/img/news/06.jpg')}}" alt="img">
+                            <div class="news-date">
+                                <span>15</span>
+                                <span>Mar</span>
+                            </div>
+                        </div>
+                        <div class="news-content">
+                            <div class="news-tag d-flex">
+                                <a href="{{url('blog-details')}}">Printing</a>
+                                <a href="{{url('blog-details')}}">Agency</a>
+                            </div>
+                            <h3><a href="{{url('blog-details')}}">What’s the Main Challange of Printing Service</a></h3>
+                            <div class="client-info">
+                                <div class="client-img bg-cover" style="background-image: url({{asset('front/assets/img/testimonial/03.png')}});"></div>
+                                <div class="content">
+                                    <h5>Kawser Ahmed</h5>
+                                    <p>June 29, 2025</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-4 col-lg-6 col-md-6 wow fadeInUp" data-wow-delay=".3s">
+                    <div class="news-card-items mt-0">
+                        <div class="news-thumb">
+                            <img src="{{asset('front/assets/img/news/06.jpg')}}" alt="img">
+                            <div class="news-date">
+                                <span>15</span>
+                                <span>Mar</span>
+                            </div>
+                        </div>
+                        <div class="news-content">
+                            <div class="news-tag d-flex">
+                                <a href="{{url('blog-details')}}">Printing</a>
+                                <a href="{{url('blog-details')}}">Agency</a>
+                            </div>
+                            <h3><a href="{{url('blog-details')}}">What’s the Main Challange of Printing Service</a></h3>
+                            <div class="client-info">
+                                <div class="client-img bg-cover" style="background-image: url({{asset('front/assets/img/testimonial/03.png')}});"></div>
+                                <div class="content">
+                                    <h5>Kawser Ahmed</h5>
+                                    <p>June 29, 2025</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-4 col-lg-6 col-md-6 wow fadeInUp" data-wow-delay=".5s">
+                    <div class="news-card-items mt-0">
+                        <div class="news-thumb">
+                            <img src="{{asset('front/assets/img/news/04.jpg')}}" alt="img">
+                            <div class="news-date">
+                                <span>15</span>
+                                <span>Mar</span>
+                            </div>
+                        </div>
+                        <div class="news-content">
+                            <div class="news-tag d-flex">
+                                <a href="{{url('blog-details')}}">Printing</a>
+                                <a href="{{url('blog-details')}}">Agency</a>
+                            </div>
+                            <h3><a href="{{url('blog-details')}}">What’s the Main Challange of Printing Service</a></h3>
+                            <div class="client-info">
+                                <div class="client-img bg-cover" style="background-image: url({{asset('front/assets/img/testimonial/01.png')}});"></div>
+                                <div class="content">
+                                    <h5>Shikhon Islam</h5>
+                                    <p>June 29, 2025</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-4 col-lg-6 col-md-6 wow fadeInUp" data-wow-delay=".7s">
+                    <div class="news-card-items mt-0">
+                        <div class="news-thumb">
+                            <img src="{{asset('front/assets/img/news/05.jpg')}}" alt="img">
+                            <div class="news-date">
+                                <span>15</span>
+                                <span>Mar</span>
+                            </div>
+                        </div>
+                        <div class="news-content">
+                            <div class="news-tag d-flex">
+                                <a href="{{url('blog-details')}}">Printing</a>
+                                <a href="{{url('blog-details')}}">Agency</a>
+                            </div>
+                            <h3><a href="{{url('blog-details')}}">Best 3D Printing Modern Equipment Team</a></h3>
+                            <div class="client-info">
+                                <div class="client-img bg-cover" style="background-image: url({{asset('front/assets/img/testimonial/02.png')}});"></div>
+                                <div class="content">
+                                    <h5>Salman Ahmed</h5>
+                                    <p>June 29, 2025</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="page-nav-wrap mt-5 text-center wow fadeInUp" data-wow-delay=".3s">
+                <ul>
+                    <li><a class="page-numbers" href="#"><i class="fal fa-long-arrow-left"></i></a></li>
+                    <li><a class="page-numbers" href="#">01</a></li>
+                    <li><a class="page-numbers" href="#">02</a></li>
+                    <li><a class="page-numbers" href="#">..</a></li>
+                    <li><a class="page-numbers" href="#">10</a></li>
+                    <li><a class="page-numbers" href="#">11</a></li>
+                    <li><a class="page-numbers" href="#"><i class="fal fa-long-arrow-right"></i></a></li>
+                </ul>
+            </div>
+        </div>
+    </section>
 @endsection
-@push('scripts')
-
-@endpush
