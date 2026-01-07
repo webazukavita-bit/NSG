@@ -11,7 +11,7 @@
                     <h5 class="mb-0 text-primary">Add Blog</h5>
                 </div>
                 <div>
-                    <a href="{{ route('blogs') }}" class="btn btn-primary"><i class="bx bx-list-ol"></i> Blog List</a> 
+                    <a href="{{ url('blogs') }}" class="btn btn-primary"><i class="bx bx-list-ol"></i> Blog List</a> 
                 </div>
             </div>
             <hr>

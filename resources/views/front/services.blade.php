@@ -25,7 +25,7 @@
     </div>
 
     <!-- Service Section Start -->
-    <section class="service-section section-padding">
+    {{-- <section class="service-section section-padding">
         <div class="bg-shape">
             <img src="{{asset('front/assets/img/service/bg-shape.png')}}" alt="img">
         </div>
@@ -40,7 +40,7 @@
                                         <i class="fal fa-print"></i>
                                     </div>
                                     <div class="content">
-                                        <h3><a href="javascript:void(0)">Printing Services</a></h3>
+                                        <h3><a href="{{url('/shop')}}">Printing Services</a></h3>
                                         <p>It is a long established fact xbliuthat a reader will be distracteda the readable content of a page when looking</p>
                                     </div>
                                 </div>
@@ -49,7 +49,7 @@
                                         <i class="fal fa-desktop-alt"></i>
                                     </div>
                                     <div class="content">
-                                        <h3><a href="javascript:void(0)">Design Service</a></h3>
+                                        <h3><a href="{{url('/shop')}}">Design Service</a></h3>
                                         <p>It is a long established fact xbliuthat a reader will be distracteda the readable content of a page when looking</p>
                                     </div>
                                 </div>
@@ -60,7 +60,7 @@
                                         <i class="fal fa-shopping-bag"></i>
                                     </div>
                                     <div class="content">
-                                        <h3><a href="javascript:void(0)">Promotional Product</a></h3>
+                                        <h3><a href="{{url('/shop')}}">Promotional Product</a></h3>
                                         <p>It is a long established fact xbliuthat a reader will be distracteda the readable content of a page when looking</p>
                                     </div>
                                 </div>
@@ -69,7 +69,7 @@
                                         <i class="fal fa-user"></i>
                                     </div>
                                     <div class="content">
-                                        <h3><a href="javascript:void(0)">T-Shirt Printing</a></h3>
+                                        <h3><a href="{{url('/shop')}}">T-Shirt Printing</a></h3>
                                         <p>It is a long established fact xbliuthat a reader will be distracteda the readable content of a page when looking</p>
                                     </div>
                                 </div>
@@ -108,7 +108,7 @@
                                     <span>Payment Secure</span>
                                 </div>
                             </div>
-                            <a href="javascript:void(0)" class="theme-btn wow fadeInUp" data-wow-delay=".3s">Learn More</a>
+                            <a href="{{url('/shop')}}" class="theme-btn wow fadeInUp" data-wow-delay=".3s">Learn More</a>
                         </div>
                     </div>
                 </div>
@@ -134,9 +134,9 @@
                             <div class="service-image">
                                 <img src="{{asset('front/assets/img/service/01.jpg')}}" alt="img">
                                 <div class="service-content">
-                                    <h3><a href="javascript:void(0)">POD For Online Stores</a></h3>
+                                    <h3><a href="{{url('/shop')}}">POD For Online Stores</a></h3>
                                 </div>
-                                <a href="javascript:void(0)" class="icon">
+                                <a href="{{url('/shop')}}" class="icon">
                                     <i class="far fa-long-arrow-right"></i>
                                 </a>
                             </div>
@@ -144,33 +144,33 @@
                         <div class="swiper-slide">
                             <div class="service-image">
                                 <img src="{{asset('front/assets/img/service/02.jpg')}}" alt="img">
-                                <a href="javascript:void(0)" class="icon">
+                                <a href="{{url('/shop')}}" class="icon">
                                     <i class="far fa-long-arrow-right"></i>
                                 </a>
                                 <div class="service-content">
-                                    <h3><a href="javascript:void(0)">Digital Scanning</a></h3>
+                                    <h3><a href="{{url('/shop')}}">Digital Scanning</a></h3>
                                 </div>
                             </div>
                         </div>
                         <div class="swiper-slide">
                             <div class="service-image">
                                 <img src="{{asset('front/assets/img/service/03.jpg')}}" alt="img">
-                                <a href="javascript:void(0)" class="icon">
+                                <a href="{{url('/shop')}}" class="icon">
                                     <i class="far fa-long-arrow-right"></i>
                                 </a>
                                 <div class="service-content">
-                                    <h3><a href="javascript:void(0)">Stickers And Labels</a></h3>
+                                    <h3><a href="{{url('/shop')}}">Stickers And Labels</a></h3>
                                 </div>
                             </div>
                         </div>
                         <div class="swiper-slide">
                             <div class="service-image">
                                 <img src="{{asset('front/assets/img/feature-product/01.png')}}" alt="img" style="height: 430px;">
-                                <a href="javascript:void(0)" class="icon">
+                                <a href="{{url('/shop')}}" class="icon">
                                     <i class="far fa-long-arrow-right"></i>
                                 </a>
                                 <div class="service-content">
-                                    <h3><a href="javascript:void(0)">Printing Service</a></h3>
+                                    <h3><a href="{{url('/shop')}}">Printing Service</a></h3>
                                 </div>
                             </div>
                         </div>
@@ -219,7 +219,7 @@
                                 50k design & prints</li>
                         </ul>
                         <div class="pricing-button">
-                            <a href="javascript:void(0)" class="theme-btn">choose pricing plan</a>
+                            <a href="{{url('/shop')}}" class="theme-btn">choose pricing plan</a>
                         </div>
                     </div>
                 </div>
@@ -244,7 +244,7 @@
                                 50k design & prints</li>
                         </ul>
                         <div class="pricing-button">
-                            <a href="javascript:void(0)" class="theme-btn">choose pricing plan</a>
+                            <a href="{{url('/shop')}}" class="theme-btn">choose pricing plan</a>
                         </div>
                     </div>
                 </div>
@@ -269,23 +269,20 @@
                                 50k design & prints</li>
                         </ul>
                         <div class="pricing-button">
-                            <a href="javascript:void(0)" class="theme-btn">choose pricing plan</a>
+                            <a href="{{url('/shop')}}" class="theme-btn">choose pricing plan</a>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </section>
+    </section> --}}
 
     <!-- Service Section Start -->
     <section class="service-section fix section-padding">
         <div class="container">
             <div class="section-title text-center">
-                <div class="sub-title wow fadeInUp">
-                    <span>our services</span>
-                </div>
                 <h2 class="split-text right">
-                    Explore Our All Catagories
+                    Explore Our All Services
                 </h2>
             </div>
             <div class="row">
@@ -295,11 +292,11 @@
                             <img src="{{asset('front/assets/img/service/01.png')}}" alt="img">
                         </div>
                         <div class="service-content">
-                            <h3><a href="javascript:void(0)">Printing Service</a></h3>
+                            <h3><a href="{{url('/shop')}}">Printing Exhibition</a></h3>
                             <p>
                                 There are many variations of passages of Lorem Ipsum available, but the majority have suffered. There are many variations
                             </p>
-                            <a href="javascript:void(0)" class="link-btn">Read More <i class="far fa-long-arrow-right"></i></a>
+                            <a href="{{url('/shop')}}" class="link-btn">Read More <i class="far fa-long-arrow-right"></i></a>
                         </div>
                     </div>
                 </div>
@@ -309,11 +306,11 @@
                             <img src="{{asset('front/assets/img/service/02.png')}}" alt="img">
                         </div>
                         <div class="service-content">
-                            <h3><a href="javascript:void(0)">Digital Scaning</a></h3>
+                            <h3><a href="{{url('/shop')}}">Brand Printing Services</a></h3>
                             <p>
                                 There are many variations of passages of Lorem Ipsum available, but the majority have suffered. There are many variations
                             </p>
-                            <a href="javascript:void(0)" class="link-btn">Read More <i class="far fa-long-arrow-right"></i></a>
+                            <a href="{{url('/shop')}}" class="link-btn">Read More <i class="far fa-long-arrow-right"></i></a>
                         </div>
                     </div>
                 </div>
@@ -323,11 +320,39 @@
                             <img src="{{asset('front/assets/img/service/03.png')}}" alt="img">
                         </div>
                         <div class="service-content">
-                            <h3><a href="javascript:void(0)">Design Services</a></h3>
+                            <h3><a href="{{url('/shop')}}">Printing Services</a></h3>
                             <p>
                                 There are many variations of passages of Lorem Ipsum available, but the majority have suffered. There are many variations
                             </p>
-                            <a href="javascript:void(0)" class="link-btn">Read More <i class="far fa-long-arrow-right"></i></a>
+                            <a href="{{url('/shop')}}" class="link-btn">Read More <i class="far fa-long-arrow-right"></i></a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6 wow fadeInUp" data-wow-delay=".5s">
+                    <div class="service-card-items">
+                        <div class="service-thumb">
+                            <img src="{{asset('front/assets/img/today_def.png')}}" alt="img" style="height: 150px;">
+                        </div>
+                        <div class="service-content">
+                            <h3><a href="{{url('/shop')}}">Magazine Services</a></h3>
+                            <p>
+                                There are many variations of passages of Lorem Ipsum available, but the majority have suffered. There are many variations
+                            </p>
+                            <a href="{{url('/shop')}}" class="link-btn">Read More <i class="far fa-long-arrow-right"></i></a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6 wow fadeInUp" data-wow-delay=".5s">
+                    <div class="service-card-items">
+                        <div class="service-thumb">
+                            <img src="{{asset('front/assets/img/login_Free_Tamplate.png')}}" alt="img" style="height: 150px;">
+                        </div>
+                        <div class="service-content">
+                            <h3><a href="{{url('/shop')}}">Free Design Files</a></h3>
+                            <p>
+                                There are many variations of passages of Lorem Ipsum available, but the majority have suffered. There are many variations
+                            </p>
+                            <a href="{{url('/shop')}}" class="link-btn">Read More <i class="far fa-long-arrow-right"></i></a>
                         </div>
                     </div>
                 </div>
@@ -337,11 +362,11 @@
                             <img src="{{asset('front/assets/img/service/04.png')}}" alt="img">
                         </div>
                         <div class="service-content">
-                            <h3><a href="javascript:void(0)">Brand Strategy</a></h3>
+                            <h3><a href="{{url('/shop')}}">Poster printing</a></h3>
                             <p>
                                 There are many variations of passages of Lorem Ipsum available, but the majority have suffered. There are many variations
                             </p>
-                            <a href="javascript:void(0)" class="link-btn">Read More <i class="far fa-long-arrow-right"></i></a>
+                            <a href="{{url('/shop')}}" class="link-btn">Read More <i class="far fa-long-arrow-right"></i></a>
                         </div>
                     </div>
                 </div>

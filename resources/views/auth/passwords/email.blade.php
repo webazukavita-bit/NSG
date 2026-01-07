@@ -1,5 +1,4 @@
 @extends('auth.layouts.app')
-
 @section('content')
 
 <div class="row justify-content-center">
@@ -30,7 +29,6 @@
                             @enderror
                         </div>
                     </div>
-
                     <div class="row mb-0">
                         <div class="col-md-12 ">
                             <button type="submit" class="btn btn-primary">
@@ -43,5 +41,4 @@
         </div>
     </div>
 </div>
-
 @endsection
