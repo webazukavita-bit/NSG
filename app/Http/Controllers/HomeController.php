@@ -1,14 +1,16 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use App\Services\SolarCalculationService;
 use Illuminate\Validation\Rule;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Route;
 use App\Models\StaticContent;
 use App\Models\ContactUs;
 use App\Models\Blog;
-
+use App\Models\State;
 
 class HomeController extends Controller
 {
@@ -17,7 +19,7 @@ class HomeController extends Controller
      *
      * @return void
      */
-    
+
     protected $solarService;
 
     public function __construct(SolarCalculationService $solarService)
@@ -34,85 +36,104 @@ class HomeController extends Controller
     public function index()
     {
         $states = [];
-        return view('front.index',compact('states'));
+        return view('front.index', compact('states'));
     }
-
+    public function aboutUs()
+    {
+        return view('front.about-us');
+    }
+    public function serviceDetails()
+    {
+        return view('front.service-details');
+    }
+    public function shop()
+    {
+        return view('front.shop');
+    }
+    public function shopDetails()
+    {
+        return view('front.shop-details');
+    }
     public function static_content()
     {
-        $routeName = \Route::currentRouteName();
+        $routeName = Route::currentRouteName();
 
         $data = StaticContent::where('type', $routeName)->first();
-        if(!$data) {
+        if (!$data) {
             return back();
         } else {
             return view('front.static_content', compact('data'));
         }
     }
 
-    
+
     public function blogs(Request $request)
     {
         $data = Blog::with('category')
-                ->where(function ($query) {
-                    $query->where('status', 'publish')
-                        ->orWhere(function ($q) {
-                            $q->where('status', 'schedule')
+            ->where(function ($query) {
+                $query->where('status', 'publish')
+                    ->orWhere(function ($q) {
+                        $q->where('status', 'schedule')
                             ->where('publish_datetime', '<=', now());
-                        });
-                })
-                ->latest()
-                ->paginate(6);
+                    });
+            })
+            ->latest()
+            ->paginate(6);
 
         return view('front.blog-list', compact('data'));
-    } 
+    }
+    public function blogDetail()
+    {
+        return view('front.blog-details');
+    }
 
-    
+
     public function blogDetails($slug)
     {
         $blog = Blog::with('category')
-                ->where(function ($query) {
-                    $query->where('status', 'publish')
-                        ->orWhere(function ($q) {
-                            $q->where('status', 'schedule')
+            ->where(function ($query) {
+                $query->where('status', 'publish')
+                    ->orWhere(function ($q) {
+                        $q->where('status', 'schedule')
                             ->where('publish_datetime', '<=', now());
-                        });
-                })->where('slug', $slug)->first();
+                    });
+            })->where('slug', $slug)->first();
 
         $data = Blog::with('category')
-                ->where(function ($query) {
-                    $query->where('status', 'publish')
-                        ->orWhere(function ($q) {
-                            $q->where('status', 'schedule')
+            ->where(function ($query) {
+                $query->where('status', 'publish')
+                    ->orWhere(function ($q) {
+                        $q->where('status', 'schedule')
                             ->where('publish_datetime', '<=', now());
-                        });
-                })->where('category_id', $blog->category_id)
-                ->latest()
-                ->paginate(6);
+                    });
+            })->where('category_id', $blog->category_id)
+            ->latest()
+            ->paginate(6);
 
-        return view('front.blog-details',compact('blog','data'));
-    } 
+        return view('front.blog-details', compact('blog', 'data'));
+    }
 
     public function ourServices()
     {
         return view('front.services');
-    } 
-   
+    }
+
 
     public function ourProjects()
     {
         return view('front.projects');
-    } 
-   
-   
+    }
+
+
     public function faq()
     {
         return view('front.contact-us');
-    } 
-   
+    }
+
     public function contactUs()
     {
         return view('front.contact-us');
-    } 
+    }
 
     public function contactSubmit(Request $request)
     {
@@ -150,8 +171,8 @@ class HomeController extends Controller
         ]);
 
         $state = State::find($validated['state']);
-        
-        $result = match($validated['category']) {
+
+        $result = match ($validated['category']) {
             'residential' => $this->solarService->calculateResidential($validated, $state),
             'commercial' => $this->solarService->calculateCommercial($validated, $state),
             'industrial' => $this->solarService->calculateIndustrial($validated, $state),
@@ -160,20 +181,19 @@ class HomeController extends Controller
         return response()->json($result);
     }
 
-    public function saveCalculation(Request $request)
-    {
-        $calculation = Calculation::create([
-            'category' => $request->category,
-            'monthly_consumption' => $request->monthly_consumption,
-            'system_capacity' => $request->system_capacity,
-            'installation_cost' => $request->installation_cost,
-            'monthly_savings' => $request->monthly_savings,
-            'payback_period' => $request->payback_period,
-            'state_id' => $request->state_id,
-            'ip_address' => $request->ip(),
-        ]);
+    // public function saveCalculation(Request $request)
+    // {
+    //     $calculation = Calculation::create([
+    //         'category' => $request->category,
+    //         'monthly_consumption' => $request->monthly_consumption,
+    //         'system_capacity' => $request->system_capacity,
+    //         'installation_cost' => $request->installation_cost,
+    //         'monthly_savings' => $request->monthly_savings,
+    //         'payback_period' => $request->payback_period,
+    //         'state_id' => $request->state_id,
+    //         'ip_address' => $request->ip(),
+    //     ]);
 
-        return response()->json(['success' => true, 'id' => $calculation->id]);
-    }
-
+    //     return response()->json(['success' => true, 'id' => $calculation->id]);
+    // }
 }

@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use App\Notifications\NewOrderNotification;
 use Google\Auth\Credentials\ServiceAccountCredentials;
 use Illuminate\Support\Facades\Http;
@@ -13,6 +14,7 @@ use App\Models\User;
 
 use App\Helpers\Helper;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
@@ -37,42 +39,53 @@ class UserController extends Controller
     }
 
     public function profileUpdate(Request $request)
-    {   
-        $user_id = auth()->user()->id;
-        $user = User::findOrFail($user_id); 
-
-        $check = $user->update([
-            'name' => $request->name,
-            'father_name' => $request->father_name,
-            'mother_name' => $request->mother_name,
-            'dob' => $request->dob
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'gender' => 'required|in:Male,Female,Other',
+            'dob' => 'nullable|date',
+            'father_name' => 'nullable|string|max:255',
+            'mother_name' => 'nullable|string|max:255',
         ]);
 
-        if ($check) {
-                return redirect()->route('profile')->with(['success'=> 'profile update Successfully,']);
-        } else {
-                return redirect()->route('profile')->with(['error'=> 'profile Not update.']);
-        }
+        $user = User::find(Auth::id());
+
+        $user->update([
+            'name' => $request->name,
+            'gender' => $request->gender,
+            'father_name' => $request->father_name,
+            'mother_name' => $request->mother_name,
+            'dob' => $request->dob,
+        ]);
+
+        return redirect()->route('profile')->with('success', 'Profile updated successfully.');
     }
 
     public function profileUploadImage(Request $request)
     {
         $request->validate([
-            'profile_image' => 'required|image|max:2048',
+            'profile_image' => 'required|image|mimes:jpg,jpeg,png,webp|max:2048',
         ]);
+
+        $user = User::find(Auth::id());
+
+        if ($user->image && file_exists(public_path('images/profile/' . $user->image))) {
+            unlink(public_path('images/profile/' . $user->image));
+        }
 
         $file = $request->file('profile_image');
-        $filename = 'profile_' . auth()->user()->code . '_' .time().'_'.$file->getClientOriginalExtension();
+        $filename = 'profile_' . $user->code . '_' . time() . '.' . $file->getClientOriginalExtension();
+
         $file->move(public_path('images/profile'), $filename);
 
-        auth()->user()->update([
-            'profile_image' => $filename
+        $user->update([
+            'image' => $filename
         ]);
 
-        return back()->with('success', 'Profile updated successfully!');
+        return back()->with('success', 'Profile image updated successfully!');
     }
 
-    
+
     public function security()
     {
         $sessions = DB::table('sessions')
@@ -88,7 +101,7 @@ class UserController extends Controller
                 $lastActivity = Carbon::createFromTimestamp($session->last_activity);
 
                 // Get the session lifetime from config (default is 120 minutes)
-                $sessionLifetime = config('session.lifetime'); 
+                $sessionLifetime = config('session.lifetime');
 
                 // Calculate session expiry time
                 $expiryTime = $lastActivity->addMinutes($sessionLifetime);
@@ -124,7 +137,7 @@ class UserController extends Controller
     public function loginActivity(Request $request)
     {
         $user_id = auth()->user()->id;
-        $query = LoginLog::with('user')->where('user_id', $user_id)->withTrashed(); 
+        $query = LoginLog::with('user')->where('user_id', $user_id)->withTrashed();
 
         // Default date range (last 3 month)
         $default_from = now()->subMonths(3)->startOfDay()->toDateString();
@@ -145,39 +158,39 @@ class UserController extends Controller
 
         $data = $query->get()->map(function ($log) {
 
-                $agent = new Agent();
-                $agent->setUserAgent($log->device_info);
+            $agent = new Agent();
+            $agent->setUserAgent($log->device_info);
 
-                return [
-                    'id'          => $log->id,
-                    'user_image'  => $log->user->image,
-                    'user_name'   => $log->user->name,
-                    'user_code'   => $log->user->code,
-                    'user_gender' => $log->user->gender,
-                    'ip'          => $log->ip_address,
-                    'request'     => $log->request,
-                    'server'      => $log->server,
-                    'browser'     => $agent->browser(),
-                    'browser_ver' => $agent->version($agent->browser()),
-                    'os'          => $agent->platform(),
-                    'os_ver'      => $agent->version($agent->platform()),
-                    'device'      => $agent->device(),
-                    'is_phone'    => $agent->isPhone(),
-                    'is_desktop'  => $agent->isDesktop(),
-                    'location'    => $log->location,
-                    'created_at'  => $log->created_at,
-                    'updated_at'  => $log->updated_at,
-                ];
-            });
+            return [
+                'id'          => $log->id,
+                'user_image'  => $log->user->image,
+                'user_name'   => $log->user->name,
+                'user_code'   => $log->user->code,
+                'user_gender' => $log->user->gender,
+                'ip'          => $log->ip_address,
+                'request'     => $log->request,
+                'server'      => $log->server,
+                'browser'     => $agent->browser(),
+                'browser_ver' => $agent->version($agent->browser()),
+                'os'          => $agent->platform(),
+                'os_ver'      => $agent->version($agent->platform()),
+                'device'      => $agent->device(),
+                'is_phone'    => $agent->isPhone(),
+                'is_desktop'  => $agent->isDesktop(),
+                'location'    => $log->location,
+                'created_at'  => $log->created_at,
+                'updated_at'  => $log->updated_at,
+            ];
+        });
 
         return view('admin.user.login-log', compact('data'));
     }
-    
-    
+
+
     public function activityLog(Request $request)
     {
         $user_id = auth()->user()->id;
-        $query = ActivityLog::with('user')->where('user_id', $user_id)->withTrashed(); 
+        $query = ActivityLog::with('user')->where('user_id', $user_id)->withTrashed();
 
         // Default date range (last 3 month)
         $default_from = now()->subMonths(3)->startOfDay()->toDateString();
@@ -209,7 +222,7 @@ class UserController extends Controller
     public function notifications(Request $request)
     {
         $user_id = auth()->user()->id;
-        $query = ActivityLog::where('user_id', $user_id)->withTrashed(); 
+        $query = ActivityLog::where('user_id', $user_id)->withTrashed();
 
         // Default date range (last 3 month)
         $default_from = now()->subMonths(3)->startOfDay()->toDateString();
@@ -230,7 +243,7 @@ class UserController extends Controller
         }
 
         $query->where('notification_show', 'Yes');
-        
+
         // Execute query
         $data = $query->get();
 
@@ -259,13 +272,12 @@ class UserController extends Controller
     {
         $user = auth()->user();
 
-    //     $check = Helper::send_fcm_notification(
-    //         $user, 
-    //         "Order Shipped!", 
-    //         "Your order #{1} is on the way.", 
-    //         url("/orders/{1}")
-    //     );
-    //    dd($check);
+        //     $check = Helper::send_fcm_notification(
+        //         $user, 
+        //         "Order Shipped!", 
+        //         "Your order #{1} is on the way.", 
+        //         url("/orders/{1}")
+        //     );
+        //    dd($check);
     }
-    
 }

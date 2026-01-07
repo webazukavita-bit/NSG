@@ -197,10 +197,10 @@
                                 <nav id="mobile-menu">
                                     <ul>
                                         <li class="has-dropdown active menu-thumb">
-                                            <a href="index.html">
+                                            <a href="{{url('/')}}">
                                             Home 
                                             </a>
-                                            <ul class="submenu has-home-menu">
+                                            {{-- <ul class="submenu has-home-menu">
                                                 <li class="border-top-none">
                                                     <div class="row g-4">
                                                         <div class="col-lg-3 home-menu">
@@ -265,73 +265,88 @@
                                                         </div>
                                                     </div>
                                                 </li>
-                                            </ul>
+                                            </ul> --}}
                                         </li>
                                         <li class="has-dropdown active d-xl-none">
-                                            <a href="index.html" class="border-top-none">
+                                            <a href="{{url('/')}}" class="border-top-none">
                                             Home
                                             <i class="fas fa-angle-down"></i>
                                             </a>
-                                            <ul class="submenu">
+                                            {{-- <ul class="submenu">
                                                 <li><a href="index.html">Home 01</a></li>
                                                 <li><a href="index-2.html">Home 02</a></li>
                                                 <li><a href="index-3.html">Home 03</a></li>
                                                 <li><a href="index-4.html">Home 04</a></li>
-                                            </ul>
+                                            </ul> --}}
                                         </li>
                                         <li>
-                                            <a href="about.html">About Us</a>
+                                            <a href="{{url('about-us')}}">About Us</a>
                                         </li>
                                         <li>
-                                            <a href="service.html"> Services </a>
+                                            <a href="{{url('our-services')}}"> Services </a>
                                             <ul class="submenu">
-                                                <li><a href="service-details.html">Service Details</a></li>
+                                                <li><a href="{{url('service-details')}}">Service Details</a></li>
                                             </ul>
                                         </li>
                                         <li class="has-dropdown active">
-                                            <a href="shop.html">Shop</a>
-                                            <ul class="submenu">
+                                            <a href="{{url('shop')}}">Shop</a>
+                                            {{-- <ul class="submenu">
                                                 <li><a href="shop-leftsidebar.html">Shop Left Sidebar</a></li>
                                                 <li><a href="shop-rightsidebar.html">Shop Right Sidebar</a></li>
-                                                <li><a href="shop-details.html">Shop Details</a></li>
-                                                <li><a href="shop-cart.html">Shop Cart</a></li>
-                                                <li><a href="checkout.html">Checkout</a></li>
-                                                <li><a href="sign-in.html">Sign In</a></li>
-                                                <li><a href="sign-up.html">Sign Up</a></li>
-                                            </ul>
+                                                <li><a href="javascript:void(0)">Shop Details</a></li>
+                                                <li><a href="javascript:void(0)">Shop Cart</a></li>
+                                                <li><a href="javascript:void(0)">Checkout</a></li>
+                                                <li><a href="{{url('login')}}">Sign In</a></li>
+                                                <li><a href="{{url('register')}}">Sign Up</a></li>
+                                            </ul> --}}
                                         </li>
-                                        <li class="has-dropdown">
-                                            <a href="news.html">
+                                        {{-- <li class="has-dropdown">
+                                            <a href="{{url('pages')}}">
                                                 Pages
                                             </a>
                                             <ul class="submenu">
-                                                <li><a href="project.html">Project</a></li>
-                                                <li><a href="project-details.html">Project Details</a></li>
-                                                <li><a href="pricing.html">Our Pricing</a></li>
-                                                <li><a href="faq.html">Faq's</a></li>
-                                                <li><a href="404.html">404 Page</a></li>
+                                                <li><a href="javascript:void(0)">Project</a></li>
+                                                <li><a href="javascript:void(0)">Project Details</a></li>
+                                                <li><a href="javascript:void(0)">Our Pricing</a></li>
+                                                <li><a href="javascript:void(0)">Faq's</a></li>
+                                                <li><a href="javascript:void(0)">404 Page</a></li>
                                             </ul>
-                                        </li>
+                                        </li> --}}
                                         <li>
-                                            <a href="news.html">
+                                            <a href="{{url('blog-grid')}}">
                                                 Blog
                                             </a>
                                             <ul class="submenu">
-                                                <li><a href="news-grid.html">Blog Grid</a></li>
-                                                <li><a href="news.html">Blog Standard </a></li>
-                                                <li><a href="news-details.html">Blog Details</a></li>
+                                                <li><a href="{{url('blog-grid')}}">Blog Grid</a></li>
+                                                {{-- <li><a href="{{url('blog-details')}}">Blog Details</a></li> --}}
                                             </ul>
                                         </li>
                                         <li>
-                                            <a href="contact.html">Contact</a>
+                                            <a href="{{url('contact-us')}}">Contact</a>
                                         </li>
                                     </ul>
                                 </nav>
                             </div>
                         </div>
+                           @php
+            $profile = 'images/user-1.svg';
+            if(!Auth::check()) {
+                $profile = 'images/user-1.svg';
+            }
+            else
+            if (Auth::user()->gender == 'Female') {
+                $profile = 'images/user-2.svg';
+            }
+        @endphp
                         <div class="header-right d-flex justify-content-end align-items-center">
                             <a href="#0" class="search-trigger search-icon"><i class="fal fa-search"></i></a>
-                            <a href="sign-in.html" class="user-icon"><i class="far fa-user"></i></a>
+                            @if(!Auth::check())
+                            <a href="{{url('login')}}" class="user-icon"><i class="far fa-user"></i></a>
+                            @else
+                            <a href="{{ url('dashboard') }}" class="user-icon"><img src="{{ asset('images/profile/' . Auth::user()->image) }}" onerror="this.onerror=null;this.src='{{ asset($profile) }}';" alt="Admin" class="rounded-circle bg-primary p-1" style="height: 50px; width:50px;"> </a>
+                            <div class="mt-3">
+                                {{-- <p>{{ Auth::user()->name }}</p></a> --}}
+                            @endif
                             <div class="menu-cart">
                                 <button id="openButton" class="cart-icon">
                                     <i class="far fa-shopping-cart"></i>

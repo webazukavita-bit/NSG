@@ -23,7 +23,7 @@
         <!--end breadcrumb-->
         @php
             $profile = 'images/user-1.svg';
-            if (auth()->user()->gender == 'Female') {
+            if (Auth::user()->gender == 'Female') {
                 $profile = 'images/user-2.svg';
             }
         @endphp
@@ -32,10 +32,10 @@
                 <div class="card">
                     <div class="card-body">
                         <div class="d-flex flex-column align-items-center text-center">
-                            <img src="{{ asset('images/profile/' . auth()->user()->image) }}" onerror="this.onerror=null;this.src='{{ asset($profile) }}';" alt="Admin" class="rounded-circle p-1 bg-primary" width="110">
+                            <img src="{{ asset('images/profile/' . Auth::user()->image) }}" onerror="this.onerror=null;this.src='{{ asset($profile) }}';" alt="Admin" class="rounded-circle p-1 bg-primary" width="110">
                             <div class="mt-3">
-                                <h4>{{ auth()->user()->name }}</h4>
-                                <p class="text-secondary mb-1">{{ auth()->user()->roles->name }}</p>
+                                <h4>{{ Auth::user()->name }}</h4>
+                                <p class="text-secondary mb-1">{{ Auth::user()->roles->name }}</p>
                                 <form action="{{ route('profile-upload-image') }}" method="POST" enctype="multipart/form-data" id="profileForm">
                                     @csrf
 
