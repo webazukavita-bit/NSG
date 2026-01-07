@@ -284,13 +284,13 @@
                                         </li>
                                         <li>
                                             <a href="{{url('our-services')}}"> Services </a>
-                                            <ul class="submenu">
-                                                <li><a href="{{url('service-details')}}">Service Details</a></li>
-                                            </ul>
-                                        </li>
-                                        <li class="has-dropdown active">
-                                            <a href="{{url('shop')}}">Shop</a>
                                             {{-- <ul class="submenu">
+                                                <li><a href="{{url('service-details')}}">Service Details</a></li>
+                                            </ul> --}}
+                                        </li>
+                                        {{-- <li class="has-dropdown active">
+                                            <a href="{{url('shop')}}">Shop</a>
+                                            <ul class="submenu">
                                                 <li><a href="shop-leftsidebar.html">Shop Left Sidebar</a></li>
                                                 <li><a href="shop-rightsidebar.html">Shop Right Sidebar</a></li>
                                                 <li><a href="javascript:void(0)">Shop Details</a></li>
@@ -298,9 +298,9 @@
                                                 <li><a href="javascript:void(0)">Checkout</a></li>
                                                 <li><a href="{{url('login')}}">Sign In</a></li>
                                                 <li><a href="{{url('register')}}">Sign Up</a></li>
-                                            </ul> --}}
+                                            </ul>
                                         </li>
-                                        {{-- <li class="has-dropdown">
+                                        <li class="has-dropdown">
                                             <a href="{{url('pages')}}">
                                                 Pages
                                             </a>
@@ -313,13 +313,13 @@
                                             </ul>
                                         </li> --}}
                                         <li>
-                                            <a href="{{url('blog-grid')}}">
-                                                Blog
+                                            <a href="{{url('/Articales')}}">
+                                                Articles
                                             </a>
-                                            <ul class="submenu">
-                                                <li><a href="{{url('blog-grid')}}">Blog Grid</a></li>
-                                                {{-- <li><a href="{{url('blog-details')}}">Blog Details</a></li> --}}
-                                            </ul>
+                                            {{-- <ul class="submenu">
+                                                <li><a href="{{url('/Articales')}}">Blog Grid</a></li>
+                                                <li><a href="{{url('blog-details')}}">Blog Details</a></li>
+                                            </ul> --}}
                                         </li>
                                         <li>
                                             <a href="{{url('contact-us')}}">Contact</a>

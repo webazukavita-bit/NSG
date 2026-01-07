@@ -19,7 +19,7 @@
                                     </p>
                                 </div>
                                 <div class="hero-button">
-                                    <a href="shop-details.html" class="theme-btn">Order Now</a>
+                                    <a href="{{url('shop-details')}}" class="theme-btn">Order Now</a>
                                 </div>
                             </div>
                             <div class="col-lg-5">
@@ -59,7 +59,7 @@
                                     </p>
                                 </div>
                                 <div class="hero-button">
-                                    <a href="shop-details.html" class="theme-btn">Order Now</a>
+                                    <a href="{{url('shop-details')}}" class="theme-btn">Order Now</a>
                                 </div>
                             </div>
                             <div class="col-lg-5">
@@ -99,7 +99,7 @@
                                     </p>
                                 </div>
                                 <div class="hero-button">
-                                    <a href="shop-details.html" class="theme-btn">Order Now</a>
+                                    <a href="{{url('shop-details')}}" class="theme-btn">Order Now</a>
                                 </div>
                             </div>
                             <div class="col-lg-5">
@@ -211,7 +211,7 @@
                                 </div>
                             </div>
                             <div class="about-author">
-                                <a href="about.html" class="theme-btn wow fadeInUp" data-wow-delay=".3s">MORE ABOUT US</a>
+                                <a href="{{url('about-us')}}" class="theme-btn wow fadeInUp" data-wow-delay=".3s">MORE ABOUT US</a>
                                 <div class="author-image wow fadeInUp" data-wow-delay=".5s">
                                     <img src="{{asset('front/assets/img/about/author.png')}}" alt="author-img">
                                     <div class="content">
@@ -260,7 +260,7 @@
                                 <div class="shop-banner-content">
                                     <span>LATEST DESIGn</span>
                                     <h3>Book Cover Design</h3>
-                                    <a href="shop-details.html" class="theme-btn">Shop now</a>
+                                    <a href="{{url('shop-details')}}" class="theme-btn">Shop now</a>
                                 </div>
                             </div>
                             <div class="col-xl-7 col-lg-5 col-md-7">
@@ -283,7 +283,7 @@
                                 <div class="shop-banner-content">
                                     <span>LATEST DESIGn</span>
                                     <h3>Book Cover Design</h3>
-                                    <a href="shop-details.html" class="theme-btn">Shop now</a>
+                                    <a href="{{url('shop-details')}}" class="theme-btn">Shop now</a>
                                 </div>
                             </div>
                             <div class="col-xl-8 col-lg-5 col-md-8">
@@ -327,11 +327,11 @@
                         </div>
                         <div class="content">
                             <span>50+ Style</span>
-                            <h3><a href="shop-details.html">Business Cards Design and Printing</a></h3>
+                            <h3><a href="{{url('shop-details')}}">Business Cards Design and Printing</a></h3>
                             <p>
                                 Customizable template, with a ton  web blocks to create an amazing website that looks.
                             </p>
-                            <a href="shop-details.html" class="arrow-icon">
+                            <a href="{{url('shop-details')}}" class="arrow-icon">
                                 <i class="fas fa-long-arrow-right"></i>
                             </a>
                         </div>
@@ -344,11 +344,11 @@
                         </div>
                         <div class="content">
                             <span>50+ Style</span>
-                            <h3><a href="shop-details.html">Signs & Banners Design Printing</a></h3>
+                            <h3><a href="{{url('shop-details')}}">Signs & Banners Design Printing</a></h3>
                             <p>
                                 Customizable template, with a ton  web blocks to create an amazing website that looks.
                             </p>
-                            <a href="shop-details.html" class="arrow-icon">
+                            <a href="{{url('shop-details')}}" class="arrow-icon">
                                 <i class="fas fa-long-arrow-right"></i>
                             </a>
                         </div>
@@ -361,11 +361,11 @@
                         </div>
                         <div class="content">
                             <span>50+ Style</span>
-                            <h3><a href="shop-details.html">Invitations & Stationery Printing</a></h3>
+                            <h3><a href="{{url('shop-details')}}">Invitations & Stationery Printing</a></h3>
                             <p>
                                 Customizable template, with a ton  web blocks to create an amazing website that looks.
                             </p>
-                            <a href="shop-details.html" class="arrow-icon">
+                            <a href="{{url('shop-details')}}" class="arrow-icon">
                                 <i class="fas fa-long-arrow-right"></i>
                             </a>
                         </div>
@@ -378,11 +378,11 @@
                         </div>
                         <div class="content">
                             <span>50+ Style</span>
-                            <h3><a href="shop-details.html">Labels, Stickers & Package</a></h3>
+                            <h3><a href="{{url('shop-details')}}">Labels, Stickers & Package</a></h3>
                             <p>
                                 Customizable template, with a ton  web blocks to create an amazing website that looks.
                             </p>
-                            <a href="shop-details.html" class="arrow-icon">
+                            <a href="{{url('shop-details')}}" class="arrow-icon">
                                 <i class="fas fa-long-arrow-right"></i>
                             </a>
                         </div>
@@ -410,9 +410,9 @@
                             <div class="service-image">
                                 <img src="{{asset('front/assets/img/service/01.jpg')}}" alt="img">
                                 <div class="service-content">
-                                    <h3><a href="service-details.html">POD For Online Stores</a></h3>
+                                    <h3><a href="{{url('/shop')}}">POD For Online Stores</a></h3>
                                 </div>
-                                <a href="service-details.html" class="icon">
+                                <a href="{{url('/shop')}}" class="icon">
                                     <i class="far fa-long-arrow-right"></i>
                                 </a>
                             </div>
@@ -420,33 +420,33 @@
                         <div class="swiper-slide">
                             <div class="service-image">
                                 <img src="{{asset('front/assets/img/service/02.jpg')}}" alt="img">
-                                <a href="service-details.html" class="icon">
+                                <a href="{{url('/shop')}}" class="icon">
                                     <i class="far fa-long-arrow-right"></i>
                                 </a>
                                 <div class="service-content">
-                                    <h3><a href="service-details.html">Digital Scanning</a></h3>
+                                    <h3><a href="{{url('/shop')}}">Digital Scanning</a></h3>
                                 </div>
                             </div>
                         </div>
                         <div class="swiper-slide">
                             <div class="service-image">
                                 <img src="{{asset('front/assets/img/service/03.jpg')}}" alt="img">
-                                <a href="service-details.html" class="icon">
+                                <a href="{{url('/shop')}}" class="icon">
                                     <i class="far fa-long-arrow-right"></i>
                                 </a>
                                 <div class="service-content">
-                                    <h3><a href="service-details.html">Stickers And Labels</a></h3>
+                                    <h3><a href="{{url('/shop')}}">Stickers And Labels</a></h3>
                                 </div>
                             </div>
                         </div>
                         <div class="swiper-slide">
                             <div class="service-image">
                                 <img src="{{asset('front/assets/img/pen.png')}}" alt="img">
-                                <a href="service-details.html" class="icon">
+                                <a href="{{url('/shop')}}" class="icon">
                                     <i class="far fa-long-arrow-right"></i>
                                 </a>
                                 <div class="service-content">
-                                    <h3><a href="service-details.html">Printing Service</a></h3>
+                                    <h3><a href="{{url('/shop')}}">Printing Service</a></h3>
                                 </div>
                             </div>
                         </div>
@@ -477,20 +477,20 @@
                             <img src="{{asset('front/assets/img/feature-product/01.png')}}" alt="img">
                             <ul class="product-icon d-flex justify-content-center align-items-center">
                                 <li>
-                                    <a href="shop-details.html"><i class="fal fa-heart"></i></a>
+                                    <a href="{{url('shop-details')}}"><i class="fal fa-heart"></i></a>
                                 </li>
                                 <li>
-                                    <a href="shop-cart.html">
+                                    <a href="Javascript:void(0)">
                                         <i class="far fa-shopping-bag"></i>
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="shop-details.html"><i class="far fa-eye"></i></a>
+                                    <a href="{{url('shop-details')}}"><i class="far fa-eye"></i></a>
                                 </li>
                             </ul>
                         </div>
                         <div class="product-content">
-                            <h4><a href="shop-details.html">Bottle Lable Design</a></h4>
+                            <h4><a href="{{url('shop-details')}}">Bottle Lable Design</a></h4>
                             <ul class="price-list"><li>$15.00</li></ul>
                         </div>
                     </div>
@@ -501,20 +501,20 @@
                             <img src="{{asset('front/assets/img/feature-product/02.png')}}" alt="img">
                             <ul class="product-icon d-flex justify-content-center align-items-center">
                                 <li>
-                                    <a href="shop-details.html"><i class="fal fa-heart"></i></a>
+                                    <a href="{{url('shop-details')}}"><i class="fal fa-heart"></i></a>
                                 </li>
                                 <li>
-                                    <a href="shop-cart.html">
+                                    <a href="Javascript:void(0)">
                                         <i class="far fa-shopping-bag"></i>
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="shop-details.html"><i class="far fa-eye"></i></a>
+                                    <a href="{{url('shop-details')}}"><i class="far fa-eye"></i></a>
                                 </li>
                             </ul>
                         </div>
                         <div class="product-content">
-                            <h4><a href="shop-details.html">Snack Packaging</a></h4>
+                            <h4><a href="{{url('shop-details')}}">Snack Packaging</a></h4>
                             <ul class="price-list">
                                 <li>
                                     <del>$4.00</del>
@@ -533,20 +533,20 @@
                             <img src="{{asset('front/assets/img/feature-product/03.png')}}" alt="img">
                             <ul class="product-icon d-flex justify-content-center align-items-center">
                                 <li>
-                                    <a href="shop-details.html"><i class="fal fa-heart"></i></a>
+                                    <a href="{{url('shop-details')}}"><i class="fal fa-heart"></i></a>
                                 </li>
                                 <li>
-                                    <a href="shop-cart.html">
+                                    <a href="Javascript:void(0)">
                                         <i class="far fa-shopping-bag"></i>
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="shop-details.html"><i class="far fa-eye"></i></a>
+                                    <a href="{{url('shop-details')}}"><i class="far fa-eye"></i></a>
                                 </li>
                             </ul>
                         </div>
                         <div class="product-content">
-                            <h4><a href="shop-details.html">Water Bottle Print</a></h4>
+                            <h4><a href="{{url('shop-details')}}">Water Bottle Print</a></h4>
                             <ul class="price-list"><li>$15.00</li></ul>
                         </div>
                     </div>
@@ -557,20 +557,20 @@
                             <img src="{{asset('front/assets/img/ball-mug-420.jpg')}}" alt="img">
                             <ul class="product-icon d-flex justify-content-center align-items-center">
                                 <li>
-                                    <a href="shop-details.html"><i class="fal fa-heart"></i></a>
+                                    <a href="{{url('shop-details')}}"><i class="fal fa-heart"></i></a>
                                 </li>
                                 <li>
-                                    <a href="shop-cart.html">
+                                    <a href="Javascript:void(0)">
                                         <i class="far fa-shopping-bag"></i>
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="shop-details.html"><i class="far fa-eye"></i></a>
+                                    <a href="{{url('shop-details')}}"><i class="far fa-eye"></i></a>
                                 </li>
                             </ul>
                         </div>
                         <div class="product-content">
-                            <h4><a href="shop-details.html">Beanie with Logo</a></h4>
+                            <h4><a href="{{url('shop-details')}}">Beanie with Logo</a></h4>
                             <ul class="price-list">
                                 <li>
                                     <del>$24.00</del>
@@ -589,20 +589,20 @@
                             <img src="{{asset('front/assets/img/feature-product/05.webp')}}" alt="img">
                             <ul class="product-icon d-flex justify-content-center align-items-center">
                                 <li>
-                                    <a href="shop-details.html"><i class="fal fa-heart"></i></a>
+                                    <a href="{{url('shop-details')}}"><i class="fal fa-heart"></i></a>
                                 </li>
                                 <li>
-                                    <a href="shop-cart.html">
+                                    <a href="Javascript:void(0)">
                                         <i class="far fa-shopping-bag"></i>
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="shop-details.html"><i class="far fa-eye"></i></a>
+                                    <a href="{{url('shop-details')}}"><i class="far fa-eye"></i></a>
                                 </li>
                             </ul>
                         </div>
                         <div class="product-content">
-                            <h4><a href="shop-details.html">Winter Hoodie Print</a></h4>
+                            <h4><a href="{{url('shop-details')}}">Winter Hoodie Print</a></h4>
                             <ul class="price-list">
                                 <li>
                                     $222.00
@@ -617,20 +617,20 @@
                             <img src="{{asset('front/assets/img/feature-product/06.png')}}" alt="img">
                             <ul class="product-icon d-flex justify-content-center align-items-center">
                                 <li>
-                                    <a href="shop-details.html"><i class="fal fa-heart"></i></a>
+                                    <a href="{{url('shop-details')}}"><i class="fal fa-heart"></i></a>
                                 </li>
                                 <li>
-                                    <a href="shop-cart.html">
+                                    <a href="Javascript:void(0)">
                                         <i class="far fa-shopping-bag"></i>
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="shop-details.html"><i class="far fa-eye"></i></a>
+                                    <a href="{{url('shop-details')}}"><i class="far fa-eye"></i></a>
                                 </li>
                             </ul>
                         </div>
                         <div class="product-content">
-                            <h4><a href="shop-details.html">Girl Awesome Dress</a></h4>
+                            <h4><a href="{{url('shop-details')}}">Girl Awesome Dress</a></h4>
                             <ul class="price-list">
                                 <li>
                                     <del>$34.00</del>
@@ -661,7 +661,7 @@
                                             </div>
                                         </div>
                                         <div class="content">
-                                            <h3><a href="shop-details-2.html">Multicoloure Printing</a></h3>
+                                            <h3><a href="{{url('/shop')}}">Multicoloure Printing</a></h3>
                                             <h4>$570.00</h4>
                                         </div>
                                     </div>
@@ -676,7 +676,7 @@
                                             </div>
                                         </div>
                                         <div class="content">
-                                            <h3><a href="shop-details-2.html">Multicoloure Printing</a></h3>
+                                            <h3><a href="{{url('/shop')}}">Multicoloure Printing</a></h3>
                                             <h4>$570.00</h4>
                                         </div>
                                     </div>
@@ -691,7 +691,7 @@
                                             </div>
                                         </div>
                                         <div class="content">
-                                            <h3><a href="shop-details-2.html">Multicoloure Printing</a></h3>
+                                            <h3><a href="{{url('/shop')}}">Multicoloure Printing</a></h3>
                                             <h4>$570.00</h4>
                                         </div>
                                     </div>
@@ -725,7 +725,7 @@
                         <div class="project-content">
                             <div class="content">
                                 <h6>Digital Products</h6>
-                                <h3><a href="project-details.html">Custom Print Designing</a></h3>
+                                <h3><a href="Javascript:void(0)">Custom Print Designing</a></h3>
                             </div>
                             <div class="icon-btn">
                                 <a href="{{asset('front/assets/img/project/01.jpg')}}" class="img-popup">
@@ -733,10 +733,10 @@
                                         <i class="far fa-search icon"></i>
                                     </div>
                                 </a>
-                                <a href="project-details.html" class="icon"><i class="far fa-link"></i></a>
+                                <a href="Javascript:void(0)" class="icon"><i class="far fa-link"></i></a>
                             </div>
                         </div>
-                        <a href="project-details.html" class="hover-button">
+                        <a href="Javascript:void(0)" class="hover-button">
                             View <br> Demo
                         </a>
                     </div>
@@ -747,7 +747,7 @@
                         <div class="project-content">
                             <div class="content">
                                 <h6>Digital Products</h6>
-                                <h3><a href="project-details.html">Custom Print Designing</a></h3>
+                                <h3><a href="Javascript:void(0)">Custom Print Designing</a></h3>
                             </div>
                             <div class="icon-btn">
                                 <a href="{{asset('front/assets/img/project/02.jpg')}}" class="img-popup">
@@ -755,10 +755,10 @@
                                         <i class="far fa-search icon"></i>
                                     </div>
                                 </a>
-                                <a href="project-details.html" class="icon"><i class="far fa-link"></i></a>
+                                <a href="Javascript:void(0)" class="icon"><i class="far fa-link"></i></a>
                             </div>
                         </div>
-                        <a href="project-details.html" class="hover-button">
+                        <a href="Javascript:void(0)" class="hover-button">
                             View <br> Demo
                         </a>
                     </div>
@@ -769,7 +769,7 @@
                         <div class="project-content">
                             <div class="content">
                                 <h6>Digital Products</h6>
-                                <h3><a href="project-details.html">Custom Print Designing</a></h3>
+                                <h3><a href="Javascript:void(0)">Custom Print Designing</a></h3>
                             </div>
                             <div class="icon-btn">
                                 <a href="{{asset('front/assets/img/project/03.jpg')}}" class="img-popup">
@@ -777,10 +777,10 @@
                                         <i class="far fa-search icon"></i>
                                     </div>
                                 </a>
-                                <a href="project-details.html" class="icon"><i class="far fa-link"></i></a>
+                                <a href="Javascript:void(0)" class="icon"><i class="far fa-link"></i></a>
                             </div>
                         </div>
-                        <a href="project-details.html" class="hover-button">
+                        <a href="Javascript:void(0)" class="hover-button">
                             View <br> Demo
                         </a>
                     </div>
@@ -904,21 +904,21 @@
                                 <img src="{{asset('front/assets/img/product/p-1.jpg')}}" alt="img">
                                 <ul class="product-icon d-grid justify-content-center align-items-center">
                                     <li>
-                                        <a href="shop-cart.html"><i class="far fa-heart"></i></a>
+                                        <a href="Javascript:void(0)"><i class="far fa-heart"></i></a>
                                     </li>
                                     <li>
-                                        <a href="shop-details.html">
+                                        <a href="{{url('shop-details')}}">
                                             <i class="fal fa-expand-arrows"></i>
                                         </a>
                                     </li>
                                     <li>
-                                        <a href="shop-details.html"><i class="far fa-eye"></i></a>
+                                        <a href="{{url('shop-details')}}"><i class="far fa-eye"></i></a>
                                     </li>
                                 </ul>
-                                <a href="shop-cart.html" class="theme-btn">Add To cart</a>
+                                <a href="Javascript:void(0)" class="theme-btn">Add To cart</a>
                             </div>
                             <div class="product-content">
-                                <h4><a href="shop-details.html">Coffee Mug</a></h4>
+                                <h4><a href="{{url('shop-details')}}">Coffee Mug</a></h4>
                                 <div class="star">
                                     <i class="fas fa-star"></i>
                                     <i class="fas fa-star"></i>
@@ -939,18 +939,18 @@
                                 <img src="{{asset('front/assets/img/ball-mug-420.jpg')}}" alt="img" style="height: 320px;">
                                 <ul class="product-icon d-grid justify-content-center align-items-center">
                                     <li>
-                                        <a href="shop-cart.html"><i class="far fa-heart"></i></a>
+                                        <a href="Javascript:void(0)"><i class="far fa-heart"></i></a>
                                     </li>
                                     <li>
-                                        <a href="shop-details.html">
+                                        <a href="{{url('shop-details')}}">
                                             <i class="fal fa-expand-arrows"></i>
                                         </a>
                                     </li>
                                     <li>
-                                        <a href="shop-details.html"><i class="far fa-eye"></i></a>
+                                        <a href="{{url('shop-details')}}"><i class="far fa-eye"></i></a>
                                     </li>
                                 </ul>
-                                <a href="shop-cart.html" class="theme-btn">Add To cart</a>
+                                <a href="Javascript:void(0)" class="theme-btn">Add To cart</a>
                             </div>
                             <div class="product-content">
                                 <h4><a href="javascript:void(0)">Stylish Hoodie</a></h4>
@@ -974,21 +974,21 @@
                                 <img src="{{asset('front/assets/img/product/p-3.jpg')}}" alt="img">
                                 <ul class="product-icon d-grid justify-content-center align-items-center">
                                     <li>
-                                        <a href="shop-cart.html"><i class="far fa-heart"></i></a>
+                                        <a href="Javascript:void(0)"><i class="far fa-heart"></i></a>
                                     </li>
                                     <li>
-                                        <a href="shop-details.html">
+                                        <a href="{{url('shop-details')}}">
                                             <i class="fal fa-expand-arrows"></i>
                                         </a>
                                     </li>
                                     <li>
-                                        <a href="shop-details.html"><i class="far fa-eye"></i></a>
+                                        <a href="{{url('shop-details')}}"><i class="far fa-eye"></i></a>
                                     </li>
                                 </ul>
-                                <a href="shop-cart.html" class="theme-btn">Add To cart</a>
+                                <a href="Javascript:void(0)" class="theme-btn">Add To cart</a>
                             </div>
                             <div class="product-content">
-                                <h4><a href="shop-details.html">Packaging</a></h4>
+                                <h4><a href="{{url('shop-details')}}">Packaging</a></h4>
                                 <div class="star">
                                     <i class="fas fa-star"></i>
                                     <i class="fas fa-star"></i>
@@ -1009,21 +1009,21 @@
                                 <img src="{{asset('front/assets/img/product/p-2.jpg')}}" alt="img">
                                 <ul class="product-icon d-grid justify-content-center align-items-center">
                                     <li>
-                                        <a href="shop-cart.html"><i class="far fa-heart"></i></a>
+                                        <a href="Javascript:void(0)"><i class="far fa-heart"></i></a>
                                     </li>
                                     <li>
-                                        <a href="shop-details.html">
+                                        <a href="{{url('shop-details')}}">
                                             <i class="fal fa-expand-arrows"></i>
                                         </a>
                                     </li>
                                     <li>
-                                        <a href="shop-details.html"><i class="far fa-eye"></i></a>
+                                        <a href="{{url('shop-details')}}"><i class="far fa-eye"></i></a>
                                     </li>
                                 </ul>
-                                <a href="shop-cart.html" class="theme-btn">Add To cart</a>
+                                <a href="Javascript:void(0)" class="theme-btn">Add To cart</a>
                             </div>
                             <div class="product-content">
-                                <h4><a href="shop-details.html">Shopping Bag</a></h4>
+                                <h4><a href="{{url('shop-details')}}">Shopping Bag</a></h4>
                                 <div class="star">
                                     <i class="fas fa-star"></i>
                                     <i class="fas fa-star"></i>
@@ -1095,7 +1095,7 @@
                         <div class="shop-banner-content">
                             <span>flat 25% off</span>
                             <h3>Mockup print <br> designs</h3>
-                            <a href="shop-details.html" class="theme-btn">Shop now</a>
+                            <a href="{{url('shop-details')}}" class="theme-btn">Shop now</a>
                         </div>
                     </div>
                 </div>
@@ -1104,7 +1104,7 @@
                         <div class="shop-banner-content">
                             <span>flat 25% off</span>
                             <h3>Cardboard <br> package box</h3>
-                            <a href="shop-details.html" class="theme-btn">Shop now</a>
+                            <a href="{{url('shop-details')}}" class="theme-btn">Shop now</a>
                         </div>
                     </div>
                 </div>
@@ -1322,7 +1322,7 @@
                     <span class="text-white wow fadeInUp">Printed and shipped on demand!</span>
                     <h2 class="text-white split-text right">Ready To Buy In Bulk & <br> Save Up To 30%?</h2>
                 </div>
-                <a href="contact.html" class="theme-btn wow fadeInUp" data-wow-delay=".5s">Contact Us</a>
+                <a href="{{url('/contact-us')}}" class="theme-btn wow fadeInUp" data-wow-delay=".5s">Contact Us</a>
             </div>
         </div>
     </section>
@@ -1397,7 +1397,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <a href="about.html" class="theme-btn wow fadeInUp" data-wow-delay=".3s">About Us</a>
+                            <a href="{{url('about-us')}}" class="theme-btn wow fadeInUp" data-wow-delay=".3s">About Us</a>
                         </div>
                     </div>
                 </div>
@@ -1642,7 +1642,7 @@
                         </h2>
                     </div>
                 </div>
-                <a href="news.html" class="theme-btn">Read all Post</a>
+                <a href="{{url('/Articales')}}" class="theme-btn">Read all Post</a>
             </div>
             <div class="row">
                 <div class="col-xl-4 col-lg-6 col-md-6 wow img-custom-anim-top" data-wow-duration="1.5s" data-wow-delay="0.1s">
@@ -1656,7 +1656,7 @@
                                 <li>Printing</li>
                                 <li>07 July 2025</li>
                             </ul>
-                            <h4><a href="news-details.html">Latest Work Was Disapproved by the Supervisor.</a></h4>
+                            <h4><a href="{{url('/blog-details')}}">Latest Work Was Disapproved by the Supervisor.</a></h4>
                             <div class="author-items">
                                 <div class="author-info">
                                     <img src="{{asset('front/assets/img/news/author.png')}}" alt="img">
@@ -1665,7 +1665,7 @@
                                         <p>Guy Hawkins</p>
                                     </div>
                                 </div>
-                                <a href="news-details.html" class="link-btn">Read More</a>
+                                <a href="{{url('/blog-details')}}" class="link-btn">Read More</a>
                             </div>
                         </div>
                     </div>
@@ -1681,7 +1681,7 @@
                                 <li>Printing</li>
                                 <li>07 July 2025</li>
                             </ul>
-                            <h4><a href="news-details.html">Necessity May Give us Best Virtual Court</a></h4>
+                            <h4><a href="{{url('/blog-details')}}">Necessity May Give us Best Virtual Court</a></h4>
                             <div class="author-items">
                                 <div class="author-info">
                                     <img src="{{asset('front/assets/img/news/author.png')}}" alt="img">
@@ -1690,7 +1690,7 @@
                                         <p>Guy Hawkins</p>
                                     </div>
                                 </div>
-                                <a href="news-details.html" class="link-btn">Read More</a>
+                                <a href="{{url('/blog-details')}}" class="link-btn">Read More</a>
                             </div>
                         </div>
                     </div>
@@ -1706,7 +1706,7 @@
                                 <li>Printing</li>
                                 <li>07 July 2025</li>
                             </ul>
-                            <h4><a href="news-details.html">Easy and Most Powerful Server and Platform</a></h4>
+                            <h4><a href="{{url('/blog-details')}}">Easy and Most Powerful Server and Platform</a></h4>
                             <div class="author-items">
                                 <div class="author-info">
                                     <img src="{{asset('front/assets/img/news/author.png')}}" alt="img">
@@ -1715,7 +1715,7 @@
                                         <p>Guy Hawkins</p>
                                     </div>
                                 </div>
-                                <a href="news-details.html" class="link-btn">Read More</a>
+                                <a href="{{url('/blog-details')}}" class="link-btn">Read More</a>
                             </div>
                         </div>
                     </div>
@@ -1729,7 +1729,7 @@
         <div class="container">
             <div class="cta-contact-item">
                 <h2 class="split-text right">Looking For The Best Printing Company?</h2>
-                <a href="contact.html" class="theme-btn wow fadeInUp" data-wow-delay=".5s">GAT A QUOTE</a>
+                <a href="{{url('/contact-us')}}" class="theme-btn wow fadeInUp" data-wow-delay=".5s">GAT A QUOTE</a>
             </div>
         </div>
     </section>

@@ -37,7 +37,7 @@ Route::get('/our-projects', [HomeController::class, 'ourProjects'])->name('our-p
 Route::get('/contact-us', [HomeController::class, 'contactUs'])->name('contact-us');
 Route::post('/contact-submit', [HomeController::class, 'contactSubmit'])->name('contact.submit');
 Route::get('/faq', [HomeController::class, 'faq'])->name('faq');
-Route::get('/blog-grid', [HomeController::class, 'blogs'])->name('blogs');
+Route::get('/Articales', [HomeController::class, 'blogs'])->name('blogs');
 Route::get('/blog-details/{slug}', [HomeController::class, 'blogDetails'])->name('blog-details');
 Route::get('/blog-details', [HomeController::class, 'blogDetail'])->name('blog-details');
 // Route::post('/calculate', [SolarCalculatorController::class, 'calculate'])->name('calculate');
