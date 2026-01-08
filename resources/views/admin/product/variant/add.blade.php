@@ -10,17 +10,16 @@
             <div class="card-title d-flex align-items-center justify-content-between">
                 <div class="d-flex align-items-center">
                     <i class="bx bx-file me-1 font-22 text-primary"></i>
-                    <h5 class="mb-0 text-primary">Add Product</h5>
+                    <h5 class="mb-0 text-primary">Add Variant</h5>
                 </div>
                 <div>
-                    <a href="{{ route('products') }}" class="btn btn-primary"><i class="bx bx-list-ol"></i> Product List</a> 
+                    <a href="{{ route('variant') }}" class="btn btn-primary"><i class="bx bx-list-ol"></i> Product Variant List</a> 
                 </div>
             </div>
             <hr>
             
-            <form action="{{ route('product-add') }}" method="POST" class="row g-3" enctype="multipart/form-data">
+            <form action="{{ route('variant-add') }}" method="POST" class="row g-3" enctype="multipart/form-data">
                 @csrf
-
                 <div class="col-md-3">
                     <label for="category_id" class="form-label">Category</label>
                     <select name="category_id" class="single-select @error('category_id') is-invalid @enderror" id="category_id">
@@ -30,6 +29,16 @@
                         @endforeach
                     </select>
                     @error('category_id')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
+                </div>
+
+                <div class="col-md-3">
+                    <label for="parent_product_id" class="form-label">Product</label>
+                    <select name="parent_product_id" class="single-select @error('parent_product_id') is-invalid @enderror" id="parent_product_id">
+                        <option selected disabled value="">Choose...</option>
+                    </select>
+                    @error('parent_product_id')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>
@@ -45,13 +54,11 @@
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>
+
                 <div class="col-md-3">
-                    <label for="name" class="form-label">Name</label>
-                    <input type="text" name="name" class="form-control @error('name') is-invalid @enderror" id="name" placeholder="Enter Name" value="{{ old('name') }}">
+                    <label for="name" class="form-label">Name <code>*</code></label>
+                    <input type="text" name="name" class="form-control @error('name') is-invalid @enderror" id="name" placeholder="Enter Name" value="{{ old('name') }}" required>
                     @error('name')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                    @enderror
-                    @error('slug')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>
@@ -91,50 +98,20 @@
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>
+                    {{-- <div class="col-md-3">
+                        <label class="form-label">Product Images</label>
+                        <div id="product-images">
+                        </div>
+                    </div> --}}
+
                  
 
                             <div class=" align-items-center">
-                               <h6 class="mb-0 text-primary">Add Variation</h6>
+                               <h6 class="mb-0 text-primary">Variations</h6>
                             </div>
                             <div class="col-md-12">
                                 <div id="variation-wrapper">
-                                <div class="row align-items-end variation-row template-row">
-                                    <div class="col-md-4">
-                                        <label class="form-label">Variation Type</label>
-                                        <select name="variation_type[]" class="form-control variation_type"    onchange="handleVariationTypeChange(this)">
-                                            <option value="" selected disabled>Choose...</option>
-                                            @foreach ($variationType as $type)
-                                    <option value="{{ $type->id }}" 
-                                        @selected(is_array(old('variation_type')) && in_array($type->id, old('variation_type')))>
-                                        {{ $type->name }}
-                                    </option>
 
-                                            @endforeach
-                                        </select>
-                                    @error('variation_type')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                                    </div>
-
-                                    <div class="col-md-4">
-                                        <label class="form-label">Variation Value</label>
-                                        <select name="variation_value[]" class="form-control variation_value">
-                                            <option value="" selected disabled>Choose...</option>
-                                            @foreach ($variationValue as $variation)
-                                    <option value="{{ $variation->id }}" 
-                                        @selected(is_array(old('variation_value')) && in_array($variation->id, old('variation_value')))>
-                                        {{ $variation->name }}
-                                    </option>
-                                            @endforeach
-                                        </select>
-                                             @error('variation_value')
-                                                <div class="invalid-feedback">{{ $message }}</div>
-                                            @enderror
-                                    </div>
-                                        <div class="col-md-4">
-                                            <button type="button" class="btn btn-primary btn-add" id="button-plus">+</button>
-                                        </div>
-                                </div>
                                 </div>
                             </div>
 
@@ -211,105 +188,94 @@
         });
 
 
-function getVariationvalue(variationTypeId,valueSelectId, selectedValueId= null) {
 
-    const $valueSelect = $(valueSelectId);
+function loadProductsByCategory(categoryId) {
+    let $product = $('#parent_product_id');
+    $product.html('<option selected disabled>Loading...</option>');
 
-    $valueSelect.empty();
-    $valueSelect.html('<option disabled selected>Loading...</option>');
-    $valueSelect.trigger('change');
+    $.get("{{ route('category-products') }}", { category_id: categoryId }, function(res) {
+        $product.empty().append('<option selected disabled>Choose...</option>');
+        res.products.forEach(p => {
+            $product.append(`<option value="${p.id}">${p.name}</option>`);
+        });
+        $product.prop('disabled', false).trigger('change');
+    });
+}
 
-    const isSelectedValid = selectedValueId !== null && selectedValueId !== undefined && selectedValueId !== '';
+$('#category_id').change(function() {
+    let categoryId = $(this).val();
+    if (categoryId) loadProductsByCategory(categoryId);
+});
 
-    $.ajax({
-        url: "{{ route('get-variation-value', ':id') }}".replace(':id', variationTypeId),
-        method: 'GET',
-        success: function(data) {
 
-            $valueSelect.empty();
+function loadProductDetails(productId) {
+    $.get("{{ route('product-details') }}", { product_id: productId }, function(res) {
+        let product = res.product;
 
-            if (!isSelectedValid) {
-                $valueSelect.append('<option disabled selected>Choose...</option>');
-            }
 
-            data.forEach(function(item) {
-                const isSelected = isSelectedValid && item.id == selectedValueId;
-                const option = new Option(item.name, item.id, isSelected, isSelected);
-                $valueSelect.append(option);
+        $('#brand_id').html(`<option value="${product.brand.id}" selected>${product.brand.name}</option>`);
+
+        $('#price').val(product.price);
+        $('#disc_price').val(product.disc_price);
+        $('#stock_quantity').val(product.stock_quantity);
+        tinymce.get('editor').setContent(product.specifications ?? '');
+
+        // Product images
+        // $('#product-images').empty();
+        // product.image.forEach(img => {
+        //     $('#product-images').append(`<img src="/images/product/${img}" height="60">`);
+        // });
+
+        // Variations
+        $('#variation-wrapper').empty();
+product.variations.forEach(v => {
+
+    let $row = $(`
+        <div class="row mb-2">
+            <div class="col-md-4">
+                <label class="form-label">Variation Type</label>
+                <input type="hidden" name="variation_type[]" value="${v.variation_type_id}">
+                <input type="text" class="form-control" value="${v.variation_type.name}" disabled>
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">Variation Value</label>
+                <select name="variation_value[]" class="form-control variation_value">
+                    <option value="">Select value</option>
+                </select>
+            </div>
+        </div>
+    `);
+
+    $('#variation-wrapper').append($row);
+
+    let $select = $row.find('.variation_value');
+
+    $.get(
+        "{{ route('get-variation-value', ':id') }}".replace(':id', v.variation_type_id),
+        function(values) {
+            $select.empty().append('<option value="">Select value</option>');
+
+            values.forEach(val => {
+                $select.append(`
+                    <option value="${val.id}" ${Number(val.id) === Number(v.variation_value_id) ? 'selected' : ''}>
+                        ${val.name}
+                    </option>
+                `);
             });
-
-            $valueSelect.trigger('change');
-        },
-        error: function(xhr, status, error) {
-            $valueSelect.empty();
-            $valueSelect.trigger('change');
         }
+    );
+});
+
     });
 }
 
-
-function handleVariationTypeChange(selectElement) {
-    let $current = $(selectElement);
-    let typeId = $current.val();
-
-    let isDuplicate = false;
-    $('#variation-wrapper .variation-row').not('.template-row').each(function () {
-        let existing = $(this).find('.variation_type').val();
-        if (existing == typeId) {
-            isDuplicate = true;
-            return false;
-        }
-    });
-
-    if (isDuplicate) {
-        alert('This variation type is already selected.');
-        $current.val('').trigger('change');
-        return;
-    }
-
-    let $valueSelect = $current.closest('.variation-row').find('.variation_value');
-    getVariationvalue(typeId, $valueSelect);
-
-
-}
-
-
-$(document).on('click', '.btn-add', function () {
-    let $row = $(this).closest('.variation-row');
-
-    let typeVal = $row.find('.variation_type').val();
-    let valueVal = $row.find('.variation_value').val();
-
-    if (!typeVal || !valueVal) {
-        alert('Please select both Variation Type and Value before adding.');
-        return;
-    }
-
-    let $clone = $('.variation-row.template-row').clone();
-    $clone.removeClass('template-row');
-
-    $clone.find('.variation_type').val(typeVal);
-    $clone.find('.variation_value').val(valueVal);
-
-    // Convert + to -
-    $clone.find('.btn-add')
-        .text('-')
-        .removeClass('btn-add btn-primary')
-        .addClass('btn-remove btn-danger');
-
-    $('#variation-wrapper').append($clone);
-
-    // Reset template row
-    let $template = $('.variation-row.template-row');
-    $template.find('.variation_type').val('').trigger('change');
-    $template.find('.variation_value').html('<option disabled selected>Choose...</option>');
+// Trigger on product change
+$('#parent_product_id').change(function() {
+    let productId = $(this).val();
+    if (productId) loadProductDetails(productId);
 });
 
 
-
-$(document).on('click', '.btn-remove', function() {
-    $(this).closest('.variation-row').remove();
-});
 
 
 $(document).on('click', '.btn-add-additional', function () {

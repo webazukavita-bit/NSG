@@ -18,27 +18,24 @@
                         <div class="body">
                             <form action="#" method="POST" enctype="multipart/form-data">
                                 @csrf
-                                <div class="mb-3">
+                                {{-- <div class="mb-3">
                                         <h6 class="form-label text-primary">ORDER NAME<code>*</code></h6>
                                         <input type="text" name="order_name" class="form-control @error('order_name') is-invalid @enderror" placeholder="" required>
                                         @error('order_name')
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
-                                     </div>
+                                     </div> --}}
                                 <div class="mb-3">
                                     <h6 class="form-label text-primary">SELECT PRODUCT<code>*</code></h6>
                                     <select name="category_id" id="productSelect" class="form-select @error('category_id') is-invalid @enderror" onchange="productDetails()" required>
                                         <option value="" selected disabled>-- Choose Product --</option>
-                                        @foreach ($products as $product)
-                                        <option value="{{ $product->id }}" data-description="{{$product->specifications}}"
+                                        <option value="{{ $product->id }}"
                                         data-variations='@json($product->variations)'
                                         data-disc_price="{{$product->disc_price}}"
-                                        data-quantity="{{$product->stock_quantity}}"
-                                        data-image="{{ asset('images/product/'.$product->image) }}">
+                                        data-quantity="{{$product->stock_quantity}}">
                                          {{ $product->name }}   @foreach ($product->variations as $variation)
                                           {{$variation->variationType->name?' + '.$variation->variationType->name:''}} @endforeach
                                         </option>  
-                                        @endforeach
                                     </select>
                                     @error('category_id')
                                         <div class="invalid-feedback">{{ $message }}</div>
@@ -66,7 +63,7 @@
                                     <div class="row px-2">
                                         <div class="col-md-6">
                                             <input class="" type="radio" name="file_option" id="file_online">
-                                            <label class=" text-success fw-semibold" for="file_online">
+                                            <label class="  fw-semibold" for="file_online">
                                                 Attach file Online
                                             </label>
 
@@ -83,7 +80,7 @@
 
                                         <div class="col-md-6">
                                             <input class="" type="radio" name="file_option" id="file_email">
-                                            <label class="text-success fw-semibold" for="file_email">
+                                            <label class=" fw-semibold" for="file_email">
                                                 Send file via Email
                                             </label>
 
@@ -105,7 +102,7 @@
                                     <div class="row px-2">
                                         <div class="col-md-6">
                                             <input type="radio" name="privacy" id="required">
-                                            <label for="required" class="text-success fw-semibold">Required</label>
+                                            <label for="required" class=" fw-semibold">Required</label>
                                             <div id="required_charge" class="d-none">
                                                 <small class="text-danger" style="font-size:10px">
                                                 (Extra Charges -Rs.5.00 is applicable)
@@ -120,7 +117,7 @@
 
                                         <div class="col-md-6">
                                             <input type="radio" name="privacy" id="not_required">
-                                            <label for="not_required" class="text-success fw-semibold">Not Required</label>
+                                            <label for="not_required" class=" fw-semibold">Not Required</label>
                                         </div>
                                     </div>
                                    <!-- COST SECTION -->
@@ -166,20 +163,46 @@
                     </div>
                 </div>
 
-        
-                                    <div class="col-md-5">
-                                        <div class="" id="productCard" style="display:none;">
-                                            <img id="product_image" src="" alt="Product Image"
-                                            class="img-fluid"/>
+                                <div class="col-md-5">
+                                    <div id="productCard" style="display:none;">
+                                        <div id="productCarousel" class="carousel slide" data-bs-ride="carousel">
 
-                                            <div class="">
-                                                 <h5 class="text-primary text-decoration-underline mt-3" id="product_title">
+                                            <div class="carousel-indicators">
+                                                @foreach($product->image as $index => $img)
+                                                    <button type="button" data-bs-target="#productCarousel" data-bs-slide-to="{{ $index }}" 
+                                                            class="{{ $index === 0 ? 'active' : '' }}" aria-current="{{ $index === 0 ? 'true' : 'false' }}" 
+                                                            aria-label="Slide {{ $index + 1 }}"></button>
+                                                @endforeach
+                                            </div>
+
+                                            <div class="carousel-inner">
+                                                @foreach($product->image as $index => $img)
+                                                    <div class="carousel-item {{ $index === 0 ? 'active' : '' }}">
+                                                        <img src="{{ asset('images/product/' . $img) }}" 
+                                                            class="d-block w-100 object-fit-cover" 
+                                                            style="height:250px;" 
+                                                            alt="Product Image">
+                                                    </div>
+                                                @endforeach
+                                            </div>
+
+                                        </div>
+
+                                        <div class="mt-3">
+                                            <h5 class="text-primary text-decoration-underline" id="product_title">
                                                 Product Description
-                                                </h5>
-                                                 <div id="product_des"></div>
+                                            </h5>
+                                            <div id="product_des">
+                                                {!! $product->specifications !!}
                                             </div>
                                         </div>
                                     </div>
+                                </div>
+
+
+
+
+
 
 
             </div>
@@ -206,14 +229,13 @@ function productDetails() {
 
     productFields.style.display = 'block';
     infoCard.style.display = 'block';
-
-    document.getElementById('product_des').innerHTML = selectedOption.getAttribute('data-description');
     document.getElementById('disc_price').innerHTML = selectedOption.getAttribute('data-disc_price');
-    document.getElementById('product_image').src = selectedOption.getAttribute('data-image');
 
-     let stockQty = selectedOption.getAttribute('data-quantity');
+    let stockQty = selectedOption.getAttribute('data-quantity');
     document.getElementById('stock_quantity').value = stockQty;
     document.getElementById('minQty').innerText = stockQty;
+
+    
 
     // get variations
     let variations = JSON.parse(selectedOption.getAttribute('data-variations'));
@@ -272,6 +294,16 @@ $(document).ready(function () {
       $('#email_info').removeClass('d-none');
     }
   });
+
+  $('input[name="privacy"]').on('change', function () {
+    $('#required_charge').addClass('d-none');
+
+     if (this.id === 'required') {
+      $('#required_charge').removeClass('d-none');
+    } 
+  });
+
+
 });
 
 </script>
