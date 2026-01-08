@@ -12,7 +12,7 @@
 								</h2>
 								<div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
 									<div class="accordion-body">	
-										<form action="{{ route('products') }}" method="POST" class="row g-3" enctype="multipart/form-data">
+										<form action="{{ route('variant') }}" method="POST" class="row g-3" enctype="multipart/form-data">
 											@csrf
 
 											<div class="col-md-3">
@@ -45,10 +45,10 @@
 						<div class="card-title d-flex align-items-center justify-content-between">
                             <div class="d-flex align-items-center">
                                 <i class="bx bxs-file me-1 font-22 text-primary"></i>
-                                <h5 class="mb-0 text-primary">Product</h5>
+                                <h5 class="mb-0 text-primary">Product Variant</h5>
                             </div>
 							<div>
-                                <a href="{{ route('product-add') }}" class="btn btn-primary"><i class="bx bx-plus"></i> Add Product</a>
+                                <a href="{{ route('variant-add') }}" class="btn btn-primary"><i class="bx bx-plus"></i> Add Product Variant</a>
                             </div>
                         </div>
                         <hr>
@@ -62,8 +62,6 @@
 										<th>Brand</th>
 										<th>Image</th>
                                         <th>SKU</th>
-										{{-- <th>Variation</th> --}}
-										{{-- <th>Additional Charge</th> --}}
 										<th>Price</th>
 										<th>Discount Price</th>
 										<th>Stock Qt.</th>
@@ -78,9 +76,11 @@
 										<td>{{ $value->category->name??'' }}</td>
 										<td>{{ $value->brand->name??'' }}</td>
 										<td>
+											<div style="display: flex; align-items: center; gap: 8px;">
 											@foreach ($value->image as $img)
-											<img src="{{ asset('images/product/' .$img) }}" onerror="this.onerror=null;this.src='{{ asset('images/missing-image.png') }}';"  class="product-img-2" alt="img" style="margin-right: 8px;">
+											<img src="{{ asset('images/variant/' .$img) }}" onerror="this.onerror=null;this.src='{{ asset('images/missing-image.png') }}';"  class="product-img-2" alt="img" style="margin-right: 8px;">
 											@endforeach
+											</div>
 										</td>
 										<td>{{ $value->sku }}</td>
 										<td>{{ $value->price }}</td>
@@ -89,15 +89,15 @@
 										<td>
 											<div class="d-flex">
 												<span class="order-actions-primary">
-													<a href="{{ route('product-edit', ['id' => $value->id]) }}" class="" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-original-title="Edit"><i class="bx bx-edit"></i></a>
+													<a href="{{ route('variant-edit', ['id' => $value->id]) }}" class="" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-original-title="Edit"><i class="bx bx-edit"></i></a>
 												</span>
 												@if(empty($value->deleted_at))
 												<span class="order-actions-primary">
-													<a href="{{ route('product-delete', ['id' => $value->id]) }}" class="ms-2" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-original-title="Delete"><i class="bx bx-trash"></i></a>
+													<a href="{{ route('variant-delete', ['id' => $value->id]) }}" class="ms-2" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-original-title="Delete"><i class="bx bx-trash"></i></a>
 												</span>
 												@else
 												<span class="order-actions-danger">
-													<a href="{{ route('product-delete', ['id' => $value->id]) }}" class="ms-2" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-original-title="Restore"><i class="bx bx-revision"></i></a>
+													<a href="{{ route('variant-delete', ['id' => $value->id]) }}" class="ms-2" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-original-title="Restore"><i class="bx bx-revision"></i></a>
 												</span>
 												@endif
 											</div>

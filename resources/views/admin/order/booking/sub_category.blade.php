@@ -7,22 +7,23 @@
 
     <div class="d-flex align-items-center justify-content-between mb-2">
         <h3 class="fw-bold text-dark mb-0">
-            {{ $category->name }}
+            {{ $category->name??'' }}
         </h3>
     </div>
 
     <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-xl-5 g-3">
         @foreach ($products as $cat)
             <div class="col">
-                <a href="{{ route('booking-details',['id' => $category->id]) }}"
+                <a href="{{ route('booking-details',['slug' => $cat->slug]) }}"
                    class="text-decoration-none">
                     
                     <div class="bg-white rounded-3 shadow-sm">
                         <div class="position-relative">
-                            <img src="{{ asset('images/product/' . ($cat->image)) }}" 
+                            <img src="{{ asset('images/product/' . ($cat->image[0])) }}" 
                                  class="w-100 rounded-top object-fit-cover p-1 border-bottom" 
-                                 alt="{{ $cat->name }}" 
+                                 alt="" 
                                  height="140">
+
                         </div>
 
                         <div class="p-2 pt-0">

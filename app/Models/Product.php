@@ -18,16 +18,19 @@ class Product extends Model
          'sku',
          'category_id',
          'brand_id',
+         'parent_id',
         'specifications',
         'price',
         'disc_price',
         'stock_quantity',
         'charge_details',
+        
 
     ];
 
     protected $casts = [
         'charge_details' => 'array',
+        'image' => 'array',
         'updated_at' => 'datetime',
         'created_at' => 'datetime',
     ];
