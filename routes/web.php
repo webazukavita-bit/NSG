@@ -30,8 +30,8 @@ Route::get('/home', [HomeController::class, 'index'])->name('home');
 Route::get('/about-us', [HomeController::class, 'aboutUs'])->name('about-us');
 Route::get('/our-services', [HomeController::class, 'ourServices'])->name('our-services');
 Route::get('service-details', [HomeController::class, 'serviceDetails'])->name('service-details');
-Route::get('/shop', [HomeController::class, 'shop'])->name('shop');
-Route::get('/shop-details', [HomeController::class, 'shopDetails'])->name('shop-details');
+Route::get('/shop/{slug?}', [HomeController::class, 'shop'])->name('shop');
+Route::get('/shop-details/{slug?}', [HomeController::class, 'shopDetails'])->name('shop-details');
 Route::get('/our-projects', [HomeController::class, 'ourProjects'])->name('our-projects');
 
 Route::get('/contact-us', [HomeController::class, 'contactUs'])->name('contact-us');
@@ -40,13 +40,15 @@ Route::get('/faq', [HomeController::class, 'faq'])->name('faq');
 Route::get('/Articales', [HomeController::class, 'blogs'])->name('blogs');
 Route::get('/blog-details/{slug}', [HomeController::class, 'blogDetails'])->name('blog-details');
 Route::get('/blog-details', [HomeController::class, 'blogDetail'])->name('blog-details');
+Route::get('shop-by-category/{slug}', [HomeController::class, 'shopByCategory'])->name('shop-by-category');
+
 // Route::post('/calculate', [SolarCalculatorController::class, 'calculate'])->name('calculate');
 // Route::post('/save-calculation', [SolarCalculatorController::class, 'saveCalculation'])->name('save-calculation');
 
 
 Route::middleware(['permission'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-    
+
     Route::prefix('users')->group(function () {
         Route::get('/clients', [AdminController::class, 'clients'])->name('clients');
         Route::get('/client-add', [AdminController::class, 'clientAdd'])->name('client-add');
@@ -64,7 +66,7 @@ Route::middleware(['permission'])->group(function () {
         Route::get('/employee-delete/{id}', [AdminController::class, 'employeeDelete'])->name('employee-delete');
         Route::post('/employee-chnage-password', [AdminController::class, 'employeeChnagePassword'])->name('employee-chnage-password');
     });
-    
+
     Route::prefix('crm')->group(function () {
         Route::match(['get', 'post'], '/leads', [CRMController::class, 'leads'])->name('leads');
         Route::get('/lead-add', [CRMController::class, 'leadAdd'])->name('lead-add');
@@ -79,11 +81,9 @@ Route::middleware(['permission'])->group(function () {
 
         Route::get('/contact-us', [CRMController::class, 'contactUs'])->name('crm-contact-us');
         Route::get('/contact-us-delete/{id}', [CRMController::class, 'contactUsDelete'])->name('crm-contact-us-delete');
-        Route::post('/add-quotation', [CRMController::class,'storeQuotation'])->name('add-quotation');
-        Route::get('/data-form',[CRMController::class,'addData'])->name('data-form');
-        Route::post('/data-form',[CRMController::class,'storeData'])->name('data-store');
-
-
+        Route::post('/add-quotation', [CRMController::class, 'storeQuotation'])->name('add-quotation');
+        Route::get('/data-form', [CRMController::class, 'addData'])->name('data-form');
+        Route::post('/data-form', [CRMController::class, 'storeData'])->name('data-store');
     });
 
     Route::prefix('payment')->group(function () {
@@ -103,10 +103,6 @@ Route::middleware(['permission'])->group(function () {
         Route::get('/withdraw-add', [AdminController::class, 'withdrawAdd'])->name('withdraw-add');
         Route::post('/withdraw-add', [AdminController::class, 'withdrawAddStore'])->name('withdraw-add-store');
         Route::get('/withdraw-request-update/{type}/{id}', [AdminController::class, 'withdrawRequestUpdate'])->name('withdraw-request-update');
-       
-
-          
-
     });
 
     Route::prefix('setting')->group(function () {
@@ -120,9 +116,9 @@ Route::middleware(['permission'])->group(function () {
         Route::get('/whatsapp-template-edit/{id}', [MasterController::class, 'whatsappTemplateEdit'])->name('whatsapp-template-edit');
         Route::post('/whatsapp-template-edit/{id}', [MasterController::class, 'whatsappTemplateUpdate'])->name('whatsapp-template-update');
         Route::get('/whatsapp-template-delete/{id}', [MasterController::class, 'whatsappTemplateDelete'])->name('whatsapp-template-delete');
-   
-        Route::match(['get','post'],'acm',[MasterController::class,'acm'])->name('acm');
-        Route::match(['get','post'],'acm-save',[MasterController::class,'acmSave'])->name('acm-save');
+
+        Route::match(['get', 'post'], 'acm', [MasterController::class, 'acm'])->name('acm');
+        Route::match(['get', 'post'], 'acm-save', [MasterController::class, 'acmSave'])->name('acm-save');
 
         Route::get('/static-content', [MasterController::class, 'staticContent'])->name('static-content');
         Route::get('/static-content/{id}', [MasterController::class, 'staticContentEdit'])->name('static-content-edit');
@@ -175,21 +171,21 @@ Route::middleware(['permission'])->group(function () {
         Route::get('/country-edit/{id}', [MasterController::class, 'countryEdit'])->name('country-edit');
         Route::post('/country-edit/{id}', [MasterController::class, 'countryUpdate'])->name('country-update');
         Route::get('/country-delete/{id}', [MasterController::class, 'countryDelete'])->name('country-delete');
-        
+
         Route::match(['get', 'post'], '/states', [MasterController::class, 'states'])->name('states');
         Route::get('/state-add', [MasterController::class, 'stateAdd'])->name('state-add');
         Route::post('/state-add', [MasterController::class, 'stateStore'])->name('state-store');
         Route::get('/state-edit/{id}', [MasterController::class, 'stateEdit'])->name('state-edit');
         Route::post('/state-edit/{id}', [MasterController::class, 'stateUpdate'])->name('state-update');
         Route::get('/state-delete/{id}', [MasterController::class, 'stateDelete'])->name('state-delete');
-        
+
         Route::match(['get', 'post'], '/cities', [MasterController::class, 'cities'])->name('cities');
         Route::get('/city-add', [MasterController::class, 'cityAdd'])->name('city-add');
         Route::post('/city-add', [MasterController::class, 'cityStore'])->name('city-store');
         Route::get('/city-edit/{id}', [MasterController::class, 'cityEdit'])->name('city-edit');
         Route::post('/city-edit/{id}', [MasterController::class, 'cityUpdate'])->name('city-update');
         Route::get('/city-delete/{id}', [MasterController::class, 'cityDelete'])->name('city-delete');
-                
+
         Route::get('/banners', [MasterController::class, 'banners'])->name('banners');
         Route::get('/banner-add', [MasterController::class, 'bannerAdd'])->name('banner-add');
         Route::post('/banner-add', [MasterController::class, 'bannerStore'])->name('banner-store');
@@ -204,8 +200,6 @@ Route::middleware(['permission'])->group(function () {
         Route::get('/client-review-edit/{id}', [MasterController::class, 'reviewEdit'])->name('review-edit');
         Route::post('/client-review-edit/{id}', [MasterController::class, 'reviewUpdate'])->name('review-update');
         Route::get('/client-review-delete/{id}', [MasterController::class, 'reviewDelete'])->name('review-delete');
-
-
     });
 
 
@@ -251,7 +245,7 @@ Route::middleware(['permission'])->group(function () {
         Route::get('/brands-delete/{id}', [ProductController::class, 'brandDelete'])->name('brand-delete');
 
         Route::get('/orderes', [ProductController::class, 'orderes'])->name('orderes');
-        Route::get('/order-add', [ProductController::class, 'orderAdd'])->name('ordere-add'); 
+        Route::get('/order-add', [ProductController::class, 'orderAdd'])->name('ordere-add');
         Route::get('/order-delete/{id}', [ProductController::class, 'orderDelete'])->name('order-delete');
         Route::get('/show-invoice/{id}', [ProductController::class, 'showInvoice'])->name('show-invoice');
         Route::post('/order-status-update', [ProductController::class, 'orderStatusUpdate'])->name('order-status-update');
@@ -273,7 +267,7 @@ Route::middleware(['permission'])->group(function () {
         Route::get('/variation-value-delete/{id}', [ProductController::class, 'variationValueDelete'])->name('variation-value-delete');
         Route::get('/get-variation-value/{id}', [ProductController::class, 'getVariationValue'])->name('get-variation-value');
 
-         
+
         Route::match(['get', 'post'], '/variant', [ProductController::class, 'variant'])->name('variant');
         Route::get('/variant-add', [ProductController::class, 'variantAdd'])->name('variant-add');
         Route::post('/variant-add', [ProductController::class, 'variantStore'])->name('variant-store');
@@ -283,25 +277,20 @@ Route::middleware(['permission'])->group(function () {
         Route::get('category-products', [ProductController::class, 'getProductsByCategory'])->name('category-products');
 
         Route::get('product-details', [ProductController::class, 'getProductDetails'])->name('product-details');
-
-
-
-});
+    });
 
 
     Route::prefix('booking')->group(function () {
-    Route::get('/categories', [OrderController::class, 'categories'])->name('booking-categories');
-    Route::get('/sub-categories/{slug?}/{id}',[OrderController::class,'subCategories'])->name('booking-sub-category');
-    Route::get('/products/{slug}',[OrderController::class,'bookingDetails'])->name('booking-details');
-
-});
+        Route::get('/categories', [OrderController::class, 'categories'])->name('booking-categories');
+        Route::get('/sub-categories/{slug?}/{id}', [OrderController::class, 'subCategories'])->name('booking-sub-category');
+        Route::get('/products/{slug}', [OrderController::class, 'bookingDetails'])->name('booking-details');
+    });
 
     Route::prefix('logs')->group(function () {
         Route::match(['get', 'post'], '/notifications', [AdminController::class, 'notifications'])->name('user-notifications');
         Route::match(['get', 'post'], '/activity-log', [AdminController::class, 'activityLog'])->name('user-activity-log');
         Route::match(['get', 'post'], '/login-activity', [AdminController::class, 'loginActivity'])->name('user-login-activity');
     });
-
 });
 
 Route::get('/profile', [UserController::class, 'profile'])->name('profile');

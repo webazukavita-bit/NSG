@@ -5,7 +5,7 @@
         <div class="container">
             <div class="page-heading">
                 <div class="breadcrumb-sub-title text-center">
-                    <h1 class="wow fadeInUp" data-wow-delay=".3s">blog details</h1>
+                    <h1 class="wow fadeInUp" data-wow-delay=".3s">Articles details</h1>
                     <ul class="breadcrumb-items wow fadeInUp" data-wow-delay=".5s">
                         <li>
                             <a href="index.html">
@@ -16,7 +16,7 @@
                             <i class="fal fa-minus"></i>
                         </li>
                         <li>
-                             blog details
+                             Articles Details
                         </li>
                     </ul>
                 </div>
@@ -33,90 +33,23 @@
                         <div class="blog-post-details border-wrap mt-0">
                             <div class="single-blog-post post-details mt-0">
                                 <div class="post-content pt-0">
-                                    <h2 class="mt-0">The whimsically named Egg Canvas brainchild</h2>
+                                    <h2 class="mt-0">{{ $blog->title }}</h2>
                                     <div class="post-meta mt-3">
-                                        <span><i class="fal fa-user"></i>Shikhon .Ha</span>
-                                        <span><i class="fal fa-comments"></i>15 Comments</span>
-                                        <span><i class="fal fa-calendar-alt"></i>4th February 2025</span>
+                                        <span><i class="fal fa-user"></i>{{ $blog->status }}</span>
+                                        {{-- <span><i class="fal fa-comments"></i></span> --}}
+                                        <span><i class="fal fa-calendar-alt"></i>{{ $blog->created_at }}</span>
                                     </div>
                                     <p>
-                                        With worldwide annual spend on digital advertising surpassing $325 billion, it’s no surprise that different 
-                                        approaches to online marketing are becoming available. One of these new approaches is performance marketing 
-                                        or digital performance marketing. Keep reading to learn all about performance marketing, from how it works 
-                                        to how it compares to digital marketing. Plus, get insight into the benefits and risks of performance 
-                                        marketing and how it can affect your company’s long-term success and profitability. 
+                                      {{ strip_tags($blog->content) }}
+
                                     </p>
-                                    <p>
-                                        With worldwide annual spend on digital advertising surpassing $325 billion, it’s no surprise that different 
-                                        approaches to online marketing are becoming available. One of these new approaches is performance marketing 
-                                        or digital performance marketing. Keep reading to learn all about performance marketing, from how it works 
-                                        to how it compares to digital marketing. Plus, get insight into the benefits and risks of performance 
-                                        marketing and how it can affect your company’s long-term success and profitability. 
-                                    </p>
-                                    <img src="{{asset('front/assets/img/news/post-4.jpg')}}" alt="blog__img" class="single-post-image">
-                                    <h2>You Should Experience Agency At Least Once In Your Lifetime And Here's Why.</h2>
-                                    <p>
-                                        Performance marketing is an approach to digital marketing or advertising where businesses only pay when a 
-                                        specific result occurs. This result could be a new lead, sale, or other outcome agreed upon by the advertiser 
-                                        and business. Performance marketing involves channels such as affiliate marketing, online advertising.
-                                    </p>
-                                    <blockquote>
-                                        Diam luctus nostra dapibus varius et semper semper rutrum ad risus felis
-                                        eros. Cursus libero viverra tempus netus diam vestibulum
-                                    </blockquote>
-                                    <p>
-                                        With worldwide annual spend on digital advertising surpassing $325 billion, it’s no surprise that different 
-                                        approaches to online marketing are becoming available. One of these new approaches is performance marketing 
-                                        or digital performance marketing. Keep reading to learn all about performance marketing
-                                    </p>
-                                    <ul class="checked-list mb-4">
-                                        <li>Cooking is love made visible</li>
-                                        <li>We’re an open book</li>
-                                        <li>100% goes to the field</li>
-                                        <li>Received the highest grades</li>
-                                    </ul>
-                                    <h4>Our G7 Certification Means You’ll Get</h4>
-                                    <p>
-                                        With worldwide annual spend on digital advertising surpassing $325 billion, it’s no surprise that different 
-                                        approaches to online marketing are becoming available. One of these new approaches is performance marketing 
-                                        or digital performance marketing. Keep reading to learn all about performance marketing, from how it works 
-                                        to how it compares to digital marketing. Plus, get insight into the benefits and risks of performance 
-                                        marketing and how it can affect your company’s long-term success and profitability.
-                                    </p>
-                                    <img class="alignleft" src="{{asset('front/assets/img/news/post-5.jpg')}}" alt="blog__img">
-                                    <p>
-                                        With worldwide annual spend on digital advertising surpassing $325 billion, it’s no surprise that different 
-                                        approaches to online marketing are becoming available. One of these new approaches is performance marketing 
-                                        or digital performance marketing. Keep reading to learn all about performance marketing
-                                    </p>
-                                    <p>
-                                        With worldwide annual spend on digital advertising surpassing $325 billion, it’s no surprise that different 
-                                        approaches to online marketing are becoming available. One of these new approaches is performance marketing 
-                                        or digital performance marketing. Keep reading to learn all about performance marketing
-                                    </p>
+                                    <img src="{{asset('images/blog/'.$blog->image)}}" alt="blog__img" class="single-post-image">
+                                   
                                 </div>
                             </div>
-                            <div class="row tag-share-wrap">
-                                <div class="col-lg-8 col-12">
-                                    <h4>Releted Tags</h4>
-                                    <div class="tagcloud">                                   
-                                        <a href="{{url('blog-details')}}">Healthy</a>
-                                        <a href="{{url('blog-details')}}">Make Up</a>
-                                        <a href="{{url('blog-details')}}">Skin Solution</a>
-                                    </div>
-                                </div>
-                                <div class="col-lg-4 col-12 mt-3 mt-lg-0 text-lg-end">
-                                    <h4>Social Share</h4>
-                                    <div class="social-share">
-                                        <a href="#"><i class="fab fa-facebook-f"></i></a>
-                                        <a href="#"><i class="fab fa-twitter"></i></a>
-                                        <a href="#"><i class="fab fa-instagram"></i></a>
-                                        <a href="#"><i class="fab fa-linkedin-in"></i></a>                                    
-                                    </div>
-                                </div>
-                            </div>
+                        
                             <!-- comments section wrap start -->
-                            <div class="comments-section-wrap pt-40">
+                            {{-- <div class="comments-section-wrap pt-40">
                                 <div class="comments-heading">
                                     <h3>03 Comments</h3>
                                 </div>
@@ -190,7 +123,7 @@
                                          <span><i class="fal fa-comments"></i>Post Comment</span>
                                     </button>
                                 </form>
-                            </div>
+                            </div> --}}
                         </div>
                     </div>
                     <div class="col-12 col-lg-4">
@@ -206,7 +139,7 @@
                                     </form>
                                 </div>
                             </div>
-                            <div class="single-sidebar-widget">
+                            {{-- <div class="single-sidebar-widget">
                                 <div class="wid-title">
                                     <h3>Popular Feeds</h3>
                                 </div>
@@ -241,47 +174,22 @@
                                         </div>
                                     </div>
                                 </div>
-                            </div>
+                            </div> --}}
                             <div class="single-sidebar-widget">
                                 <div class="wid-title">
                                     <h3>Categories</h3>
                                 </div>
                                 <div class="widget_categories">
+                                    
                                     <ul>
-                                        <li><a href="news.html">Data Visualization  <span>02</span></a></li>
-                                        <li><a href="news.html">Product Development  <span>06</span></a></li>
-                                        <li><a href="news.html">Security System  <span>11</span></a></li>
-                                        <li><a href="news.html">UI/UX Designing  <span>05</span></a></li>
-                                        <li><a href="news.html">Digital Marketing  <span>06</span></a></li>
-                                        <li><a href="news.html">Data Analytics  <span>10</span></a></li>
+                                         @foreach ($category as $cat)
+                                            <li><a href="{{url('shop?category='.$cat->slug)}}">{{$cat->name}}</a></li>
+                                        @endforeach
+                                      
                                     </ul>
                                 </div>
                             </div>
-                            <div class="single-sidebar-widget">
-                                <div class="wid-title">
-                                    <h3>Never Miss News</h3>
-                                </div>
-                                <div class="social-link">
-                                    <a href="#"><i class="fab fa-facebook-f"></i></a>
-                                    <a href="#"><i class="fab fa-twitter"></i></a>
-                                    <a href="#"><i class="fab fa-instagram"></i></a>
-                                    <a href="#"><i class="fab fa-linkedin-in"></i></a>
-                                    <a href="#"><i class="fab fa-youtube"></i></a>
-                                </div>
-                            </div>
-                            <div class="single-sidebar-widget">
-                                <div class="wid-title">
-                                    <h3>Popular Tags</h3>
-                                </div>
-                                <div class="tagcloud">
-                                    <a href="{{url('blog-details')}}">symphony</a>     
-                                    <a href="{{url('blog-details')}}">nokia</a>
-                                    <a href="{{url('blog-details')}}">tech</a>
-                                    <a href="{{url('blog-details')}}">Samsung</a>
-                                    <a href="{{url('blog-details')}}">Alcatel</a>
-                                    <a href="{{url('blog-details')}}">mous</a>
-                                </div>
-                            </div>
+                           
                         </div>
                     </div>
                 </div>

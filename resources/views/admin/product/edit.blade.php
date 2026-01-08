@@ -20,12 +20,12 @@
                     <h5 class="mb-0 text-primary">Update Product</h5>
                 </div>
                 <div>
-                    <a href="{{ route('variant') }}" class="btn btn-primary"><i class="bx bx-list-ol"></i> Product List</a> 
+                    <a href="{{ route('products') }}" class="btn btn-primary"><i class="bx bx-list-ol"></i> Product List</a> 
                 </div>
             </div>
             <hr>
             
-            <form action="{{ route('variant-update',['id' => $data->id]) }}" method="POST" class="row g-3" enctype="multipart/form-data">
+            <form action="{{ route('product-update',['id' => $data->id]) }}" method="POST" class="row g-3" enctype="multipart/form-data">
                 @csrf
 
                 <div class="col-md-3">
@@ -61,8 +61,8 @@
                 </div>
 
                 <div class="col-md-3">
-                    <label for="image" class="form-label">Thumbnail </label>
-                    <input type="file" name="image" class="form-control @error('image') is-invalid @enderror" id="image">
+                    <label for="image" class="form-label">Thumbnail <code>*</code></label>
+                    <input type="file" name="images[]" multiple class="form-control @error('image') is-invalid @enderror" id="image" placeholder="Enter Name" value="{{ old('image') }}" required>
                     @error('image')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror

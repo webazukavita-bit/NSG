@@ -19,7 +19,7 @@
                                     </p>
                                 </div>
                                 <div class="hero-button">
-                                    <a href="{{url('shop-details')}}" class="theme-btn">Order Now</a>
+                                    <a href="{{url('/shop')}}" class="theme-btn">Order Now</a>
                                 </div>
                             </div>
                             <div class="col-lg-5">
@@ -59,7 +59,7 @@
                                     </p>
                                 </div>
                                 <div class="hero-button">
-                                    <a href="{{url('shop-details')}}" class="theme-btn">Order Now</a>
+                                    <a href="{{url('/shop')}}" class="theme-btn">Order Now</a>
                                 </div>
                             </div>
                             <div class="col-lg-5">
@@ -99,7 +99,7 @@
                                     </p>
                                 </div>
                                 <div class="hero-button">
-                                    <a href="{{url('shop-details')}}" class="theme-btn">Order Now</a>
+                                    <a href="{{url('/shop')}}" class="theme-btn">Order Now</a>
                                 </div>
                             </div>
                             <div class="col-lg-5">
@@ -260,7 +260,7 @@
                                 <div class="shop-banner-content">
                                     <span>LATEST DESIGn</span>
                                     <h3>Book Cover Design</h3>
-                                    <a href="{{url('shop-details')}}" class="theme-btn">Shop now</a>
+                                    <a href="{{url('/shop')}}" class="theme-btn">Shop now</a>
                                 </div>
                             </div>
                             <div class="col-xl-7 col-lg-5 col-md-7">
@@ -283,7 +283,7 @@
                                 <div class="shop-banner-content">
                                     <span>LATEST DESIGn</span>
                                     <h3>Book Cover Design</h3>
-                                    <a href="{{url('shop-details')}}" class="theme-btn">Shop now</a>
+                                    <a href="{{url('/shop')}}" class="theme-btn">Shop now</a>
                                 </div>
                             </div>
                             <div class="col-xl-8 col-lg-5 col-md-8">
@@ -327,11 +327,11 @@
                         </div>
                         <div class="content">
                             <span>50+ Style</span>
-                            <h3><a href="{{url('shop-details')}}">Business Cards Design and Printing</a></h3>
+                            <h3><a href="{{url('/shop')}}">Business Cards Design and Printing</a></h3>
                             <p>
                                 Customizable template, with a ton  web blocks to create an amazing website that looks.
                             </p>
-                            <a href="{{url('shop-details')}}" class="arrow-icon">
+                            <a href="{{url('/shop')}}" class="arrow-icon">
                                 <i class="fas fa-long-arrow-right"></i>
                             </a>
                         </div>
@@ -344,11 +344,11 @@
                         </div>
                         <div class="content">
                             <span>50+ Style</span>
-                            <h3><a href="{{url('shop-details')}}">Signs & Banners Design Printing</a></h3>
+                            <h3><a href="{{url('/shop')}}">Signs & Banners Design Printing</a></h3>
                             <p>
                                 Customizable template, with a ton  web blocks to create an amazing website that looks.
                             </p>
-                            <a href="{{url('shop-details')}}" class="arrow-icon">
+                            <a href="{{url('/shop')}}" class="arrow-icon">
                                 <i class="fas fa-long-arrow-right"></i>
                             </a>
                         </div>
@@ -361,11 +361,11 @@
                         </div>
                         <div class="content">
                             <span>50+ Style</span>
-                            <h3><a href="{{url('shop-details')}}">Invitations & Stationery Printing</a></h3>
+                            <h3><a href="{{url('/shop')}}">Invitations & Stationery Printing</a></h3>
                             <p>
                                 Customizable template, with a ton  web blocks to create an amazing website that looks.
                             </p>
-                            <a href="{{url('shop-details')}}" class="arrow-icon">
+                            <a href="{{url('/shop')}}" class="arrow-icon">
                                 <i class="fas fa-long-arrow-right"></i>
                             </a>
                         </div>
@@ -378,11 +378,11 @@
                         </div>
                         <div class="content">
                             <span>50+ Style</span>
-                            <h3><a href="{{url('shop-details')}}">Labels, Stickers & Package</a></h3>
+                            <h3><a href="{{url('/shop')}}">Labels, Stickers & Package</a></h3>
                             <p>
                                 Customizable template, with a ton  web blocks to create an amazing website that looks.
                             </p>
-                            <a href="{{url('shop-details')}}" class="arrow-icon">
+                            <a href="{{url('/shop')}}" class="arrow-icon">
                                 <i class="fas fa-long-arrow-right"></i>
                             </a>
                         </div>
@@ -406,50 +406,52 @@
             <div class="service-wrapper">
                 <div class="swiper service-slider">
                     <div class="swiper-wrapper">
-                        <div class="swiper-slide">
+                        @foreach ($categories as $cat )
+                            <div class="swiper-slide">
                             <div class="service-image">
-                                <img src="{{asset('front/assets/img/service/01.jpg')}}" alt="img">
+                                <img src="{{ asset('images/product/category/'.$cat->image) }}"alt="img" style="height: 300px; widht:300px;">
                                 <div class="service-content">
-                                    <h3><a href="{{url('/shop')}}">POD For Online Stores</a></h3>
+                                    <h3><a href="{{url('our-services')}}">{{ $cat->name }}</a></h3>
                                 </div>
-                                <a href="{{url('/shop')}}" class="icon">
+                                <a href="{{url('our-services')}}" class="icon">
                                     <i class="far fa-long-arrow-right"></i>
                                 </a>
                             </div>
                         </div>
-                        <div class="swiper-slide">
+                        @endforeach
+                        {{-- <div class="swiper-slide">
                             <div class="service-image">
                                 <img src="{{asset('front/assets/img/service/02.jpg')}}" alt="img">
-                                <a href="{{url('/shop')}}" class="icon">
+                                <a href="{{url('our-services')}}" class="icon">
                                     <i class="far fa-long-arrow-right"></i>
                                 </a>
                                 <div class="service-content">
-                                    <h3><a href="{{url('/shop')}}">Digital Scanning</a></h3>
+                                    <h3><a href="{{url('our-services')}}">Digital Scanning</a></h3>
                                 </div>
                             </div>
                         </div>
                         <div class="swiper-slide">
                             <div class="service-image">
                                 <img src="{{asset('front/assets/img/service/03.jpg')}}" alt="img">
-                                <a href="{{url('/shop')}}" class="icon">
+                                <a href="{{url('our-services')}}" class="icon">
                                     <i class="far fa-long-arrow-right"></i>
                                 </a>
                                 <div class="service-content">
-                                    <h3><a href="{{url('/shop')}}">Stickers And Labels</a></h3>
+                                    <h3><a href="{{url('our-services')}}">Stickers And Labels</a></h3>
                                 </div>
                             </div>
                         </div>
                         <div class="swiper-slide">
                             <div class="service-image">
                                 <img src="{{asset('front/assets/img/pen.png')}}" alt="img">
-                                <a href="{{url('/shop')}}" class="icon">
+                                <a href="{{url('our-services')}}" class="icon">
                                     <i class="far fa-long-arrow-right"></i>
                                 </a>
                                 <div class="service-content">
-                                    <h3><a href="{{url('/shop')}}">Printing Service</a></h3>
+                                    <h3><a href="{{url('our-services')}}">Printing Service</a></h3>
                                 </div>
                             </div>
-                        </div>
+                        </div> --}}
                     </div>
                     <div class="swiper-dot mt-5">
                         <div class="dot"></div>
@@ -477,7 +479,7 @@
                             <img src="{{asset('front/assets/img/feature-product/01.png')}}" alt="img">
                             <ul class="product-icon d-flex justify-content-center align-items-center">
                                 <li>
-                                    <a href="{{url('shop-details')}}"><i class="fal fa-heart"></i></a>
+                                    <a href="{{url('/shop')}}"><i class="fal fa-heart"></i></a>
                                 </li>
                                 <li>
                                     <a href="Javascript:void(0)">
@@ -485,13 +487,13 @@
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="{{url('shop-details')}}"><i class="far fa-eye"></i></a>
+                                    <a href="{{url('/shop')}}"><i class="far fa-eye"></i></a>
                                 </li>
                             </ul>
                         </div>
                         <div class="product-content">
-                            <h4><a href="{{url('shop-details')}}">Bottle Lable Design</a></h4>
-                            <ul class="price-list"><li>$15.00</li></ul>
+                            <h4><a href="{{url('/shop')}}">Bottle Lable Design</a></h4>
+                           
                         </div>
                     </div>
                 </div>
@@ -501,7 +503,7 @@
                             <img src="{{asset('front/assets/img/feature-product/02.png')}}" alt="img">
                             <ul class="product-icon d-flex justify-content-center align-items-center">
                                 <li>
-                                    <a href="{{url('shop-details')}}"><i class="fal fa-heart"></i></a>
+                                    <a href="{{url('/shop')}}"><i class="fal fa-heart"></i></a>
                                 </li>
                                 <li>
                                     <a href="Javascript:void(0)">
@@ -509,20 +511,13 @@
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="{{url('shop-details')}}"><i class="far fa-eye"></i></a>
+                                    <a href="{{url('/shop')}}"><i class="far fa-eye"></i></a>
                                 </li>
                             </ul>
                         </div>
                         <div class="product-content">
-                            <h4><a href="{{url('shop-details')}}">Snack Packaging</a></h4>
-                            <ul class="price-list">
-                                <li>
-                                    <del>$4.00</del>
-                                </li>
-                                <li>
-                                    $2.00
-                                </li>
-                            </ul>
+                            <h4><a href="{{url('/shop')}}">Snack Packaging</a></h4>
+                            
                         </div>
                         <div class="post-cat">sale!</div>
                     </div>
@@ -533,7 +528,7 @@
                             <img src="{{asset('front/assets/img/feature-product/03.png')}}" alt="img">
                             <ul class="product-icon d-flex justify-content-center align-items-center">
                                 <li>
-                                    <a href="{{url('shop-details')}}"><i class="fal fa-heart"></i></a>
+                                    <a href="{{url('/shop')}}"><i class="fal fa-heart"></i></a>
                                 </li>
                                 <li>
                                     <a href="Javascript:void(0)">
@@ -541,13 +536,13 @@
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="{{url('shop-details')}}"><i class="far fa-eye"></i></a>
+                                    <a href="{{url('/shop')}}"><i class="far fa-eye"></i></a>
                                 </li>
                             </ul>
                         </div>
                         <div class="product-content">
-                            <h4><a href="{{url('shop-details')}}">Water Bottle Print</a></h4>
-                            <ul class="price-list"><li>$15.00</li></ul>
+                            <h4><a href="{{url('/shop')}}">Water Bottle Print</a></h4>
+                         
                         </div>
                     </div>
                 </div>
@@ -557,7 +552,7 @@
                             <img src="{{asset('front/assets/img/ball-mug-420.jpg')}}" alt="img">
                             <ul class="product-icon d-flex justify-content-center align-items-center">
                                 <li>
-                                    <a href="{{url('shop-details')}}"><i class="fal fa-heart"></i></a>
+                                    <a href="{{url('/shop')}}"><i class="fal fa-heart"></i></a>
                                 </li>
                                 <li>
                                     <a href="Javascript:void(0)">
@@ -565,20 +560,13 @@
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="{{url('shop-details')}}"><i class="far fa-eye"></i></a>
+                                    <a href="{{url('/shop')}}"><i class="far fa-eye"></i></a>
                                 </li>
                             </ul>
                         </div>
                         <div class="product-content">
-                            <h4><a href="{{url('shop-details')}}">Beanie with Logo</a></h4>
-                            <ul class="price-list">
-                                <li>
-                                    <del>$24.00</del>
-                                </li>
-                                <li>
-                                    $22.00
-                                </li>
-                            </ul>
+                            <h4><a href="{{url('/shop')}}">Beanie with Logo</a></h4>
+                            
                         </div>
                         <div class="post-cat">sale!</div>
                     </div>
@@ -589,7 +577,7 @@
                             <img src="{{asset('front/assets/img/feature-product/05.webp')}}" alt="img">
                             <ul class="product-icon d-flex justify-content-center align-items-center">
                                 <li>
-                                    <a href="{{url('shop-details')}}"><i class="fal fa-heart"></i></a>
+                                    <a href="{{url('/shop')}}"><i class="fal fa-heart"></i></a>
                                 </li>
                                 <li>
                                     <a href="Javascript:void(0)">
@@ -597,17 +585,13 @@
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="{{url('shop-details')}}"><i class="far fa-eye"></i></a>
+                                    <a href="{{url('/shop')}}"><i class="far fa-eye"></i></a>
                                 </li>
                             </ul>
                         </div>
                         <div class="product-content">
-                            <h4><a href="{{url('shop-details')}}">Winter Hoodie Print</a></h4>
-                            <ul class="price-list">
-                                <li>
-                                    $222.00
-                                </li>
-                            </ul>
+                            <h4><a href="{{url('/shop')}}">Winter Hoodie Print</a></h4>
+                           
                         </div>
                     </div>
                 </div>
@@ -617,7 +601,7 @@
                             <img src="{{asset('front/assets/img/feature-product/06.png')}}" alt="img">
                             <ul class="product-icon d-flex justify-content-center align-items-center">
                                 <li>
-                                    <a href="{{url('shop-details')}}"><i class="fal fa-heart"></i></a>
+                                    <a href="{{url('/shop')}}"><i class="fal fa-heart"></i></a>
                                 </li>
                                 <li>
                                     <a href="Javascript:void(0)">
@@ -625,20 +609,13 @@
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="{{url('shop-details')}}"><i class="far fa-eye"></i></a>
+                                    <a href="{{url('/shop')}}"><i class="far fa-eye"></i></a>
                                 </li>
                             </ul>
                         </div>
                         <div class="product-content">
-                            <h4><a href="{{url('shop-details')}}">Girl Awesome Dress</a></h4>
-                            <ul class="price-list">
-                                <li>
-                                    <del>$34.00</del>
-                                </li>
-                                <li>
-                                    $30.00
-                                </li>
-                            </ul>
+                            <h4><a href="{{url('/shop')}}">Girl Awesome Dress</a></h4>
+                           
                         </div>
                         <div class="post-cat">sale!</div>
                     </div>
@@ -654,45 +631,30 @@
                                 <div class="swiper-slide">
                                     <div class="feature-product-banner-image">
                                         <img src="{{asset('front/assets/img/feature-product/banner-image-2.jpg')}}" alt="img">
-                                        <div class="discount-tag">
-                                            <div class="inner-text text-center">
-                                                <span>Save</span>
-                                                <h3><sup>$</sup>120</h3>
-                                            </div>
-                                        </div>
+                                      
                                         <div class="content">
-                                            <h3><a href="{{url('/shop')}}">Multicoloure Printing</a></h3>
-                                            <h4>$570.00</h4>
+                                            <h3><a href="{{url('our-services')}}">Multicoloure Printing</a></h3>
+                                          
                                         </div>
                                     </div>
                                 </div>
                                 <div class="swiper-slide">
                                     <div class="feature-product-banner-image">
                                         <img src="{{asset('front/assets/img/feature-product/banner-image-2.jpg')}}" alt="img">
-                                        <div class="discount-tag">
-                                            <div class="inner-text text-center">
-                                                <span>Save</span>
-                                                <h3><sup>$</sup>120</h3>
-                                            </div>
-                                        </div>
+                                       
                                         <div class="content">
-                                            <h3><a href="{{url('/shop')}}">Multicoloure Printing</a></h3>
-                                            <h4>$570.00</h4>
+                                            <h3><a href="{{url('our-services')}}">Multicoloure Printing</a></h3>
+                                            
                                         </div>
                                     </div>
                                 </div>
                                 <div class="swiper-slide">
                                     <div class="feature-product-banner-image">
                                         <img src="{{asset('front/assets/img/feature-product/banner-image-2.jpg')}}" alt="img">
-                                        <div class="discount-tag">
-                                            <div class="inner-text text-center">
-                                                <span>Save</span>
-                                                <h3><sup>$</sup>120</h3>
-                                            </div>
-                                        </div>
+                                       
                                         <div class="content">
-                                            <h3><a href="{{url('/shop')}}">Multicoloure Printing</a></h3>
-                                            <h4>$570.00</h4>
+                                            <h3><a href="{{url('our-services')}}">Multicoloure Printing</a></h3>
+                                          
                                         </div>
                                     </div>
                                 </div>
@@ -894,31 +856,32 @@
             </div>
             <div class="swiper product-slider">
                 <div class="swiper-wrapper">
-                    <div class="swiper-slide">
+                    @foreach ($products as $product) 
+                        <div class="swiper-slide">
                         <div class="products-box-items">
                             <ul class="product-top">
-                                <li>Mug</li>
-                                <li>$59.00</li>
+                                <li>{{ $product->category->name }}</li>
+                                
                             </ul>
                             <div class="product-thumb">
-                                <img src="{{asset('front/assets/img/product/p-1.jpg')}}" alt="img">
+                                <img src="{{asset('images/product/' . $product->image[0])}}" alt="img" style="height:230px;">
                                 <ul class="product-icon d-grid justify-content-center align-items-center">
                                     <li>
                                         <a href="Javascript:void(0)"><i class="far fa-heart"></i></a>
                                     </li>
                                     <li>
-                                        <a href="{{url('shop-details')}}">
+                                        <a href="{{url('/shop')}}">
                                             <i class="fal fa-expand-arrows"></i>
                                         </a>
                                     </li>
                                     <li>
-                                        <a href="{{url('shop-details')}}"><i class="far fa-eye"></i></a>
+                                        <a href="{{url('/shop')}}"><i class="far fa-eye"></i></a>
                                     </li>
                                 </ul>
-                                <a href="Javascript:void(0)" class="theme-btn">Add To cart</a>
+                                <a href="{{url('shop')}}" class="theme-btn">Booking Now</a>
                             </div>
                             <div class="product-content">
-                                <h4><a href="{{url('shop-details')}}">Coffee Mug</a></h4>
+                                <h4><a href="{{url('/shop')}}">{{ $product->name }}</a></h4>
                                 <div class="star">
                                     <i class="fas fa-star"></i>
                                     <i class="fas fa-star"></i>
@@ -929,111 +892,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="swiper-slide">
-                        <div class="products-box-items">
-                            <ul class="product-top">
-                                <li>pens</li>
-                                <li>$70.00</li>
-                            </ul>
-                            <div class="product-thumb">
-                                <img src="{{asset('front/assets/img/ball-mug-420.jpg')}}" alt="img" style="height: 320px;">
-                                <ul class="product-icon d-grid justify-content-center align-items-center">
-                                    <li>
-                                        <a href="Javascript:void(0)"><i class="far fa-heart"></i></a>
-                                    </li>
-                                    <li>
-                                        <a href="{{url('shop-details')}}">
-                                            <i class="fal fa-expand-arrows"></i>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="{{url('shop-details')}}"><i class="far fa-eye"></i></a>
-                                    </li>
-                                </ul>
-                                <a href="Javascript:void(0)" class="theme-btn">Add To cart</a>
-                            </div>
-                            <div class="product-content">
-                                <h4><a href="javascript:void(0)">Stylish Hoodie</a></h4>
-                                <div class="star">
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="swiper-slide">
-                        <div class="products-box-items">
-                            <ul class="product-top">
-                                <li>Packet</li>
-                                <li>$30.00</li>
-                            </ul>
-                            <div class="product-thumb">
-                                <img src="{{asset('front/assets/img/product/p-3.jpg')}}" alt="img">
-                                <ul class="product-icon d-grid justify-content-center align-items-center">
-                                    <li>
-                                        <a href="Javascript:void(0)"><i class="far fa-heart"></i></a>
-                                    </li>
-                                    <li>
-                                        <a href="{{url('shop-details')}}">
-                                            <i class="fal fa-expand-arrows"></i>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="{{url('shop-details')}}"><i class="far fa-eye"></i></a>
-                                    </li>
-                                </ul>
-                                <a href="Javascript:void(0)" class="theme-btn">Add To cart</a>
-                            </div>
-                            <div class="product-content">
-                                <h4><a href="{{url('shop-details')}}">Packaging</a></h4>
-                                <div class="star">
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="swiper-slide">
-                        <div class="products-box-items">
-                            <ul class="product-top">
-                                <li>Bag</li>
-                                <li>$49.00</li>
-                            </ul>
-                            <div class="product-thumb">
-                                <img src="{{asset('front/assets/img/product/p-2.jpg')}}" alt="img">
-                                <ul class="product-icon d-grid justify-content-center align-items-center">
-                                    <li>
-                                        <a href="Javascript:void(0)"><i class="far fa-heart"></i></a>
-                                    </li>
-                                    <li>
-                                        <a href="{{url('shop-details')}}">
-                                            <i class="fal fa-expand-arrows"></i>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="{{url('shop-details')}}"><i class="far fa-eye"></i></a>
-                                    </li>
-                                </ul>
-                                <a href="Javascript:void(0)" class="theme-btn">Add To cart</a>
-                            </div>
-                            <div class="product-content">
-                                <h4><a href="{{url('shop-details')}}">Shopping Bag</a></h4>
-                                <div class="star">
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    @endforeach                   
                 </div>
                 <div class="swiper-dot mt-2">
                     <div class="dot"></div>
@@ -1095,7 +954,7 @@
                         <div class="shop-banner-content">
                             <span>flat 25% off</span>
                             <h3>Mockup print <br> designs</h3>
-                            <a href="{{url('shop-details')}}" class="theme-btn">Shop now</a>
+                            <a href="{{url('/shop')}}" class="theme-btn">Shop now</a>
                         </div>
                     </div>
                 </div>
@@ -1104,7 +963,7 @@
                         <div class="shop-banner-content">
                             <span>flat 25% off</span>
                             <h3>Cardboard <br> package box</h3>
-                            <a href="{{url('shop-details')}}" class="theme-btn">Shop now</a>
+                            <a href="{{url('/shop')}}" class="theme-btn">Shop now</a>
                         </div>
                     </div>
                 </div>
@@ -1537,9 +1396,9 @@
                                 <div class="col-xl-4 col-lg-6 col-md-6 wow fadeInUp" data-wow-delay=".3s">
                                     <div class="icon-items">
                                         <div class="icon">
-                                            <img src="{{asset('front/assets/img/contact/icon-1.png')}}" alt="img">
+                                            <img src="{{asset('front/assets/img/today_def.png')}}" alt="img" style="height: 70px;">
                                         </div>
-                                        <h5>T-Shirt Printing</h5>
+                                        <h5>Magzine Printing</h5>
                                     </div>
                                 </div>
                                 <div class="col-xl-4 col-lg-6 col-md-6 wow fadeInUp" data-wow-delay=".5s">
@@ -1645,81 +1504,33 @@
                 <a href="{{url('/Articales')}}" class="theme-btn">Read all Post</a>
             </div>
             <div class="row">
+                @foreach ($blogs as $blog) 
                 <div class="col-xl-4 col-lg-6 col-md-6 wow img-custom-anim-top" data-wow-duration="1.5s" data-wow-delay="0.1s">
                     <div class="news-box-items">
                         <div class="news-image">
-                            <img src="{{asset('front/assets/img/news/01.jpg')}}" alt="img">
-                            <img src="{{asset('front/assets/img/news/01.jpg')}}" alt="img">
+                            <img src="{{asset('images/blog/'.$blog->image)}}" alt="img">
+                            <img src="{{asset('images/blog/'.$blog->image)}}" alt="img">
                         </div>
                         <div class="news-content">
                             <ul class="post-list">
-                                <li>Printing</li>
-                                <li>07 July 2025</li>
+                                <li>{{ $blog->status}}</li>
+                                <li>{{$blog->publish_datetime}}</li>
                             </ul>
-                            <h4><a href="{{url('/blog-details')}}">Latest Work Was Disapproved by the Supervisor.</a></h4>
+                            <h4><a href="{{url('/blog-details/'.$blog->slug)}}">{{$blog->title}}</a></h4>
                             <div class="author-items">
                                 <div class="author-info">
                                     <img src="{{asset('front/assets/img/news/author.png')}}" alt="img">
                                     <div class="content">
                                         <h6>Admin</h6>
-                                        <p>Guy Hawkins</p>
+                                        <p>{{ $blog->created_at}} </p>
                                     </div>
                                 </div>
-                                <a href="{{url('/blog-details')}}" class="link-btn">Read More</a>
+                                <a href="{{url('/blog-details/'.$blog->slug)}}" class="link-btn">Read More</a>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="col-xl-4 col-lg-6 col-md-6 wow img-custom-anim-top" data-wow-duration="1.5s" data-wow-delay="0.2s">
-                    <div class="news-box-items">
-                        <div class="news-image">
-                            <img src="{{asset('front/assets/img/news/02.jpg')}}" alt="img">
-                            <img src="{{asset('front/assets/img/news/02.jpg')}}" alt="img">
-                        </div>
-                        <div class="news-content">
-                            <ul class="post-list">
-                                <li>Printing</li>
-                                <li>07 July 2025</li>
-                            </ul>
-                            <h4><a href="{{url('/blog-details')}}">Necessity May Give us Best Virtual Court</a></h4>
-                            <div class="author-items">
-                                <div class="author-info">
-                                    <img src="{{asset('front/assets/img/news/author.png')}}" alt="img">
-                                    <div class="content">
-                                        <h6>Admin</h6>
-                                        <p>Guy Hawkins</p>
-                                    </div>
-                                </div>
-                                <a href="{{url('/blog-details')}}" class="link-btn">Read More</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-xl-4 col-lg-6 col-md-6 wow img-custom-anim-top" data-wow-duration="1.5s" data-wow-delay="0.4s">
-                    <div class="news-box-items">
-                        <div class="news-image">
-                            <img src="{{asset('front/assets/img/news/03.jpg')}}" alt="img">
-                            <img src="{{asset('front/assets/img/news/03.jpg')}}" alt="img">
-                        </div>
-                        <div class="news-content">
-                            <ul class="post-list">
-                                <li>Printing</li>
-                                <li>07 July 2025</li>
-                            </ul>
-                            <h4><a href="{{url('/blog-details')}}">Easy and Most Powerful Server and Platform</a></h4>
-                            <div class="author-items">
-                                <div class="author-info">
-                                    <img src="{{asset('front/assets/img/news/author.png')}}" alt="img">
-                                    <div class="content">
-                                        <h6>Admin</h6>
-                                        <p>Guy Hawkins</p>
-                                    </div>
-                                </div>
-                                <a href="{{url('/blog-details')}}" class="link-btn">Read More</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                 @endforeach
             </div>
         </div>
     </section>
