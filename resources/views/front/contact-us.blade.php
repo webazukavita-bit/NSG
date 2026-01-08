@@ -43,7 +43,7 @@
                                 <div class="bottom-part">                            
                                     <div class="info">
                                         <p><a href="https://modinatheme.com/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="bad3d4dcd5fadfc2dbd7cad6df94d9d5d7">{{ config('app.email_account') }}</a></p>
-                                        {{-- <p><a href="https://modinatheme.com/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="553f3a372615302d34382539307b363a38">{{ config('app.email_account') }}</a></p> --}}
+                                      
                                     </div>
                                     <div class="icon">
                                         <i class="fal fa-arrow-right"></i>
@@ -107,26 +107,58 @@
                                 <h2 class="split-text right">Let’s Get in Touch</h2>
                                 <p>Your email address will not be published. Required fields are marked *</p>
                             </div>
-                            <form action="https://modinatheme.com/html/printnow-html/contact.php" id="contact-form" method="POST">
+                            <form action="{{url('contact-submit')}}" method="POST" enctype="multipart/form-data">
+                                @csrf
+                                @if (session()->has('success'))
+                                    <div class="alert alert-success">
+                                        {{ session()->get('success') }}
+                                    </div>
+                                 @endif
+                                    @if (session()->has('error'))
+                                        <div class="alert alert-danger">
+                                            {{ session()->get('error') }}
+                                        </div>
+                                    @endif
                                 <div class="row g-4">
                                     <div class="col-lg-6">
                                         <div class="form-clt">
                                             <input type="text" name="name" id="name" placeholder="Your Name*">
                                         </div>
+                                        @error('name')
+                                            <span class="text-danger">{{ $message }}</span>
+                                        @enderror
                                     </div>
                                     <div class="col-lg-6">
                                         <div class="form-clt">
                                             <input type="text" name="email" id="email" placeholder="Your Email*">
+                                            @error('email')
+                                                <span class="text-danger">{{ $message }}</span>
+                                                
+                                            @enderror
                                         </div>
                                     </div>
-                                    <div class="col-lg-12">
+                                    <div class="col-lg-6">
                                         <div class="form-clt">
-                                            <input type="text" name="text" id="text" placeholder="Website*">
+                                            <input type="text" name="phone" id="phone" placeholder="phone*">
+                                            @error('phone')
+                                                <span class="text-danger">{{ $message }}</span>
+                                            @enderror
+                                        </div>
+                                    </div>
+                                      <div class="col-lg-6">
+                                        <div class="form-clt">
+                                            <input type="text" name="subject" id="subject" placeholder="Subject*">
+                                            @error('subject')
+                                                <span class="text-danger">{{ $message }}</span>
+                                            @enderror
                                         </div>
                                     </div>
                                     <div class="col-lg-12">
                                         <div class="form-clt">
                                             <textarea name="message" id="message" placeholder="Write Message*"></textarea>
+                                            @error('message')
+                                                <span class="text-danger">{{ $message }}</span>
+                                            @enderror
                                         </div>
                                     </div>
                                     <div class="col-lg-7">

@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use App\Models\OrderStatusTxn;
 use App\Models\ProductCategory;
 use App\Models\Product;
@@ -17,7 +18,7 @@ use Illuminate\Support\Str;
 
 class ProductController extends Controller
 {
-        public function __construct()
+    public function __construct()
     {
         $this->middleware('auth');
     }
@@ -56,7 +57,7 @@ class ProductController extends Controller
 
         $check = $category->save();
 
-        if($check) {
+        if ($check) {
             return redirect()->route('product-categories')->with('success', 'Category created successfully.');
         } else {
             return redirect()->route('product-categories')->with('error', 'Category Not created.');
@@ -75,18 +76,18 @@ class ProductController extends Controller
 
         $request->validate([
             'name'  => 'required|string|max:255',
-            'slug'  => 'required|string|unique:categories,slug,'.$id,
+            'slug'  => 'required|string|unique:categories,slug,' . $id,
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
         ]);
 
         $category = ProductCategory::findOrFail($id);
         $category->name = $request->name;
         $category->slug = $request->slug;
-        
+
         if ($request->hasFile('image')) {
-                
-            if ($category->image && file_exists(public_path('images/product/category/'.$category->image))) {
-                unlink(public_path('images/product/category/'.$category->image));
+
+            if ($category->image && file_exists(public_path('images/product/category/' . $category->image))) {
+                unlink(public_path('images/product/category/' . $category->image));
             }
 
             $file = $request->file('image');
@@ -97,7 +98,7 @@ class ProductController extends Controller
 
         $check = $category->save();
 
-        if($check) {
+        if ($check) {
             return redirect()->route('product-categories')->with('success', 'Category updated successfully.');
         } else {
             return redirect()->route('product-categories')->with('error', 'Category not updated.');
@@ -107,7 +108,7 @@ class ProductController extends Controller
     public function categoryDelete($id)
     {
         $data = ProductCategory::withTrashed()->findOrFail($id);
-        
+
         if ($data->trashed()) {
             $data->restore();
             $message = 'Product restored successfully!';
@@ -122,23 +123,23 @@ class ProductController extends Controller
     public function products(Request $request)
     {
         $category = ProductCategory::withTrashed()->latest()->get();
-        
-        if(empty($request->category_id)) {
-            $request->merge(['category_id' => $category[0]->id??'0']);
+
+        if (empty($request->category_id)) {
+            $request->merge(['category_id' => $category[0]->id ?? '0']);
         }
         $data = Product::with('category')->withTrashed()->latest()->get();
 
-        return view('admin.product.list', compact('data','category'));
+        return view('admin.product.list', compact('data', 'category'));
     }
 
     public function productAdd()
     {
         $category = ProductCategory::get();
         $brand = Brand::get();
-        $variationType= Variation::where('parent_id',0)->get();
-        $variationValue = Variation::whereNot('parent_id',0)->get();
+        $variationType = Variation::where('parent_id', 0)->get();
+        $variationValue = Variation::whereNot('parent_id', 0)->get();
 
-        return view('admin.product.add', compact('category', 'brand','variationType','variationValue'));
+        return view('admin.product.add', compact('category', 'brand', 'variationType', 'variationValue'));
     }
 
     public function productStore(Request $request)
@@ -150,7 +151,7 @@ class ProductController extends Controller
             'brand_id' => 'required|integer|exists:brands,id',
             'slug' => 'required|string|unique:products,slug|min:3|max:255',
             'name' => 'required|string|max:255',
-            'images' => 'required|array|min:1',     
+            'images' => 'required|array|min:1',
             'images.*' => 'required|image|mimes:jpeg,png,jpg,gif,svg,webp|max:2048',
             'sku' => 'required|string|max:100',
             'price' => 'required|numeric',
@@ -164,75 +165,74 @@ class ProductController extends Controller
             'variation_value' => 'required|array|min:1',
             'variation_value.*' => 'required|exists:variations,id',
 
-        ],[
+        ], [
             'slug.unique' => 'this product name is already exist'
         ]);
 
 
 
-      DB::beginTransaction();
-      try{
+        DB::beginTransaction();
+        try {
 
-        $charges = [];
-        $additionalNames = $request->additional_name;
-        $chargeAmounts = $request->charge;
+            $charges = [];
+            $additionalNames = $request->additional_name;
+            $chargeAmounts = $request->charge;
 
-        foreach ($additionalNames as $index => $name) {
-            $amount = $chargeAmounts[$index] ?? null;
-            if ($name && $amount !== null) {
-                $charges[] = [
-                    'name' => $name,
-                    'charge' => (float) $amount,
-                ];
+            foreach ($additionalNames as $index => $name) {
+                $amount = $chargeAmounts[$index] ?? null;
+                if ($name && $amount !== null) {
+                    $charges[] = [
+                        'name' => $name,
+                        'charge' => (float) $amount,
+                    ];
+                }
             }
-        }
-          
-        $product = new Product();
-        $product->category_id = $request->category_id;
-        $product->brand_id = $request->brand_id;
-        $product->name = $request->name;
-        $product->slug = $request->slug;
-        $product->sku = $request->sku;
-        $product->price = $request->price;
-        $product->disc_price = $request->disc_price;
-        $product->stock_quantity = $request->stock_quantity;
-        $product->specifications = $request->content;
-        $product->charge_details = $charges;
-        $product->parent_id =0;
 
-      
-        $imageFiles = [];
+            $product = new Product();
+            $product->category_id = $request->category_id;
+            $product->brand_id = $request->brand_id;
+            $product->name = $request->name;
+            $product->slug = $request->slug;
+            $product->sku = $request->sku;
+            $product->price = $request->price;
+            $product->disc_price = $request->disc_price;
+            $product->stock_quantity = $request->stock_quantity;
+            $product->specifications = $request->content;
+            $product->charge_details = $charges;
+            $product->parent_id = 0;
 
-        if ($request->hasFile('images')) {
-            foreach ($request->file('images') as $file) {
-                $fileName = 'product_' . time() . '.' . $file->getClientOriginalExtension();
-                $file->move(public_path('images/product'), $fileName);
-                $imageFiles[] = $fileName;
+
+            $imageFiles = [];
+
+            if ($request->hasFile('images')) {
+                foreach ($request->file('images') as $file) {
+                    $fileName = 'product_' . time() . '.' . $file->getClientOriginalExtension();
+                    $file->move(public_path('images/product'), $fileName);
+                    $imageFiles[] = $fileName;
+                }
             }
-        }
 
-        $product->image =$imageFiles;
-        $product->save();
+            $product->image = $imageFiles;
+            $product->save();
 
 
-       
+
             $variationTypes = $request->variation_type;
             $variationValues = $request->variation_value;
 
-                foreach ($variationTypes as $index => $typeId) {
-                    $valueId = $variationValues[$index] ?? null;
-                    if ($valueId) {
-                        ProductVariation::create([
-                            'product_id' => $product->id,
-                            'variation_type_id' => $typeId,
-                            'variation_value_id' => $valueId,
-                        ]);
-                    }
+            foreach ($variationTypes as $index => $typeId) {
+                $valueId = $variationValues[$index] ?? null;
+                if ($valueId) {
+                    ProductVariation::create([
+                        'product_id' => $product->id,
+                        'variation_type_id' => $typeId,
+                        'variation_value_id' => $valueId,
+                    ]);
                 }
+            }
 
             DB::commit();
-
-      } catch(\Exception $e){
+        } catch (\Exception $e) {
             foreach ($imageFiles as $img) {
                 $path = public_path('images/product/' . $img);
                 if (file_exists($path)) {
@@ -240,9 +240,9 @@ class ProductController extends Controller
                 }
             }
 
-         return redirect()->route('products')->with('error', 'Something went wrong:'.$e->getMessage());
-      }
-            return redirect()->route('products')->with('success', 'Product created successfully.');
+            return redirect()->route('products')->with('error', 'Something went wrong:' . $e->getMessage());
+        }
+        return redirect()->route('products')->with('success', 'Product created successfully.');
     }
 
     public function productEdit($id)
@@ -251,16 +251,16 @@ class ProductController extends Controller
         $data = Product::withTrashed()->findOrFail($id);
         $brand = Brand::get();
 
-       $variationType = Variation::where('parent_id', 0)->get();
+        $variationType = Variation::where('parent_id', 0)->get();
 
-       $variationValue = Variation::where('parent_id', '!=', 0)->get();
-        return view('admin.product.edit', compact('data', 'category', 'brand','variationType','variationValue'));
+        $variationValue = Variation::where('parent_id', '!=', 0)->get();
+        return view('admin.product.edit', compact('data', 'category', 'brand', 'variationType', 'variationValue'));
     }
 
     public function productUpdate(Request $request, $id)
     {
         $request->merge(['slug' => Str::slug($request->name)]);
-        
+
         $request->validate([
             'category_id' => 'required|integer|exists:categories,id',
             'brand_id' => 'required|integer|exists:brands,id',
@@ -269,11 +269,11 @@ class ProductController extends Controller
             'price' => 'required|numeric',
             'disc_price' => 'required|numeric',
             'stock_quantity' => 'required|integer',
-            'slug' => 'required|string|min:3|max:255|unique:products,slug,'.$id,
+            'slug' => 'required|string|min:3|max:255|unique:products,slug,' . $id,
             'content' => 'required|string',
-            'images' => 'nullable|array|min:1',     
+            'images' => 'nullable|array|min:1',
             'images.*' => 'required|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
-             'additional_name.*' => 'nullable|string',
+            'additional_name.*' => 'nullable|string',
             'charge.*' => 'nullable|numeric',
             'variation_type' => 'required|array|min:1',
             'variation_type.*' => 'required|exists:variations,id',
@@ -282,79 +282,79 @@ class ProductController extends Controller
         ]);
 
 
-         DB::beginTransaction();
-          
-         try{
-          $charges = [];
-        $additionalNames = $request->additional_name;
-        $chargeAmounts = $request->charge;
+        DB::beginTransaction();
 
-        foreach ($additionalNames as $index => $name) {
-            $amount = $chargeAmounts[$index] ?? null;
-            if ($name && $amount !== null) {
-                $charges[] = [
-                    'name' => $name,
-                    'charge' => (float) $amount,
-                ];
-            }
-        }
+        try {
+            $charges = [];
+            $additionalNames = $request->additional_name;
+            $chargeAmounts = $request->charge;
 
-        $product = Product::withTrashed()->findOrFail($id);
-        $product->category_id = $request->category_id;
-        $product->brand_id = $request->brand_id;
-        $product->name = $request->name;
-        $product->sku = $request->sku;
-        $product->price = $request->price;
-        $product->disc_price = $request->disc_price;
-        $product->stock_quantity = $request->stock_quantity;
-        $product->slug = $request->slug;
-        $product->specifications = $request->content;
-        $product->charge_details = $charges;
-        
-
-        if ($request->hasFile('images')) {
-            if ($product->image && is_array($product->image)) {
-                foreach ($product->image as $oldImage) {
-                    if (file_exists(public_path('images/product/'.$oldImage))) {
-                        unlink(public_path('images/product/'.$oldImage));
-                    }
+            foreach ($additionalNames as $index => $name) {
+                $amount = $chargeAmounts[$index] ?? null;
+                if ($name && $amount !== null) {
+                    $charges[] = [
+                        'name' => $name,
+                        'charge' => (float) $amount,
+                    ];
                 }
             }
 
-            $imageFiles = [];
-            foreach ($request->file('images') as $file) {
-                $fileName = 'product_' . time() . '.' . $file->getClientOriginalExtension();
-                $file->move(public_path('images/product'), $fileName);
-                $imageFiles[] = $fileName;
-            }
+            $product = Product::withTrashed()->findOrFail($id);
+            $product->category_id = $request->category_id;
+            $product->brand_id = $request->brand_id;
+            $product->name = $request->name;
+            $product->sku = $request->sku;
+            $product->price = $request->price;
+            $product->disc_price = $request->disc_price;
+            $product->stock_quantity = $request->stock_quantity;
+            $product->slug = $request->slug;
+            $product->specifications = $request->content;
+            $product->charge_details = $charges;
+            $product->parent_id = 0;
 
-            $product->image = $imageFiles;
-        }
 
-        $product->save();
-
-        ProductVariation::where('product_id', $product->id)->delete();
-
-                $variationTypes = $request->variation_type;
-                $variationValues = $request->variation_value; 
-                foreach ($variationTypes as $index => $typeId) {
-                    $valueId = $variationValues[$index] ?? null;
-                    if ($valueId) {
-                        ProductVariation::create([
-                            'product_id' => $product->id,
-                            'variation_type_id' => $typeId,
-                            'variation_value_id' => $valueId,
-                        ]);
+            if ($request->hasFile('images')) {
+                if ($product->image && is_array($product->image)) {
+                    foreach ($product->image as $oldImage) {
+                        if (file_exists(public_path('images/product/' . $oldImage))) {
+                            unlink(public_path('images/product/' . $oldImage));
+                        }
                     }
                 }
 
-           DB::commit();
+                $imageFiles = [];
+                foreach ($request->file('images') as $file) {
+                    $fileName = 'product_' . time() . '.' . $file->getClientOriginalExtension();
+                    $file->move(public_path('images/product'), $fileName);
+                    $imageFiles[] = $fileName;
+                }
+
+                $product->image = $imageFiles;
+            }
+
+            $product->save();
+
+            ProductVariation::where('product_id', $product->id)->delete();
+
+            $variationTypes = $request->variation_type;
+            $variationValues = $request->variation_value;
+            foreach ($variationTypes as $index => $typeId) {
+                $valueId = $variationValues[$index] ?? null;
+                if ($valueId) {
+                    ProductVariation::create([
+                        'product_id' => $product->id,
+                        'variation_type_id' => $typeId,
+                        'variation_value_id' => $valueId,
+                    ]);
+                }
+            }
+
+            DB::commit();
 
             return redirect()->route('products')->with('success', 'Product updated successfully.');
-
-            } catch(\Exception $e){
-                DB::rollBack();
-            return redirect()->route('products')->with('error', 'Update failed' .$e->getMessage());
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->route('products')->with('error', 'Update failed' . $e->getMessage());
         }
     }
 
@@ -362,7 +362,7 @@ class ProductController extends Controller
     {
         $data = Product::withTrashed()->findOrFail($id);
 
-        
+
         if ($data->trashed()) {
             $data->restore();
             $message = 'Product restored successfully!';
@@ -376,13 +376,13 @@ class ProductController extends Controller
 
     public function variant(Request $request)
     {
-         $category = ProductCategory::withTrashed()->latest()->get();
-        
-        if(empty($request->category_id)) {
-            $request->merge(['category_id' => $category[0]->id??'0']);
+        $category = ProductCategory::withTrashed()->latest()->get();
+
+        if (empty($request->category_id)) {
+            $request->merge(['category_id' => $category[0]->id ?? '0']);
         }
-        $data = Product::with('category')->whereNot('parent_id',0)->withTrashed()->latest()->get();
-        return view('admin.product.variant.list',compact('data','category'));
+        $data = Product::with('category')->whereNot('parent_id', 0)->withTrashed()->latest()->get();
+        return view('admin.product.variant.list', compact('data', 'category'));
     }
 
     public function variantAdd()
@@ -390,22 +390,22 @@ class ProductController extends Controller
         $category = ProductCategory::get();
         $brand = Brand::get();
 
-        return view('admin.product.variant.add', compact('category','brand'));  
+        return view('admin.product.variant.add', compact('category', 'brand'));
     }
-   
-   
+
+
     public function variantStore(Request $request)
     {
-         $request->merge(['slug' => Str::slug($request->name)]);
+        $request->merge(['slug' => Str::slug($request->name)]);
         $request->validate([
             'parent_product_id' => 'required|exists:products,id',
             'category_id'       => 'required|exists:categories,id',
             'brand_id'          => 'required|exists:brands,id',
-            'name'              =>'required|string',
-            'images'            => 'required|array|min:1',     
+            'name'              => 'required|string',
+            'images'            => 'required|array|min:1',
             'images.*'          => 'required|image|mimes:jpeg,png,jpg,gif,svg,webp|max:2048',
             'sku'               => 'required|string|unique:products,sku',
-            'slug'              => 'required|string|unique:products,slug|min:3|max:255',  
+            'slug'              => 'required|string|unique:products,slug|min:3|max:255',
             'price'             => 'required|numeric',
             'disc_price'        => 'required|numeric',
             'stock_quantity'    => 'required|integer',
@@ -444,7 +444,7 @@ class ProductController extends Controller
             $variant->brand_id          = $request->brand_id;
             $variant->name              = $request->name;
             $variant->slug              = $request->slug;
-            
+
             $variant->sku               = $request->sku;
             $variant->price             = $request->price;
             $variant->disc_price        = $request->disc_price;
@@ -452,50 +452,49 @@ class ProductController extends Controller
             $variant->specifications    = $request->content;
             $variant->charge_details    = $charges;
 
-       
+
             $imageFiles = [];
 
-        if ($request->hasFile('images')) {
-            foreach ($request->file('images') as $file) {
-                $fileName = 'variant_' . uniqid() . '.' . $file->getClientOriginalExtension();
-                $file->move(public_path('images/variant'), $fileName);
-                $imageFiles[] = $fileName;
+            if ($request->hasFile('images')) {
+                foreach ($request->file('images') as $file) {
+                    $fileName = 'variant_' . uniqid() . '.' . $file->getClientOriginalExtension();
+                    $file->move(public_path('images/variant'), $fileName);
+                    $imageFiles[] = $fileName;
+                }
             }
-        }
 
-            $variant->image =$imageFiles;
+            $variant->image = $imageFiles;
             $variant->save();
 
             $variationTypes = $request->variation_type;
             $variationValues = $request->variation_value;
 
-                foreach ($variationTypes as $index => $typeId) {
-                    $valueId = $variationValues[$index] ?? null;
-                    if ($valueId) {
-                        ProductVariation::create([
-                            'product_id' => $variant->id,
-                            'variation_type_id' => $typeId,
-                            'variation_value_id' => $valueId,
-                        ]);
-                    }
+            foreach ($variationTypes as $index => $typeId) {
+                $valueId = $variationValues[$index] ?? null;
+                if ($valueId) {
+                    ProductVariation::create([
+                        'product_id' => $variant->id,
+                        'variation_type_id' => $typeId,
+                        'variation_value_id' => $valueId,
+                    ]);
                 }
+            }
 
             DB::commit();
 
             return redirect()
                 ->route('variant')
                 ->with('success', ' Product Variant added successfully');
-
         } catch (\Exception $e) {
 
             DB::rollBack();
-                foreach ($imageFiles as $img) {
-                    $path = public_path('images/variant/' . $img);
+            foreach ($imageFiles as $img) {
+                $path = public_path('images/variant/' . $img);
 
-                    if (file_exists($path)) {
-                        unlink($path);
-                    }
+                if (file_exists($path)) {
+                    unlink($path);
                 }
+            }
             return back()->with('error', $e->getMessage());
         }
     }
@@ -505,21 +504,21 @@ class ProductController extends Controller
         $category = ProductCategory::get();
         $data = Product::withTrashed()->findOrFail($id);
         $brand = Brand::get();
-        $product=Product::where('parent_id',0)
-        ->where('category_id',$data->category_id)
-        ->get();
-        
-       $variationType = Variation::where('parent_id', 0)->get();
+        $product = Product::where('parent_id', 0)
+            ->where('category_id', $data->category_id)
+            ->get();
 
-       $variationValue = Variation::where('parent_id', '!=', 0)->get();
-        return view('admin.product.variant.edit', compact('data', 'category', 'brand','variationType','variationValue','product'));
+        $variationType = Variation::where('parent_id', 0)->get();
+
+        $variationValue = Variation::where('parent_id', '!=', 0)->get();
+        return view('admin.product.variant.edit', compact('data', 'category', 'brand', 'variationType', 'variationValue', 'product'));
     }
-   
-    
+
+
     public function variantUpdate(Request $request, $id)
     {
         $request->merge(['slug' => Str::slug($request->name)]);
-        
+
         $request->validate([
             'parent_product_id' => 'required|exists:products,id',
             'category_id' => 'required|integer|exists:categories,id',
@@ -529,9 +528,9 @@ class ProductController extends Controller
             'price' => 'required|numeric',
             'disc_price' => 'required|numeric',
             'stock_quantity' => 'required|integer',
-            'slug' => 'required|string|min:3|max:255|unique:products,slug,'.$id,
+            'slug' => 'required|string|min:3|max:255|unique:products,slug,' . $id,
             'content' => 'required|string',
-            'images' => 'nullable|array|min:1',     
+            'images' => 'nullable|array|min:1',
             'images.*' => 'required|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
             'additional_name.*' => 'nullable|string',
             'charge.*' => 'nullable|numeric',
@@ -542,88 +541,87 @@ class ProductController extends Controller
         ]);
 
 
-         DB::beginTransaction();
-          
-         try{
-          $charges = [];
-        $additionalNames = $request->additional_name;
-        $chargeAmounts = $request->charge;
+        DB::beginTransaction();
 
-        foreach ($additionalNames as $index => $name) {
-            $amount = $chargeAmounts[$index] ?? null;
-            if ($name && $amount !== null) {
-                $charges[] = [
-                    'name' => $name,
-                    'charge' => (float) $amount,
-                ];
-            }
-        }
+        try {
+            $charges = [];
+            $additionalNames = $request->additional_name;
+            $chargeAmounts = $request->charge;
 
-        $product = Product::withTrashed()->findOrFail($id);
-        $product->category_id = $request->category_id;
-        $product->brand_id = $request->brand_id;
-        $product->name = $request->name;
-        $product->sku = $request->sku;
-        $product->price = $request->price;
-        $product->disc_price = $request->disc_price;
-        $product->stock_quantity = $request->stock_quantity;
-        $product->slug = $request->slug;
-        $product->specifications = $request->content;
-        $product->charge_details = $charges;
-        $product->parent_id = $request->parent_product_id;
-
-
-        if ($request->hasFile('images')) {
-            if ($product->image && is_array($product->image)) {
-                foreach ($product->image as $oldImage) {
-                    if (file_exists(public_path('images/variant/'.$oldImage))) {
-                        unlink(public_path('images/variant/'.$oldImage));
-                    }
+            foreach ($additionalNames as $index => $name) {
+                $amount = $chargeAmounts[$index] ?? null;
+                if ($name && $amount !== null) {
+                    $charges[] = [
+                        'name' => $name,
+                        'charge' => (float) $amount,
+                    ];
                 }
             }
 
-            $imageFiles = [];
-            foreach ($request->file('images') as $file) {
-                $fileName = 'variant_' . time() . '.' . $file->getClientOriginalExtension();
-                $file->move(public_path('images/variant'), $fileName);
-                $imageFiles[] = $fileName;
-            }
+            $product = Product::withTrashed()->findOrFail($id);
+            $product->category_id = $request->category_id;
+            $product->brand_id = $request->brand_id;
+            $product->name = $request->name;
+            $product->sku = $request->sku;
+            $product->price = $request->price;
+            $product->disc_price = $request->disc_price;
+            $product->stock_quantity = $request->stock_quantity;
+            $product->slug = $request->slug;
+            $product->specifications = $request->content;
+            $product->charge_details = $charges;
+            $product->parent_id = $request->parent_product_id;
 
-            $product->image = $imageFiles;
-        }
 
-        $product->save();
-
-        ProductVariation::where('product_id', $product->id)->delete();
-
-                $variationTypes = $request->variation_type;
-                $variationValues = $request->variation_value; 
-                foreach ($variationTypes as $index => $typeId) {
-                    $valueId = $variationValues[$index] ?? null;
-                    if ($valueId) {
-                        ProductVariation::create([
-                            'product_id' => $product->id,
-                            'variation_type_id' => $typeId,
-                            'variation_value_id' => $valueId,
-                        ]);
+            if ($request->hasFile('images')) {
+                if ($product->image && is_array($product->image)) {
+                    foreach ($product->image as $oldImage) {
+                        if (file_exists(public_path('images/variant/' . $oldImage))) {
+                            unlink(public_path('images/variant/' . $oldImage));
+                        }
                     }
                 }
 
-           DB::commit();
+                $imageFiles = [];
+                foreach ($request->file('images') as $file) {
+                    $fileName = 'variant_' . time() . '.' . $file->getClientOriginalExtension();
+                    $file->move(public_path('images/variant'), $fileName);
+                    $imageFiles[] = $fileName;
+                }
+
+                $product->image = $imageFiles;
+            }
+
+            $product->save();
+
+            ProductVariation::where('product_id', $product->id)->delete();
+
+            $variationTypes = $request->variation_type;
+            $variationValues = $request->variation_value;
+            foreach ($variationTypes as $index => $typeId) {
+                $valueId = $variationValues[$index] ?? null;
+                if ($valueId) {
+                    ProductVariation::create([
+                        'product_id' => $product->id,
+                        'variation_type_id' => $typeId,
+                        'variation_value_id' => $valueId,
+                    ]);
+                }
+            }
+
+            DB::commit();
 
             return redirect()->route('variant')->with('success', 'Product Variant updated successfully.');
-
-            } catch(\Exception $e){
-                DB::rollBack();
-            return redirect()->route('variant')->with('error', 'Update failed' .$e->getMessage());
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->route('variant')->with('error', 'Update failed' . $e->getMessage());
         }
     }
-    
-        public function variationDelete($id)
+
+    public function variationDelete($id)
     {
         $data = Product::withTrashed()->findOrFail($id);
 
-        
+
         if ($data->trashed()) {
             $data->restore();
             $message = ' Product Variant restored successfully!';
@@ -638,8 +636,8 @@ class ProductController extends Controller
     {
         $category = ProductCategory::findOrFail($request->category_id);
         $products = Product::where('category_id', $category->id)
-                   ->where('parent_id', 0)
-                   ->get();
+            ->where('parent_id', 0)
+            ->get();
 
         return response()->json(['products' => $products]);
     }
@@ -650,8 +648,8 @@ class ProductController extends Controller
         return response()->json(['product' => $product]);
     }
 
-  
-   
+
+
 
 
     public function brands()
@@ -688,7 +686,7 @@ class ProductController extends Controller
 
         $check = $brand->save();
 
-        if($check) {
+        if ($check) {
             return redirect()->route('brands')->with('success', 'Brand created successfully.');
         } else {
             return redirect()->route('brands')->with('error', 'Brand Not created.');
@@ -707,18 +705,18 @@ class ProductController extends Controller
 
         $request->validate([
             'name'  => 'required|string|max:255',
-            'slug'  => 'required|string|unique:brands,slug,'.$id,
+            'slug'  => 'required|string|unique:brands,slug,' . $id,
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
         ]);
 
         $brand = Brand::findOrFail($id);
         $brand->name = $request->name;
         $brand->slug = $request->slug;
-        
+
         if ($request->hasFile('image')) {
-                
-            if ($brand->image && file_exists(public_path('images/brand/'.$brand->image))) {
-                unlink(public_path('images/brand/'.$brand->image));
+
+            if ($brand->image && file_exists(public_path('images/brand/' . $brand->image))) {
+                unlink(public_path('images/brand/' . $brand->image));
             }
 
             $file = $request->file('image');
@@ -729,7 +727,7 @@ class ProductController extends Controller
 
         $check = $brand->save();
 
-        if($check) {
+        if ($check) {
             return redirect()->route('brands')->with('success', 'Brand updated successfully.');
         } else {
             return redirect()->route('brands')->with('error', 'Brand not updated.');
@@ -739,7 +737,7 @@ class ProductController extends Controller
     public function brandDelete($id)
     {
         $data = Brand::withTrashed()->findOrFail($id);
-        
+
         if ($data->trashed()) {
             $data->restore();
             $message = 'Brand restored successfully!';
@@ -754,14 +752,14 @@ class ProductController extends Controller
 
 
 
-        public function orderes()
-        {
-            $order = Order::with(['user', 'status','paymentStatus'])
-                ->latest()
-                ->get();   
-            
-            return view('admin.order.list', compact('order'));
-        }
+    public function orderes()
+    {
+        $order = Order::with(['user', 'status', 'paymentStatus'])
+            ->latest()
+            ->get();
+
+        return view('admin.order.list', compact('order'));
+    }
 
 
 
@@ -790,7 +788,7 @@ class ProductController extends Controller
     public function orderDelete($id)
     {
         $data = Order::withTrashed()->findOrFail($id);
-        
+
         if ($data->trashed()) {
             $data->restore();
             $message = 'Order restored successfully!';
@@ -812,28 +810,26 @@ class ProductController extends Controller
 
         $order = Order::findOrFail($request->id);
         $orderStatus = OrderStatus::where('name', $request->status1)->first();
-          
-        if ($orderStatus->name =='pending') {
-            $orderStatus->name=$request->status1;
-            $order->commision=$request->advance;
+
+        if ($orderStatus->name == 'pending') {
+            $orderStatus->name = $request->status1;
+            $order->commision = $request->advance;
             $order->order_status_id = $orderStatus->id;
             $check = $order->save();
-
-        } else if ($orderStatus->name =='Confirm') {
-            $orderStatus->name=$request->status2;
+        } else if ($orderStatus->name == 'Confirm') {
+            $orderStatus->name = $request->status2;
             $order->order_status_id = $orderStatus->id;
             $check = $order->save();
-
         } else {
 
-            $orderStatus->name=$request->status3;
+            $orderStatus->name = $request->status3;
             $order->order_status_id = $orderStatus->id;
             $request->validate([
                 'documents' => 'nullable|array',
                 'documents.*' => 'file|mimes:pdf,jpg,jpeg,png|max:2048',
             ]);
 
-             $doc=OrderStatusTxn::where('order_id',$request->id)->first();
+            $doc = OrderStatusTxn::where('order_id', $request->id)->first();
             if ($request->hasFile('documents')) {
                 $documentPaths = [];
                 foreach ($request->file('documents') as $file) {
@@ -844,21 +840,21 @@ class ProductController extends Controller
 
                 $doc->documents = json_encode($documentPaths);
                 $doc->save();
-     } 
+            }
             $check = $order->save();
         }
-            if($check) {
-                return redirect()->route('orderes')->with('success', 'Order status updated successfully.');
-            } else {
-                return redirect()->route('orderes')->with('error', 'Order status not updated.');
-            } 
+        if ($check) {
+            return redirect()->route('orderes')->with('success', 'Order status updated successfully.');
+        } else {
+            return redirect()->route('orderes')->with('error', 'Order status not updated.');
+        }
     }
-  
+
 
     // public function paymentUpdate(Request $request){
-     
 
-    
+
+
 
     //     $orderId = $order->id;
 
@@ -913,7 +909,7 @@ class ProductController extends Controller
 
         $data = new Variation();
         $data->name = $request->name;
-          $data->parent_id = 0;
+        $data->parent_id = 0;
         $data->description = $request->description;
 
         if ($request->hasFile('image')) {
@@ -925,7 +921,7 @@ class ProductController extends Controller
 
         $check = $data->save();
 
-        if($check) {
+        if ($check) {
             return redirect()->route('variation-type')->with('success', 'variation Type created successfully.');
         } else {
             return redirect()->route('variation-type')->with('error', 'variation Type Not created.');
@@ -950,12 +946,12 @@ class ProductController extends Controller
         $data = Variation::findOrFail($id);
         $data->type = $request->type;
         $data->description = $request->description;
-          $data->parent_id = 0;
-        
+        $data->parent_id = 0;
+
         if ($request->hasFile('image')) {
-                
-            if ($data->image && file_exists(public_path('images/variation/type/'.$data->image))) {
-                unlink(public_path('images/variation/type/'.$data->image));
+
+            if ($data->image && file_exists(public_path('images/variation/type/' . $data->image))) {
+                unlink(public_path('images/variation/type/' . $data->image));
             }
 
             $file = $request->file('image');
@@ -966,7 +962,7 @@ class ProductController extends Controller
 
         $check = $data->save();
 
-        if($check) {
+        if ($check) {
             return redirect()->route('variation-type')->with('success', 'Variation
             Type updated successfully.');
         } else {
@@ -977,7 +973,7 @@ class ProductController extends Controller
     public function variationTypeDelete($id)
     {
         $data = Variation::withTrashed()->findOrFail($id);
-        
+
         if ($data->trashed()) {
             $data->restore();
             $message = 'Variation Type restored successfully!';
@@ -992,12 +988,12 @@ class ProductController extends Controller
     public function variationValue()
     {
         $data = Variation::whereNot('parent_id', 0)->latest()->get();
-         return view('admin.product.variationvalue.list', compact('data'));
+        return view('admin.product.variationvalue.list', compact('data'));
     }
 
     public function variationValueAdd()
     {
-         $data = Variation::where('parent_id', 0)->get();
+        $data = Variation::where('parent_id', 0)->get();
 
         return view('admin.product.variationvalue.add', compact('data'));
     }
@@ -1008,11 +1004,11 @@ class ProductController extends Controller
             'parent_id'      => 'required|exists:variations,id',
             'value'       => 'required|string|max:255',
             'image'      => 'nullable|image|mimes:jpg,jpeg,png,webp',
-            'description'=> 'nullable|string',
+            'description' => 'nullable|string',
         ]);
 
         $data = new Variation();
-        $data->parent_id=$request->parent_id;
+        $data->parent_id = $request->parent_id;
         $data->name = $request->value;
         $data->description = $request->description;
 
@@ -1025,18 +1021,17 @@ class ProductController extends Controller
 
         $check = $data->save();
 
-        if($check) {
+        if ($check) {
             return redirect()->route('variation-value')->with('success', 'variation Value created successfully.');
         } else {
             return redirect()->route('variation-value')->with('error', 'variation Value Not created.');
         }
-
     }
 
     public function variationValueEdit($id)
     {
         $data = Variation::findOrFail($id);
-       $types = Variation::where('parent_id', 0)->latest()->get();
+        $types = Variation::where('parent_id', 0)->latest()->get();
 
         return view('admin.product.variationvalue.edit', compact('data', 'types'));
     }
@@ -1047,7 +1042,7 @@ class ProductController extends Controller
             'parent_id'       => 'required|exists:variations,id',
             'value'       => 'required|string|max:255',
             'image'      => 'nullable|image|mimes:jpg,jpeg,png,webp',
-            'description'=> 'nullable|string',
+            'description' => 'nullable|string',
         ]);
 
 
@@ -1056,11 +1051,11 @@ class ProductController extends Controller
         $data->name = $request->value;
         $data->description = $request->description;
 
-        
+
         if ($request->hasFile('image')) {
-                
-            if ($data->image && file_exists(public_path('images/variation/value/'.$data->image))) {
-                unlink(public_path('images/variation/value/'.$data->image));
+
+            if ($data->image && file_exists(public_path('images/variation/value/' . $data->image))) {
+                unlink(public_path('images/variation/value/' . $data->image));
             }
 
             $file = $request->file('image');
@@ -1071,19 +1066,18 @@ class ProductController extends Controller
 
         $check = $data->save();
 
-        if($check) {
+        if ($check) {
             return redirect()->route('variation-value')->with('success', 'Variation
             Value updated successfully.');
         } else {
             return redirect()->route('variation-value')->with('error', 'Variation Value not updated.');
         }
-
     }
 
     public function variationValueDelete($id)
     {
         $data = Variation::withTrashed()->findOrFail($id);
-        
+
         if ($data->trashed()) {
             $data->restore();
             $message = 'Variation Value restored successfully!';
@@ -1097,10 +1091,9 @@ class ProductController extends Controller
 
 
     public function getVariationValue($id)
-{
-    $values = Variation::where('parent_id', $id)->get();
+    {
+        $values = Variation::where('parent_id', $id)->get();
 
-    return response()->json($values);
-}
-
+        return response()->json($values);
+    }
 }

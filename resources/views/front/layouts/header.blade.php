@@ -200,126 +200,26 @@
                                             <a href="{{url('/')}}">
                                             Home 
                                             </a>
-                                            {{-- <ul class="submenu has-home-menu">
-                                                <li class="border-top-none">
-                                                    <div class="row g-4">
-                                                        <div class="col-lg-3 home-menu">
-                                                            <div class="home-menu-thumb">
-                                                                <img src="{{asset('front/assets/img/header/home-1.jpg')}}" alt="img">
-                                                                <div class="demo-button">
-                                                                    <a href="index.html" class="theme-btn">
-                                                                        <span>View Demo</span>
-                                                                    </a>
-                                                                </div>
-                                                            </div>
-                                                            <div class="home-menu-content text-center">
-                                                                <h4 class="home-menu-title">
-                                                                    Home 01
-                                                                </h4>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-lg-3  home-menu">
-                                                            <div class="home-menu-thumb mb-15">
-                                                                <img src="{{asset('front/assets/img/header/home-2.jpg')}}" alt="img">
-                                                                <div class="demo-button">
-                                                                    <a href="index-2.html" class="theme-btn">
-                                                                        <span>View Demo</span>
-                                                                    </a>
-                                                                </div>
-                                                            </div>
-                                                            <div class="home-menu-content text-center">
-                                                                <h4 class="home-menu-title">
-                                                                    Home 02
-                                                                </h4>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-lg-3 home-menu">
-                                                            <div class="home-menu-thumb mb-15">
-                                                                <img src="{{asset('front/assets/img/header/home-3.jpg')}}" alt="img">
-                                                                <div class="demo-button">
-                                                                    <a href="index-3.html" class="theme-btn">
-                                                                        <span>View Demo</span>
-                                                                    </a>
-                                                                </div>
-                                                            </div>
-                                                            <div class="home-menu-content text-center">
-                                                                <h4 class="home-menu-title">
-                                                                    Home 03
-                                                                </h4>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-lg-3 home-menu">
-                                                            <div class="home-menu-thumb mb-15">
-                                                                <img src="{{asset('front/assets/img/header/home-4.jpg')}}" alt="img">
-                                                                <div class="demo-button">
-                                                                    <a href="index-4.html" class="theme-btn">
-                                                                        <span>View Demo</span>
-                                                                    </a>
-                                                                </div>
-                                                            </div>
-                                                            <div class="home-menu-content text-center">
-                                                                <h4 class="home-menu-title">
-                                                                    Home 04
-                                                                </h4>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </li>
-                                            </ul> --}}
                                         </li>
                                         <li class="has-dropdown active d-xl-none">
                                             <a href="{{url('/')}}" class="border-top-none">
                                             Home
                                             <i class="fas fa-angle-down"></i>
                                             </a>
-                                            {{-- <ul class="submenu">
-                                                <li><a href="index.html">Home 01</a></li>
-                                                <li><a href="index-2.html">Home 02</a></li>
-                                                <li><a href="index-3.html">Home 03</a></li>
-                                                <li><a href="index-4.html">Home 04</a></li>
-                                            </ul> --}}
                                         </li>
                                         <li>
                                             <a href="{{url('about-us')}}">About Us</a>
                                         </li>
                                         <li>
                                             <a href="{{url('our-services')}}"> Services </a>
-                                            {{-- <ul class="submenu">
-                                                <li><a href="{{url('service-details')}}">Service Details</a></li>
-                                            </ul> --}}
                                         </li>
-                                        {{-- <li class="has-dropdown active">
-                                            <a href="{{url('shop')}}">Shop</a>
-                                            <ul class="submenu">
-                                                <li><a href="shop-leftsidebar.html">Shop Left Sidebar</a></li>
-                                                <li><a href="shop-rightsidebar.html">Shop Right Sidebar</a></li>
-                                                <li><a href="javascript:void(0)">Shop Details</a></li>
-                                                <li><a href="javascript:void(0)">Shop Cart</a></li>
-                                                <li><a href="javascript:void(0)">Checkout</a></li>
-                                                <li><a href="{{url('login')}}">Sign In</a></li>
-                                                <li><a href="{{url('register')}}">Sign Up</a></li>
-                                            </ul>
+                                         <li>
+                                            <a href="{{url('shop')}}">Booking</a>
                                         </li>
-                                        <li class="has-dropdown">
-                                            <a href="{{url('pages')}}">
-                                                Pages
-                                            </a>
-                                            <ul class="submenu">
-                                                <li><a href="javascript:void(0)">Project</a></li>
-                                                <li><a href="javascript:void(0)">Project Details</a></li>
-                                                <li><a href="javascript:void(0)">Our Pricing</a></li>
-                                                <li><a href="javascript:void(0)">Faq's</a></li>
-                                                <li><a href="javascript:void(0)">404 Page</a></li>
-                                            </ul>
-                                        </li> --}}
                                         <li>
                                             <a href="{{url('/Articales')}}">
                                                 Articles
                                             </a>
-                                            {{-- <ul class="submenu">
-                                                <li><a href="{{url('/Articales')}}">Blog Grid</a></li>
-                                                <li><a href="{{url('blog-details')}}">Blog Details</a></li>
-                                            </ul> --}}
                                         </li>
                                         <li>
                                             <a href="{{url('contact-us')}}">Contact</a>

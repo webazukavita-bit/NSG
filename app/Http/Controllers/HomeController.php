@@ -10,7 +10,10 @@ use Illuminate\Support\Facades\Route;
 use App\Models\StaticContent;
 use App\Models\ContactUs;
 use App\Models\Blog;
+use App\Models\Product;
+use App\Models\ProductCategory;
 use App\Models\State;
+use Illuminate\Support\Facades\DB;
 
 class HomeController extends Controller
 {
@@ -36,7 +39,20 @@ class HomeController extends Controller
     public function index()
     {
         $states = [];
-        return view('front.index', compact('states'));
+        $categories = ProductCategory::get();
+        $blogs = Blog::with('category')
+            ->where(function ($query) {
+                $query->where('status', 'publish')
+                    ->orWhere(function ($q) {
+                        $q->where('status', 'schedule')
+                            ->where('publish_datetime', '<=', now());
+                    });
+            })
+            ->latest()
+            ->limit(3)
+            ->get();
+        $products = Product::with('category')->latest()->limit(4)->get();
+        return view('front.index', compact('states', 'categories', 'blogs', 'products'));
     }
     public function aboutUs()
     {
@@ -46,10 +62,28 @@ class HomeController extends Controller
     {
         return view('front.service-details');
     }
-    public function shop()
+    public function shop(Request $request)
     {
-        return view('front.shop');
+        $categories = ProductCategory::get();
+
+        $productsQuery = Product::with('category');
+
+        if ($request->filled('search')) {
+            $productsQuery->where('name', 'LIKE', '%' . $request->search . '%');
+        }
+        if ($request->filled('category')) {
+            $category = ProductCategory::where('slug', $request->category)->first();
+
+            if ($category) {
+                $productsQuery->where('category_id', $category->id);
+            }
+        }
+        $products = $productsQuery->paginate(6)->withQueryString();
+
+        return view('front.shop', compact('categories', 'products'));
     }
+
+
     public function shopDetails()
     {
         return view('front.shop-details');
@@ -109,13 +143,15 @@ class HomeController extends Controller
             })->where('category_id', $blog->category_id)
             ->latest()
             ->paginate(6);
+        $category = DB::table('categories')->get();
 
-        return view('front.blog-details', compact('blog', 'data'));
+        return view('front.blog-details', compact('blog', 'data', 'category'));
     }
 
     public function ourServices()
     {
-        return view('front.services');
+        $data = ProductCategory::get();
+        return view('front.services', compact('data'));
     }
 
 
@@ -139,11 +175,12 @@ class HomeController extends Controller
     {
         $request->validate([
             'name'          => 'required|string|max:100',
-            'phone'         => ['required', 'regex:/^[6-9]\d{9}$/'],
+            'phone'         => 'required',
             'email'         => 'required|email',
             'subject'       => 'required|string|max:191',
             'message'       => 'required|string|max:10000'
         ]);
+
 
         ContactUs::create([
             'name'    => $request->name,

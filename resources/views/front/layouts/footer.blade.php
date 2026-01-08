@@ -30,13 +30,7 @@
                                             <h4><a href="javascript:void(0)">{{ config('app.contact_us') }} </a></h4>
                                         </div>
                                     </div>
-                                    <div class="contact-items-2">
-                                        <h4>Open Hours:</h4>
-                                        <p>
-                                            Mon - Sat: 9 am - 6 pm <br>
-                                            Sunday: CLOSED
-                                        </p>
-                                    </div>
+                                 
                                 </div>
                             </div>
                         </div>
@@ -123,10 +117,7 @@
                                         <i class="fas fa-envelope"></i>
                                     </button>
                                 </div>
-                                <div class="play-app">
-                                    <img src="{{asset('front/assets/img/play.png')}}" alt="img">
-                                    <img src="{{asset('front/assets/img/app.png')}}" alt="img">
-                                </div>
+                              
                                 <div class="social-icon d-flex align-items-center">
                                     <a href="{{ config('app.facebook_url') }}"><i class="fab fa-facebook-f"></i></a>
                                     <a href="{{ config('app.twitter_url') }}"><i class="fab fa-twitter"></i></a>
