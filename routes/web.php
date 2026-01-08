@@ -238,47 +238,58 @@ Route::middleware(['permission'])->group(function () {
         Route::get('/products-view/{id}', [ProductController::class, 'productView'])->name('product-view');
 
 
-    Route::get('/brands', [ProductController::class, 'brands'])->name('brands');
-    Route::get('/brands-add', [ProductController::class, 'brandAdd'])->name('brand-add');
-    Route::post('/brands-add', [ProductController::class, 'brandStore'])->name('brand-store');
-    Route::get('/brands-edit/{id}', [ProductController::class, 'brandEdit'])->name('brand-edit');
-    Route::post('/brands-edit/{id}', [ProductController::class, 'brandUpdate'])->name('brand-update');
-    Route::get('/brands-delete/{id}', [ProductController::class, 'brandDelete'])->name('brand-delete');
+        Route::get('/brands', [ProductController::class, 'brands'])->name('brands');
+        Route::get('/brands-add', [ProductController::class, 'brandAdd'])->name('brand-add');
+        Route::post('/brands-add', [ProductController::class, 'brandStore'])->name('brand-store');
+        Route::get('/brands-edit/{id}', [ProductController::class, 'brandEdit'])->name('brand-edit');
+        Route::post('/brands-edit/{id}', [ProductController::class, 'brandUpdate'])->name('brand-update');
+        Route::get('/brands-delete/{id}', [ProductController::class, 'brandDelete'])->name('brand-delete');
 
-    Route::get('/orderes', [ProductController::class, 'orderes'])->name('orderes');
-    Route::get('/order-add', [ProductController::class, 'orderAdd'])->name('ordere-add'); 
-    Route::get('/order-delete/{id}', [ProductController::class, 'orderDelete'])->name('order-delete');
-    Route::get('/show-invoice/{id}', [ProductController::class, 'showInvoice'])->name('show-invoice');
-    Route::post('/order-status-update', [ProductController::class, 'orderStatusUpdate'])->name('order-status-update');
-    Route::post('/payment-update', [ProductController::class, 'paymentUpdate'])->name('payment-update');
+        Route::get('/orderes', [ProductController::class, 'orderes'])->name('orderes');
+        Route::get('/order-add', [ProductController::class, 'orderAdd'])->name('ordere-add'); 
+        Route::get('/order-delete/{id}', [ProductController::class, 'orderDelete'])->name('order-delete');
+        Route::get('/show-invoice/{id}', [ProductController::class, 'showInvoice'])->name('show-invoice');
+        Route::post('/order-status-update', [ProductController::class, 'orderStatusUpdate'])->name('order-status-update');
+        Route::post('/payment-update', [ProductController::class, 'paymentUpdate'])->name('payment-update');
 
 
-    Route::get('/variation-type', [ProductController::class, 'variationType'])->name('variation-type');
-    Route::get('/variation-type-add', [ProductController::class, 'variationTypeAdd'])->name('variation-type-add');
-    Route::post('/variation-type-add', [ProductController::class, 'variationTypeStore'])->name('variation-type-store');
-    Route::get('/variation-type-edit/{id}', [ProductController::class, 'variationTypeEdit'])->name('variation-type-edit');
-    Route::post('/variation-type-edit/{id}', [ProductController::class, 'variationTypeUpdate'])->name('variation-type-update');
-    Route::get('/variation-type-delete/{id}', [ProductController::class, 'variationTypeDelete'])->name('variation-type-delete');
+        Route::get('/variation-type', [ProductController::class, 'variationType'])->name('variation-type');
+        Route::get('/variation-type-add', [ProductController::class, 'variationTypeAdd'])->name('variation-type-add');
+        Route::post('/variation-type-add', [ProductController::class, 'variationTypeStore'])->name('variation-type-store');
+        Route::get('/variation-type-edit/{id}', [ProductController::class, 'variationTypeEdit'])->name('variation-type-edit');
+        Route::post('/variation-type-edit/{id}', [ProductController::class, 'variationTypeUpdate'])->name('variation-type-update');
+        Route::get('/variation-type-delete/{id}', [ProductController::class, 'variationTypeDelete'])->name('variation-type-delete');
 
-    Route::get('/variation-value', [ProductController::class, 'variationValue'])->name('variation-value');
-    Route::get('/variation-value-add', [ProductController::class, 'variationValueAdd'])->name('variation-value-add');
-    Route::post('/variation-value-add', [ProductController::class, 'variationValueStore'])->name('variation-value-store');
-    Route::get('/variation-value-edit/{id}', [ProductController::class, 'variationValueEdit'])->name('variation-value-edit');
-    Route::post('/variation-value-edit/{id}', [ProductController::class, 'variationValueUpdate'])->name('variation-value-update');
-    Route::get('/variation-value-delete/{id}', [ProductController::class, 'variationValueDelete'])->name('variation-value-delete');
-    Route::get('/get-variation-value/{id}', [ProductController::class, 'getVariationValue'])->name('get-variation-value');
+        Route::get('/variation-value', [ProductController::class, 'variationValue'])->name('variation-value');
+        Route::get('/variation-value-add', [ProductController::class, 'variationValueAdd'])->name('variation-value-add');
+        Route::post('/variation-value-add', [ProductController::class, 'variationValueStore'])->name('variation-value-store');
+        Route::get('/variation-value-edit/{id}', [ProductController::class, 'variationValueEdit'])->name('variation-value-edit');
+        Route::post('/variation-value-edit/{id}', [ProductController::class, 'variationValueUpdate'])->name('variation-value-update');
+        Route::get('/variation-value-delete/{id}', [ProductController::class, 'variationValueDelete'])->name('variation-value-delete');
+        Route::get('/get-variation-value/{id}', [ProductController::class, 'getVariationValue'])->name('get-variation-value');
+
+         
+        Route::match(['get', 'post'], '/variant', [ProductController::class, 'variant'])->name('variant');
+        Route::get('/variant-add', [ProductController::class, 'variantAdd'])->name('variant-add');
+        Route::post('/variant-add', [ProductController::class, 'variantStore'])->name('variant-store');
+        Route::get('/variant-edit/{id}', [ProductController::class, 'variantEdit'])->name('variant-edit');
+        Route::post('/variant-edit/{id}', [ProductController::class, 'variantUpdate'])->name('variant-update');
+        Route::get('/variation-delete/{id}', [ProductController::class, 'variationDelete'])->name('variant-delete');
+        Route::get('category-products', [ProductController::class, 'getProductsByCategory'])->name('category-products');
+
+        Route::get('product-details', [ProductController::class, 'getProductDetails'])->name('product-details');
+
+
 
 });
 
 
     Route::prefix('booking')->group(function () {
     Route::get('/categories', [OrderController::class, 'categories'])->name('booking-categories');
-    Route::get('/sub-categories/{id}',[OrderController::class,'subCategories'])->name('booking-sub-category');
-    Route::get('/booking-details/{id}',[OrderController::class,'bookingDetails'])->name('booking-details');
+    Route::get('/sub-categories/{slug?}/{id}',[OrderController::class,'subCategories'])->name('booking-sub-category');
+    Route::get('/products/{slug}',[OrderController::class,'bookingDetails'])->name('booking-details');
 
 });
-    
-
 
     Route::prefix('logs')->group(function () {
         Route::match(['get', 'post'], '/notifications', [AdminController::class, 'notifications'])->name('user-notifications');

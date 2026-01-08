@@ -150,7 +150,8 @@ class ProductController extends Controller
             'brand_id' => 'required|integer|exists:brands,id',
             'slug' => 'required|string|unique:products,slug|min:3|max:255',
             'name' => 'required|string|max:255',
-            'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg,webp|max:2048',
+            'images' => 'required|array|min:1',     
+            'images.*' => 'required|image|mimes:jpeg,png,jpg,gif,svg,webp|max:2048',
             'sku' => 'required|string|max:100',
             'price' => 'required|numeric',
             'disc_price' => 'required|numeric',
@@ -197,14 +198,22 @@ class ProductController extends Controller
         $product->stock_quantity = $request->stock_quantity;
         $product->specifications = $request->content;
         $product->charge_details = $charges;
+        $product->parent_id =0;
 
-        if ($request->hasFile('image')) {
-            $file = $request->file('image');
-            $fileName = 'product_' . time() . '.' . $file->getClientOriginalExtension();
-            $file->move(public_path('images/product'), $fileName);
-            $product->image = $fileName;
+      
+        $imageFiles = [];
+
+        if ($request->hasFile('images')) {
+            foreach ($request->file('images') as $file) {
+                $fileName = 'product_' . time() . '.' . $file->getClientOriginalExtension();
+                $file->move(public_path('images/product'), $fileName);
+                $imageFiles[] = $fileName;
+            }
         }
-         $product->save();
+
+        $product->image =$imageFiles;
+        $product->save();
+
 
        
             $variationTypes = $request->variation_type;
@@ -224,9 +233,12 @@ class ProductController extends Controller
             DB::commit();
 
       } catch(\Exception $e){
-        DB::rollBack();
-         if ($fileName && file_exists(public_path('images/product/'.$fileName))) { unlink(public_path('images/product/'.$fileName)); 
-        }
+            foreach ($imageFiles as $img) {
+                $path = public_path('images/product/' . $img);
+                if (file_exists($path)) {
+                    unlink($path);
+                }
+            }
 
          return redirect()->route('products')->with('error', 'Something went wrong:'.$e->getMessage());
       }
@@ -239,9 +251,9 @@ class ProductController extends Controller
         $data = Product::withTrashed()->findOrFail($id);
         $brand = Brand::get();
 
-    $variationType = Variation::where('parent_id', 0)->get();
+       $variationType = Variation::where('parent_id', 0)->get();
 
-    $variationValue = Variation::where('parent_id', '!=', 0)->get();
+       $variationValue = Variation::where('parent_id', '!=', 0)->get();
         return view('admin.product.edit', compact('data', 'category', 'brand','variationType','variationValue'));
     }
 
@@ -259,7 +271,8 @@ class ProductController extends Controller
             'stock_quantity' => 'required|integer',
             'slug' => 'required|string|min:3|max:255|unique:products,slug,'.$id,
             'content' => 'required|string',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
+            'images' => 'nullable|array|min:1',     
+            'images.*' => 'required|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
              'additional_name.*' => 'nullable|string',
             'charge.*' => 'nullable|numeric',
             'variation_type' => 'required|array|min:1',
@@ -299,16 +312,23 @@ class ProductController extends Controller
         $product->charge_details = $charges;
         
 
-        if ($request->hasFile('image')) {
-                
-            if ($product->image && file_exists(public_path('images/product/'.$product->image))) {
-                unlink(public_path('images/product/'.$product->image));
+        if ($request->hasFile('images')) {
+            if ($product->image && is_array($product->image)) {
+                foreach ($product->image as $oldImage) {
+                    if (file_exists(public_path('images/product/'.$oldImage))) {
+                        unlink(public_path('images/product/'.$oldImage));
+                    }
+                }
             }
 
-            $file = $request->file('image');
-            $fileName = 'product_' . time() . '.' . $file->getClientOriginalExtension();
-            $file->move(public_path('images/product'), $fileName);
-            $product->image = $fileName;
+            $imageFiles = [];
+            foreach ($request->file('images') as $file) {
+                $fileName = 'product_' . time() . '.' . $file->getClientOriginalExtension();
+                $file->move(public_path('images/product'), $fileName);
+                $imageFiles[] = $fileName;
+            }
+
+            $product->image = $imageFiles;
         }
 
         $product->save();
@@ -354,7 +374,286 @@ class ProductController extends Controller
         return redirect()->route('products')->with('success', $message);
     }
 
+    public function variant(Request $request)
+    {
+         $category = ProductCategory::withTrashed()->latest()->get();
+        
+        if(empty($request->category_id)) {
+            $request->merge(['category_id' => $category[0]->id??'0']);
+        }
+        $data = Product::with('category')->whereNot('parent_id',0)->withTrashed()->latest()->get();
+        return view('admin.product.variant.list',compact('data','category'));
+    }
+
+    public function variantAdd()
+    {
+        $category = ProductCategory::get();
+        $brand = Brand::get();
+
+        return view('admin.product.variant.add', compact('category','brand'));  
+    }
+   
+   
+    public function variantStore(Request $request)
+    {
+         $request->merge(['slug' => Str::slug($request->name)]);
+        $request->validate([
+            'parent_product_id' => 'required|exists:products,id',
+            'category_id'       => 'required|exists:categories,id',
+            'brand_id'          => 'required|exists:brands,id',
+            'name'              =>'required|string',
+            'images'            => 'required|array|min:1',     
+            'images.*'          => 'required|image|mimes:jpeg,png,jpg,gif,svg,webp|max:2048',
+            'sku'               => 'required|string|unique:products,sku',
+            'slug'              => 'required|string|unique:products,slug|min:3|max:255',  
+            'price'             => 'required|numeric',
+            'disc_price'        => 'required|numeric',
+            'stock_quantity'    => 'required|integer',
+
+            'variation_type'    => 'required|array|min:1',
+            'variation_type.*'  => 'required|exists:variations,id',
+
+            'variation_value'   => 'required|array|min:1',
+            'variation_value.*' => 'required|exists:variations,id',
+
+            'additional_name.*' => 'nullable|string',
+            'charge.*'          => 'nullable|numeric',
+
+            'content'           => 'required|string',
+        ]);
+
+        DB::beginTransaction();
+
+        try {
+            $charges = [];
+
+            if ($request->additional_name && $request->charge) {
+                foreach ($request->additional_name as $i => $name) {
+                    if ($name && isset($request->charge[$i])) {
+                        $charges[] = [
+                            'name'   => $name,
+                            'charge' => (float) $request->charge[$i],
+                        ];
+                    }
+                }
+            }
+
+            $variant = new Product();
+            $variant->parent_id         = $request->parent_product_id;
+            $variant->category_id       = $request->category_id;
+            $variant->brand_id          = $request->brand_id;
+            $variant->name              = $request->name;
+            $variant->slug              = $request->slug;
+            
+            $variant->sku               = $request->sku;
+            $variant->price             = $request->price;
+            $variant->disc_price        = $request->disc_price;
+            $variant->stock_quantity    = $request->stock_quantity;
+            $variant->specifications    = $request->content;
+            $variant->charge_details    = $charges;
+
+       
+            $imageFiles = [];
+
+        if ($request->hasFile('images')) {
+            foreach ($request->file('images') as $file) {
+                $fileName = 'variant_' . uniqid() . '.' . $file->getClientOriginalExtension();
+                $file->move(public_path('images/variant'), $fileName);
+                $imageFiles[] = $fileName;
+            }
+        }
+
+            $variant->image =$imageFiles;
+            $variant->save();
+
+            $variationTypes = $request->variation_type;
+            $variationValues = $request->variation_value;
+
+                foreach ($variationTypes as $index => $typeId) {
+                    $valueId = $variationValues[$index] ?? null;
+                    if ($valueId) {
+                        ProductVariation::create([
+                            'product_id' => $variant->id,
+                            'variation_type_id' => $typeId,
+                            'variation_value_id' => $valueId,
+                        ]);
+                    }
+                }
+
+            DB::commit();
+
+            return redirect()
+                ->route('variant')
+                ->with('success', ' Product Variant added successfully');
+
+        } catch (\Exception $e) {
+
+            DB::rollBack();
+                foreach ($imageFiles as $img) {
+                    $path = public_path('images/variant/' . $img);
+
+                    if (file_exists($path)) {
+                        unlink($path);
+                    }
+                }
+            return back()->with('error', $e->getMessage());
+        }
+    }
+
+    public function variantEdit($id)
+    {
+        $category = ProductCategory::get();
+        $data = Product::withTrashed()->findOrFail($id);
+        $brand = Brand::get();
+        $product=Product::where('parent_id',0)
+        ->where('category_id',$data->category_id)
+        ->get();
+        
+       $variationType = Variation::where('parent_id', 0)->get();
+
+       $variationValue = Variation::where('parent_id', '!=', 0)->get();
+        return view('admin.product.variant.edit', compact('data', 'category', 'brand','variationType','variationValue','product'));
+    }
+   
     
+    public function variantUpdate(Request $request, $id)
+    {
+        $request->merge(['slug' => Str::slug($request->name)]);
+        
+        $request->validate([
+            'parent_product_id' => 'required|exists:products,id',
+            'category_id' => 'required|integer|exists:categories,id',
+            'brand_id' => 'required|integer|exists:brands,id',
+            'name' => 'required|string|max:255',
+            'sku' => 'required|string|max:100',
+            'price' => 'required|numeric',
+            'disc_price' => 'required|numeric',
+            'stock_quantity' => 'required|integer',
+            'slug' => 'required|string|min:3|max:255|unique:products,slug,'.$id,
+            'content' => 'required|string',
+            'images' => 'nullable|array|min:1',     
+            'images.*' => 'required|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
+            'additional_name.*' => 'nullable|string',
+            'charge.*' => 'nullable|numeric',
+            'variation_type' => 'required|array|min:1',
+            'variation_type.*' => 'required|exists:variations,id',
+            'variation_value' => 'required|array|min:1',
+            'variation_value.*' => 'required|exists:variations,id',
+        ]);
+
+
+         DB::beginTransaction();
+          
+         try{
+          $charges = [];
+        $additionalNames = $request->additional_name;
+        $chargeAmounts = $request->charge;
+
+        foreach ($additionalNames as $index => $name) {
+            $amount = $chargeAmounts[$index] ?? null;
+            if ($name && $amount !== null) {
+                $charges[] = [
+                    'name' => $name,
+                    'charge' => (float) $amount,
+                ];
+            }
+        }
+
+        $product = Product::withTrashed()->findOrFail($id);
+        $product->category_id = $request->category_id;
+        $product->brand_id = $request->brand_id;
+        $product->name = $request->name;
+        $product->sku = $request->sku;
+        $product->price = $request->price;
+        $product->disc_price = $request->disc_price;
+        $product->stock_quantity = $request->stock_quantity;
+        $product->slug = $request->slug;
+        $product->specifications = $request->content;
+        $product->charge_details = $charges;
+        $product->parent_id = $request->parent_product_id;
+
+
+        if ($request->hasFile('images')) {
+            if ($product->image && is_array($product->image)) {
+                foreach ($product->image as $oldImage) {
+                    if (file_exists(public_path('images/variant/'.$oldImage))) {
+                        unlink(public_path('images/variant/'.$oldImage));
+                    }
+                }
+            }
+
+            $imageFiles = [];
+            foreach ($request->file('images') as $file) {
+                $fileName = 'variant_' . time() . '.' . $file->getClientOriginalExtension();
+                $file->move(public_path('images/variant'), $fileName);
+                $imageFiles[] = $fileName;
+            }
+
+            $product->image = $imageFiles;
+        }
+
+        $product->save();
+
+        ProductVariation::where('product_id', $product->id)->delete();
+
+                $variationTypes = $request->variation_type;
+                $variationValues = $request->variation_value; 
+                foreach ($variationTypes as $index => $typeId) {
+                    $valueId = $variationValues[$index] ?? null;
+                    if ($valueId) {
+                        ProductVariation::create([
+                            'product_id' => $product->id,
+                            'variation_type_id' => $typeId,
+                            'variation_value_id' => $valueId,
+                        ]);
+                    }
+                }
+
+           DB::commit();
+
+            return redirect()->route('variant')->with('success', 'Product Variant updated successfully.');
+
+            } catch(\Exception $e){
+                DB::rollBack();
+            return redirect()->route('variant')->with('error', 'Update failed' .$e->getMessage());
+        }
+    }
+    
+        public function variationDelete($id)
+    {
+        $data = Product::withTrashed()->findOrFail($id);
+
+        
+        if ($data->trashed()) {
+            $data->restore();
+            $message = ' Product Variant restored successfully!';
+        } else {
+            $data->delete();
+            $message = 'Product Variant deleted successfully!';
+        }
+
+        return redirect()->route('products')->with('success', $message);
+    }
+    public function getProductsByCategory(Request $request)
+    {
+        $category = ProductCategory::findOrFail($request->category_id);
+        $products = Product::where('category_id', $category->id)
+                   ->where('parent_id', 0)
+                   ->get();
+
+        return response()->json(['products' => $products]);
+    }
+
+    public function getProductDetails(Request $request)
+    {
+        $product = Product::with(['brand', 'variations', 'variations.variationType', 'variations.variationValue'])->findOrFail($request->product_id);
+        return response()->json(['product' => $product]);
+    }
+
+  
+   
+
+
     public function brands()
     {
         $data = Brand::withTrashed()->latest()->get();
@@ -455,40 +754,40 @@ class ProductController extends Controller
 
 
 
-public function orderes()
-{
-    $order = Order::with(['user', 'status','paymentStatus'])
-        ->latest()
-        ->get();   
-     
-    return view('admin.order.list', compact('order'));
-}
+        public function orderes()
+        {
+            $order = Order::with(['user', 'status','paymentStatus'])
+                ->latest()
+                ->get();   
+            
+            return view('admin.order.list', compact('order'));
+        }
 
 
 
-public function showInvoice($id)
-{
-    $order = Order::withTrashed()->findOrFail($id);
-    $user  = User::where('id', $order->user_id)->first();
-    $products = json_decode($order->product_details, true) ?? [];
-    $address = json_decode($order->address, true);
+    public function showInvoice($id)
+    {
+        $order = Order::withTrashed()->findOrFail($id);
+        $user  = User::where('id', $order->user_id)->first();
+        $products = json_decode($order->product_details, true) ?? [];
+        $address = json_decode($order->address, true);
 
-    $subTotal = 0;
-    foreach ($products as $product) {
-        $subTotal += $product['price'] * $product['quantity'];
+        $subTotal = 0;
+        foreach ($products as $product) {
+            $subTotal += $product['price'] * $product['quantity'];
+        }
+
+
+        return view('admin.order.invoice', [
+            'order'       => $order,
+            'user'        => $user,
+            'products'    => $products,
+            'subTotal'    => $subTotal,
+            'address'     => $address,
+        ]);
     }
 
-
-    return view('admin.order.invoice', [
-        'order'       => $order,
-        'user'        => $user,
-        'products'    => $products,
-        'subTotal'    => $subTotal,
-        'address'     => $address,
-    ]);
-}
-
-  public function orderDelete($id)
+    public function orderDelete($id)
     {
         $data = Order::withTrashed()->findOrFail($id);
         
@@ -503,7 +802,8 @@ public function showInvoice($id)
         return redirect()->route('orderes')->with('success', $message);
     }
 
-  public function orderStatusUpdate(Request $request)
+
+    public function orderStatusUpdate(Request $request)
     {
         $request->validate([
             'order_id' => 'required|integer|exists:orders,id',
@@ -589,6 +889,7 @@ public function showInvoice($id)
     //             ]);
     //         }
     // }
+
 
 
     public function variationType()

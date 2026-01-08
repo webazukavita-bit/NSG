@@ -266,7 +266,7 @@
 
                             <div class="form-group col-md-6 mb-3">
                                 <label for="country" class="form-label">country <span class="text-danger">*</span></label>
-                                <select name="country" class="form-select single-select @error('country') is-invalid @enderror" id="country1" onchange="getStates(this.value)">
+                                <select name="country" class="form-select single-select @error('country') is-invalid @enderror" id="country1" onchange="getStates(this.value,'state1')">
                                     <option selected disabled value="">Choose...</option>
                                     @foreach ($countrie as $country)
                                     <option value="{{ $country->id }}" @selected($country->id == old('country', $country_id))>{{ $country->name }}</option>
@@ -468,7 +468,7 @@ function switchTab(tab) {
         allowClear: Boolean($(this).data('allow-clear')),
     });
 
-    function getStates(countryId, selectedStateId = null, stateSelectId = '#state,#state1,#state2') {
+    function getStates(countryId, selectedStateId = null, stateSelectId = '#state') {
             const $stateSelect = $(stateSelectId);
 
             $stateSelect.empty();
@@ -500,7 +500,7 @@ function switchTab(tab) {
                     $stateSelect.trigger('change');
                 }
             });
-        }
+    }
 
 </script>
 @endpush
