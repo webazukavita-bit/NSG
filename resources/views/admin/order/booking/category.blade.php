@@ -49,7 +49,7 @@
     <div class="row g-3 row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5">
         @foreach ($data as $category)
             <div class="col">
-                <a href="{{ route('booking-sub-category',['id' => $category->id]) }}"
+                <a href="{{ route('booking-sub-category',['id'=>$category->id,'slug' => $category->slug]) }}"
                    class="text-decoration-none">
 
                     <div class="card h-100 border-0">

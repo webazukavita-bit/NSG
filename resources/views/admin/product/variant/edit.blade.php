@@ -1,7 +1,7 @@
 @extends('admin.layouts.app')
 
 @section('content')
-@if ($errors->any())
+{{-- @if ($errors->any())
     <div class="alert alert-danger">
         <ul class="mb-0">
             @foreach ($errors->all() as $error)
@@ -9,7 +9,7 @@
             @endforeach
         </ul>
     </div>
-@endif
+@endif --}}
 
     <div class="card border-top border-0 border-4 border-primary">
         <div class="card-body">
@@ -17,10 +17,10 @@
             <div class="card-title d-flex align-items-center justify-content-between">
                 <div class="d-flex align-items-center">
                     <i class="bx bx-file me-1 font-22 text-primary"></i>
-                    <h5 class="mb-0 text-primary">Update Product</h5>
+                    <h5 class="mb-0 text-primary">Update Product Variant</h5>
                 </div>
                 <div>
-                    <a href="{{ route('variant') }}" class="btn btn-primary"><i class="bx bx-list-ol"></i> Product List</a> 
+                    <a href="{{ route('variant') }}" class="btn btn-primary"><i class="bx bx-list-ol"></i> Product Variant List</a> 
                 </div>
             </div>
             <hr>
@@ -49,6 +49,18 @@
                         @endforeach
                     </select>
                     @error('brand_id')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
+                </div>
+                <div class="col-md-3">
+                    <label for="parent_product_id" class="form-label">Product</label>
+                    <select name="parent_product_id" class="single-select @error('parent_product_id') is-invalid @enderror" id="parent_product_id">
+                        <option selected disabled value="">Choose...</option>
+                        @foreach ($product as $cat)
+                        <option value="{{ $cat->id }}" @selected($cat->id == old('parent_product_id', $data->parent_id))>{{ $cat->name }}</option>
+                        @endforeach
+                    </select>
+                    @error('parent_product_id')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>
@@ -98,9 +110,11 @@
 
                 <div class="col-md-3">
                     <label for="image" class="form-label">Old Image</label>
+                    <div style="display: flex; align-items: center; gap: 8px;">
                     @foreach ($data->image as $img)
-                        <img src="{{ asset('images/product/' . $img) }}" onerror="this.onerror=null;this.src='{{ asset('images/missing-image.png') }}';"  class="product-img-2" alt="img" style="margin-right: 8px;"> 
+                        <img src="{{ asset('images/variant/' . $img) }}" onerror="this.onerror=null;this.src='{{ asset('images/missing-image.png') }}';"  class="product-img-2" alt="img" style="margin-right: 8px;"> 
                     @endforeach
+                    </div>
                 </div>
                   
                 <div class="align-items-center">
@@ -109,7 +123,7 @@
 
                 <div class="col-md-12">
                     <div id="variation-wrapper">
-                        @if($data->variations->isNotEmpty())
+                    @if($data->variations->isNotEmpty())
                         @foreach($data->variations as $index => $v)
                         <div class="row variation-row mb-2 align-items-end">
 
@@ -148,21 +162,21 @@
 
                         </div>
                         @endforeach
-                                 @else
-                    {{-- NO VARIATION EXISTS → SHOW EMPTY ROW --}}
-                    <div class="row variation-row mb-2 align-items-end">
+                        @else
+                        {{-- NO VARIATION EXISTS → SHOW EMPTY ROW --}}
+                        <div class="row variation-row mb-2 align-items-end">
 
-                        <div class="col-md-4">
-                            <label class="form-label">Variation Type</label>
-                            <select name="variation_type[]"
-                                    class="form-control variation_type"
-                                    onchange="handleVariationTypeChange(this)">
-                                <option disabled selected>Choose...</option>
-                                @foreach($variationType as $type)
-                                    <option value="{{ $type->id }}">{{ $type->name }}</option>
-                                @endforeach
-                            </select>
-                        </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Variation Type</label>
+                                <select name="variation_type[]"
+                                        class="form-control variation_type"
+                                        onchange="handleVariationTypeChange(this)">
+                                    <option disabled selected>Choose...</option>
+                                    @foreach($variationType as $type)
+                                        <option value="{{ $type->id }}">{{ $type->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
 
                             <div class="col-md-4">
                                 <label class="form-label">Variation Value</label>
@@ -218,22 +232,14 @@
                         <div class="row additional-row mb-2 align-items-end">
 
                             <div class="col-md-4">
-                                <label class="form-label">Name</label>
-                                <input type="text"
-                                    name="additional_name[]"
-                                    class="form-control additional_name"
-                                    value="{{ $cd['name'] }}"
-                                    required>
+                                    <label class="form-label">Name</label>
+                                    <input type="text" name="additional_name[]" class="form-control additional_name"
+                                 value="{{ $cd['name'] }}" required>
                             </div>
 
                             <div class="col-md-4">
                                 <label class="form-label">Charge</label>
-                                <input type="number"
-                                    step=".01"
-                                    name="charge[]"
-                                    class="form-control charge"
-                                    value="{{ $cd['charge'] }}"
-                                    required>
+                                <input type="number" step=".01" name="charge[]" class="form-control charge" value="{{ $cd['charge'] }}" required>
                             </div>
 
                             <div class="col-md-4">
@@ -246,34 +252,34 @@
 
                         </div>
                         @endforeach
-                        
-                            @else
-                                {{-- NO ADDITIONAL CHARGE EXISTS --}}
-                                <div class="row additional-row mb-2 align-items-end">
+                                                
+                        @else
+                            {{-- NO ADDITIONAL CHARGE EXISTS --}}
+                            <div class="row additional-row mb-2 align-items-end">
 
-                                    <div class="col-md-4">
-                                        <label class="form-label">Name</label>
-                                        <input type="text"
-                                            name="additional_name[]"
-                                            class="form-control additional_name"
-                                            placeholder="Name">
-                                    </div>
-
-                                    <div class="col-md-4">
-                                        <label class="form-label">Charge</label>
-                                        <input type="number"
-                                            step=".01"
-                                            name="charge[]"
-                                            class="form-control charge"
-                                            placeholder="Charge">
-                                    </div>
-
-                                    <div class="col-md-4">
-                                        <button type="button" class="btn btn-primary btn-add-additional">+</button>
-                                    </div>
-
+                                <div class="col-md-4">
+                                    <label class="form-label">Name</label>
+                                    <input type="text"
+                                        name="additional_name[]"
+                                        class="form-control additional_name"
+                                        placeholder="Name">
                                 </div>
-                            @endif
+
+                                <div class="col-md-4">
+                                    <label class="form-label">Charge</label>
+                                    <input type="number"
+                                        step=".01"
+                                        name="charge[]"
+                                        class="form-control charge"
+                                        placeholder="Charge">
+                                </div>
+
+                                <div class="col-md-4">
+                                    <button type="button" class="btn btn-primary btn-add-additional">+</button>
+                                </div>
+
+                            </div>
+                        @endif
                     </div>
                 </div>
 
@@ -389,7 +395,7 @@ function handleVariationTypeChange(selectElement) {
     let typeId = $current.val();
     let $currentRow = $current.closest('.variation-row');
 
-    // Check duplicate
+     // Check duplicate
     let isDuplicate = false;
     $('#variation-wrapper .variation-row').not('.template-row').not($currentRow).each(function () {
         let existing = $(this).find('.variation_type').val();
@@ -399,11 +405,11 @@ function handleVariationTypeChange(selectElement) {
         }
     });
 
-    if (isDuplicate) {
+     if (isDuplicate) {
         alert('This variation type is already selected.');
-        $current.val('').trigger('change');
-        return;
-    }
+         $current.val('').trigger('change');
+         return;
+     }
 
         // Load variation values
     let $valueSelect = $current.closest('.variation-row').find('.variation_value');
@@ -493,6 +499,7 @@ $(document).on('click', '.btn-add-additional', function () {
     $('#additional-wrapper').append($clone);
 
     // Reset template
+    // $('.additional-row.template-row').find('input').val('');
         $row.find('.additional_name').val('');
     $row.find('.charge').val('');
 });
