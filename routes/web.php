@@ -46,7 +46,7 @@ Route::get('/blog-details', [HomeController::class, 'blogDetail'])->name('blog-d
 
 Route::middleware(['permission'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-
+    
     Route::prefix('users')->group(function () {
         Route::get('/clients', [AdminController::class, 'clients'])->name('clients');
         Route::get('/client-add', [AdminController::class, 'clientAdd'])->name('client-add');
@@ -64,7 +64,7 @@ Route::middleware(['permission'])->group(function () {
         Route::get('/employee-delete/{id}', [AdminController::class, 'employeeDelete'])->name('employee-delete');
         Route::post('/employee-chnage-password', [AdminController::class, 'employeeChnagePassword'])->name('employee-chnage-password');
     });
-
+    
     Route::prefix('crm')->group(function () {
         Route::match(['get', 'post'], '/leads', [CRMController::class, 'leads'])->name('leads');
         Route::get('/lead-add', [CRMController::class, 'leadAdd'])->name('lead-add');
@@ -79,9 +79,11 @@ Route::middleware(['permission'])->group(function () {
 
         Route::get('/contact-us', [CRMController::class, 'contactUs'])->name('crm-contact-us');
         Route::get('/contact-us-delete/{id}', [CRMController::class, 'contactUsDelete'])->name('crm-contact-us-delete');
-        Route::post('/add-quotation', [CRMController::class, 'storeQuotation'])->name('add-quotation');
-        Route::get('/data-form', [CRMController::class, 'addData'])->name('data-form');
-        Route::post('/data-form', [CRMController::class, 'storeData'])->name('data-store');
+        Route::post('/add-quotation', [CRMController::class,'storeQuotation'])->name('add-quotation');
+        Route::get('/data-form',[CRMController::class,'addData'])->name('data-form');
+        Route::post('/data-form',[CRMController::class,'storeData'])->name('data-store');
+
+
     });
 
     Route::prefix('payment')->group(function () {
@@ -101,6 +103,10 @@ Route::middleware(['permission'])->group(function () {
         Route::get('/withdraw-add', [AdminController::class, 'withdrawAdd'])->name('withdraw-add');
         Route::post('/withdraw-add', [AdminController::class, 'withdrawAddStore'])->name('withdraw-add-store');
         Route::get('/withdraw-request-update/{type}/{id}', [AdminController::class, 'withdrawRequestUpdate'])->name('withdraw-request-update');
+       
+
+          
+
     });
 
     Route::prefix('setting')->group(function () {
@@ -114,9 +120,9 @@ Route::middleware(['permission'])->group(function () {
         Route::get('/whatsapp-template-edit/{id}', [MasterController::class, 'whatsappTemplateEdit'])->name('whatsapp-template-edit');
         Route::post('/whatsapp-template-edit/{id}', [MasterController::class, 'whatsappTemplateUpdate'])->name('whatsapp-template-update');
         Route::get('/whatsapp-template-delete/{id}', [MasterController::class, 'whatsappTemplateDelete'])->name('whatsapp-template-delete');
-
-        Route::match(['get', 'post'], 'acm', [MasterController::class, 'acm'])->name('acm');
-        Route::match(['get', 'post'], 'acm-save', [MasterController::class, 'acmSave'])->name('acm-save');
+   
+        Route::match(['get','post'],'acm',[MasterController::class,'acm'])->name('acm');
+        Route::match(['get','post'],'acm-save',[MasterController::class,'acmSave'])->name('acm-save');
 
         Route::get('/static-content', [MasterController::class, 'staticContent'])->name('static-content');
         Route::get('/static-content/{id}', [MasterController::class, 'staticContentEdit'])->name('static-content-edit');
@@ -169,21 +175,21 @@ Route::middleware(['permission'])->group(function () {
         Route::get('/country-edit/{id}', [MasterController::class, 'countryEdit'])->name('country-edit');
         Route::post('/country-edit/{id}', [MasterController::class, 'countryUpdate'])->name('country-update');
         Route::get('/country-delete/{id}', [MasterController::class, 'countryDelete'])->name('country-delete');
-
+        
         Route::match(['get', 'post'], '/states', [MasterController::class, 'states'])->name('states');
         Route::get('/state-add', [MasterController::class, 'stateAdd'])->name('state-add');
         Route::post('/state-add', [MasterController::class, 'stateStore'])->name('state-store');
         Route::get('/state-edit/{id}', [MasterController::class, 'stateEdit'])->name('state-edit');
         Route::post('/state-edit/{id}', [MasterController::class, 'stateUpdate'])->name('state-update');
         Route::get('/state-delete/{id}', [MasterController::class, 'stateDelete'])->name('state-delete');
-
+        
         Route::match(['get', 'post'], '/cities', [MasterController::class, 'cities'])->name('cities');
         Route::get('/city-add', [MasterController::class, 'cityAdd'])->name('city-add');
         Route::post('/city-add', [MasterController::class, 'cityStore'])->name('city-store');
         Route::get('/city-edit/{id}', [MasterController::class, 'cityEdit'])->name('city-edit');
         Route::post('/city-edit/{id}', [MasterController::class, 'cityUpdate'])->name('city-update');
         Route::get('/city-delete/{id}', [MasterController::class, 'cityDelete'])->name('city-delete');
-
+                
         Route::get('/banners', [MasterController::class, 'banners'])->name('banners');
         Route::get('/banner-add', [MasterController::class, 'bannerAdd'])->name('banner-add');
         Route::post('/banner-add', [MasterController::class, 'bannerStore'])->name('banner-store');
@@ -198,6 +204,8 @@ Route::middleware(['permission'])->group(function () {
         Route::get('/client-review-edit/{id}', [MasterController::class, 'reviewEdit'])->name('review-edit');
         Route::post('/client-review-edit/{id}', [MasterController::class, 'reviewUpdate'])->name('review-update');
         Route::get('/client-review-delete/{id}', [MasterController::class, 'reviewDelete'])->name('review-delete');
+
+
     });
 
 
@@ -243,7 +251,7 @@ Route::middleware(['permission'])->group(function () {
         Route::get('/brands-delete/{id}', [ProductController::class, 'brandDelete'])->name('brand-delete');
 
         Route::get('/orderes', [ProductController::class, 'orderes'])->name('orderes');
-        Route::get('/order-add', [ProductController::class, 'orderAdd'])->name('ordere-add');
+        Route::get('/order-add', [ProductController::class, 'orderAdd'])->name('ordere-add'); 
         Route::get('/order-delete/{id}', [ProductController::class, 'orderDelete'])->name('order-delete');
         Route::get('/show-invoice/{id}', [ProductController::class, 'showInvoice'])->name('show-invoice');
         Route::post('/order-status-update', [ProductController::class, 'orderStatusUpdate'])->name('order-status-update');
@@ -264,22 +272,36 @@ Route::middleware(['permission'])->group(function () {
         Route::post('/variation-value-edit/{id}', [ProductController::class, 'variationValueUpdate'])->name('variation-value-update');
         Route::get('/variation-value-delete/{id}', [ProductController::class, 'variationValueDelete'])->name('variation-value-delete');
         Route::get('/get-variation-value/{id}', [ProductController::class, 'getVariationValue'])->name('get-variation-value');
-    });
+
+         
+        Route::match(['get', 'post'], '/variant', [ProductController::class, 'variant'])->name('variant');
+        Route::get('/variant-add', [ProductController::class, 'variantAdd'])->name('variant-add');
+        Route::post('/variant-add', [ProductController::class, 'variantStore'])->name('variant-store');
+        Route::get('/variant-edit/{id}', [ProductController::class, 'variantEdit'])->name('variant-edit');
+        Route::post('/variant-edit/{id}', [ProductController::class, 'variantUpdate'])->name('variant-update');
+        Route::get('/variation-delete/{id}', [ProductController::class, 'variationDelete'])->name('variant-delete');
+        Route::get('category-products', [ProductController::class, 'getProductsByCategory'])->name('category-products');
+
+        Route::get('product-details', [ProductController::class, 'getProductDetails'])->name('product-details');
+
+
+
+});
 
 
     Route::prefix('booking')->group(function () {
-        Route::get('/categories', [OrderController::class, 'categories'])->name('booking-categories');
-        Route::get('/sub-categories/{id}', [OrderController::class, 'subCategories'])->name('booking-sub-category');
-        Route::get('/booking-details/{id}', [OrderController::class, 'bookingDetails'])->name('booking-details');
-    });
+    Route::get('/categories', [OrderController::class, 'categories'])->name('booking-categories');
+    Route::get('/sub-categories/{slug?}/{id}',[OrderController::class,'subCategories'])->name('booking-sub-category');
+    Route::get('/products/{slug}',[OrderController::class,'bookingDetails'])->name('booking-details');
 
-
+});
 
     Route::prefix('logs')->group(function () {
         Route::match(['get', 'post'], '/notifications', [AdminController::class, 'notifications'])->name('user-notifications');
         Route::match(['get', 'post'], '/activity-log', [AdminController::class, 'activityLog'])->name('user-activity-log');
         Route::match(['get', 'post'], '/login-activity', [AdminController::class, 'loginActivity'])->name('user-login-activity');
     });
+
 });
 
 Route::get('/profile', [UserController::class, 'profile'])->name('profile');
@@ -297,4 +319,4 @@ Route::get('/fcm/send', [UserController::class, 'sendNotification']);
 Route::get('/find-user-name', [Controller::class, 'find_user_name'])->name('find-user-name');
 Route::get('/chnage-mode', [Controller::class, 'activateThemeMode'])->name('chnage-mode');
 Route::get('states/{country_id}', [Controller::class, 'getStates'])->name('get-states');
-Route::get('cities/{state_id}', [Controller::class, 'getCities'])->name('get-cities');
+Route::get('cities/{state_id}', [Controller::class, 'getCities'])->name('get-cities');;
