@@ -21,6 +21,8 @@ class Variation extends Model
         'updated_at' => 'datetime',
         'created_at' => 'datetime',
     ];
-     
-    
+    public function type()
+    {
+        return $this->belongsTo(Variation::class, 'parent_id');
+    }
 }

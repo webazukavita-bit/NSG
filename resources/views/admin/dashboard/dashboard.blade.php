@@ -1,44 +1,47 @@
 @extends('admin.layouts.app')
 @section('content')
-{{-- <div class="row row-cols-1 row-cols-md-2 row-cols-xl-4">
+@php
+    $profile = 'images/user-1.svg';
+@endphp
+<div class="row row-cols-1 row-cols-md-2 row-cols-xl-4">
     <div class="col">
-        <div class="card radius-10 border-start border-0 border-3 border-info">
+        <div class="card radius-10 border-start border-0 border-3 bg-gradient-cosmic">
         <div class="card-body">
             <div class="d-flex align-items-center">
                 <div>
-                    <p class="mb-0 text-secondary">Total Orders</p>
-                    <h4 class="my-1 text-info">4805</h4>
-                    <p class="mb-0 font-13">+2.5% from last week</p>
+                    <p class="mb-0 text-white">Total Orders</p>
+                    <h4 class="my-1 text-white">{{ $orderCount }}</h4>
+                    <p class="mb-0 font-13 text-white">{{ $orderLastCount }} from last week</p>
                 </div>
-                <div class="widgets-icons-2 rounded-circle bg-gradient-scooter text-white ms-auto"><i class='bx bxs-cart'></i>
+                <div class="widgets-icons-2 rounded-circle text-white ms-auto bg-gradient-cosmic"><i class='bx bxs-cart'></i>
                 </div>
             </div>
         </div>
         </div>
     </div>
     <div class="col">
-    <div class="card radius-10 border-start border-0 border-3 border-danger">
+    <div class="card radius-10 border-start border-0 border-3 bg-gradient-ibiza">
         <div class="card-body">
             <div class="d-flex align-items-center">
                 <div>
-                    <p class="mb-0 text-secondary">Total Revenue</p>
-                    <h4 class="my-1 text-danger">$84,245</h4>
-                    <p class="mb-0 font-13">+5.4% from last week</p>
+                    <p class="mb-0 text-white">Total Revenue</p>
+                    <h4 class="my-1 text-white">{{config('app.currency_symbol')}}{{number_format($totalRevenue,2)}}</h4>
+                    <p class="mb-0 font-13 text-white">{{config('app.currency_symbol')}}{{number_format($totalRevenueLast,2)}} from last week</p>
                 </div>
-                <div class="widgets-icons-2 rounded-circle bg-gradient-bloody text-white ms-auto"><i class='bx bxs-wallet'></i>
+                <div class="widgets-icons-2 rounded-circle bg-gradient-ibiza text-white ms-auto"><i class='bx bxs-wallet'></i>
                 </div>
             </div>
         </div>
     </div>
     </div>
     <div class="col">
-    <div class="card radius-10 border-start border-0 border-3 border-success">
+    <div class="card radius-10 border-start border-0 border-3 bg-gradient-ohhappiness">
         <div class="card-body">
             <div class="d-flex align-items-center">
                 <div>
-                    <p class="mb-0 text-secondary">Bounce Rate</p>
-                    <h4 class="my-1 text-success">34.6%</h4>
-                    <p class="mb-0 font-13">-4.5% from last week</p>
+                    <p class="mb-0 text-white">Commission</p>
+                    <h4 class="my-1 text-white">{{config('app.currency_symbol')}}{{number_format('0',2)}}</h4>
+                    <p class="mb-0 font-13 text-white">{{config('app.currency_symbol')}}{{number_format('0',2)}} from last week</p>
                 </div>
                 <div class="widgets-icons-2 rounded-circle bg-gradient-ohhappiness text-white ms-auto"><i class='bx bxs-bar-chart-alt-2' ></i>
                 </div>
@@ -47,33 +50,31 @@
     </div>
     </div>
     <div class="col">
-    <div class="card radius-10 border-start border-0 border-3 border-warning">
+    <div class="card radius-10 border-start border-0 border-3 bg-gradient-kyoto">
         <div class="card-body">
             <div class="d-flex align-items-center">
                 <div>
-                    <p class="mb-0 text-secondary">Total Customers</p>
-                    <h4 class="my-1 text-warning">8.4K</h4>
-                    <p class="mb-0 font-13">+8.4% from last week</p>
+                    <p class="mb-0 text-white">Wallet Balance</p>
+                    <h4 class="my-1 text-white">{{config('app.currency_symbol')}}{{number_format($main_balance,2)}}</h4>
+                    <p class="mb-0 font-13 text-white">.</p>
                 </div>
-                <div class="widgets-icons-2 rounded-circle bg-gradient-blooker text-white ms-auto"><i class='bx bxs-group'></i>
+                <div class="widgets-icons-2 rounded-circle bg-gradient-kyoto text-white ms-auto"><i class='bx bxs-group'></i>
                 </div>
             </div>
         </div>
     </div>
     </div> 
-</div><!--end row--> --}}
-{{-- 
+</div><!--end row-->
+
 <div class="row">
-    <div class="col-12 col-lg-8">
+    <div class="col-12 col-lg-3">
         <div class="card radius-10">
             <div class="card-body">
             <div class="d-flex align-items-center">
                 <div>
-                    <h6 class="mb-0">Sales Overview</h6>
+                    <h6 class="mb-0">Fund Requests</h6>
                 </div>
-                <div class="dropdown ms-auto">
-                    <a class="dropdown-toggle dropdown-toggle-nocaret" href="#" data-bs-toggle="dropdown"><i class='bx bx-dots-horizontal-rounded font-22 text-option'></i>
-                    </a>
+       <!--          <div class="dropdown ms-auto">
                     <ul class="dropdown-menu">
                         <li><a class="dropdown-item" href="javascript:;">Action</a>
                         </li>
@@ -85,255 +86,222 @@
                         <li><a class="dropdown-item" href="javascript:;">Something else here</a>
                         </li>
                     </ul>
-                </div>
-            </div>
-            <div class="d-flex align-items-center ms-auto font-13 gap-2 my-3">
-                <span class="border px-1 rounded cursor-pointer"><i class="bx bxs-circle me-1" style="color: #14abef"></i>Sales</span>
-                <span class="border px-1 rounded cursor-pointer"><i class="bx bxs-circle me-1" style="color: #ffc107"></i>Visits</span>
-            </div>
-            <div class="chart-container-1">
-                <canvas id="chart1"></canvas>
-                </div>
-            </div>
-            <div class="row row-cols-1 row-cols-md-3 row-cols-xl-3 g-0 row-group text-center border-top">
-            <div class="col">
-                <div class="p-3">
-                <h5 class="mb-0">24.15M</h5>
-                <small class="mb-0">Overall Visitor <span> <i class="bx bx-up-arrow-alt align-middle"></i> 2.43%</span></small>
-                </div>
-            </div>
-            <div class="col">
-                <div class="p-3">
-                <h5 class="mb-0">12:38</h5>
-                <small class="mb-0">Visitor Duration <span> <i class="bx bx-up-arrow-alt align-middle"></i> 12.65%</span></small>
-                </div>
-            </div>
-            <div class="col">
-                <div class="p-3">
-                <h5 class="mb-0">639.82</h5>
-                <small class="mb-0">Pages/Visit <span> <i class="bx bx-up-arrow-alt align-middle"></i> 5.62%</span></small>
-                </div>
-            </div>
-            </div>
-        </div>
-    </div>
-    <div class="col-12 col-lg-4">
-        <div class="card radius-10">
-            <div class="card-body">
-            <div class="d-flex align-items-center">
-                <div>
-                    <h6 class="mb-0">Trending Products</h6>
-                </div>
-                <div class="dropdown ms-auto">
-                    <a class="dropdown-toggle dropdown-toggle-nocaret" href="#" data-bs-toggle="dropdown"><i class='bx bx-dots-horizontal-rounded font-22 text-option'></i>
-                    </a>
-                    <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="javascript:;">Action</a>
-                        </li>
-                        <li><a class="dropdown-item" href="javascript:;">Another action</a>
-                        </li>
-                        <li>
-                            <hr class="dropdown-divider">
-                        </li>
-                        <li><a class="dropdown-item" href="javascript:;">Something else here</a>
-                        </li>
-                    </ul>
-                </div>
+                </div> -->
             </div>
             <div class="chart-container-2 mt-4">
-                <canvas id="chart2"></canvas>
+                <canvas id="chart-fund-requests"></canvas>
                 </div>
             </div>
             <ul class="list-group list-group-flush">
-            <li class="list-group-item d-flex bg-transparent justify-content-between align-items-center">Jeans <span class="badge bg-success rounded-pill">25</span>
+            <li class="list-group-item d-flex bg-transparent justify-content-between align-items-center">Pending <span class="badge bg-warning rounded-pill">{{$fundRequestCount->Pending??0}}</span>
             </li>
-            <li class="list-group-item d-flex bg-transparent justify-content-between align-items-center">T-Shirts <span class="badge bg-danger rounded-pill">10</span>
+            <li class="list-group-item d-flex bg-transparent justify-content-between align-items-center">Approved <span class="badge bg-success rounded-pill">{{$fundRequestCount->Approved??0}}</span>
             </li>
-            <li class="list-group-item d-flex bg-transparent justify-content-between align-items-center">Shoes <span class="badge bg-primary rounded-pill">65</span>
+            <li class="list-group-item d-flex bg-transparent justify-content-between align-items-center">Rejected <span class="badge bg-danger rounded-pill">{{$fundRequestCount->Rejected??0}}</span>
             </li>
-            <li class="list-group-item d-flex bg-transparent justify-content-between align-items-center">Lingerie <span class="badge bg-warning text-dark rounded-pill">14</span>
+            <li class="list-group-item d-flex bg-transparent justify-content-between align-items-center">. <span class="badge bg-warning text-dark rounded-pill"></span>
+            </li>
+        </ul>
+        </div>
+    </div>
+    @if(auth()->user()->role_id == 1)
+    <div class="col-12 col-lg-3">
+        <div class="card radius-10">
+            <div class="card-body">
+            <div class="d-flex align-items-center">
+                <div>
+                    <h6 class="mb-0">Teams</h6>
+                </div>
+              <!--   <div class="dropdown ms-auto">
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="javascript:;">Action</a>
+                        </li>
+                        <li><a class="dropdown-item" href="javascript:;">Another action</a>
+                        </li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+                        <li><a class="dropdown-item" href="javascript:;">Something else here</a>
+                        </li>
+                    </ul>
+                </div> -->
+            </div>
+            <div class="chart-container-2 mt-4">
+                <canvas id="chart-teams"></canvas>
+                </div>
+            </div>
+            <ul class="list-group list-group-flush">
+            <li class="list-group-item d-flex bg-transparent justify-content-between align-items-center">Sales <span class="badge bg-success rounded-pill">{{$userCount->Sales}}</span>
+            </li>
+            <li class="list-group-item d-flex bg-transparent justify-content-between align-items-center">Support <span class="badge bg-danger rounded-pill">{{$userCount->Support}}</span>
+            </li>
+            <li class="list-group-item d-flex bg-transparent justify-content-between align-items-center">Associate <span class="badge bg-info rounded-pill">{{$userCount->Associate}}</span>
+            </li>
+            <li class="list-group-item d-flex bg-transparent justify-content-between align-items-center">. <span class="badge bg-warning text-dark rounded-pill"></span>
+            </li>
+        </ul>
+        </div>
+    </div>
+    @endif
+    <div class="col-12 col-lg-3">
+        <div class="card radius-10">
+            <div class="card-body">
+            <div class="d-flex align-items-center">
+                <div>
+                    <h6 class="mb-0">CRM</h6>
+                </div>
+                <div class="dropdown ms-auto">
+   <!--                  <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="javascript:;">Action</a>
+                        </li>
+                        <li><a class="dropdown-item" href="javascript:;">Another action</a>
+                        </li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+                        <li><a class="dropdown-item" href="javascript:;">Something else here</a>
+                        </li>
+                    </ul> -->
+                </div>
+            </div>
+            <div class="chart-container-2 mt-4">
+                <canvas id="chart-crm"></canvas>
+                </div>
+            </div>
+
+            <ul class="list-group list-group-flush">
+            <li class="list-group-item d-flex bg-transparent justify-content-between align-items-center">Pending <span class="badge bg-warning rounded-pill">{{$leadCount->Pending}}</span>
+            </li>
+            <li class="list-group-item d-flex bg-transparent justify-content-between align-items-center">Prospecting <span class="badge bg-info rounded-pill">{{$leadCount->Prospecting}}</span>
+            </li>
+            <li class="list-group-item d-flex bg-transparent justify-content-between align-items-center">Converted <span class="badge bg-primary rounded-pill">{{$leadCount->Converted}}</span>
+            </li>
+            <li class="list-group-item d-flex bg-transparent justify-content-between align-items-center">Closed <span class="badge bg-warning text-dark rounded-pill">{{$leadCount->Closed}}</span>
+            </li>
+        </ul>
+        </div>
+    </div>
+    <div class="col-12 col-lg-3">
+        <div class="card radius-10">
+            <div class="card-body">
+            <div class="d-flex align-items-center">
+                <div>
+                    <h6 class="mb-0">Orderes</h6>
+                </div>
+                <div class="dropdown ms-auto">
+            <!--         <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="javascript:;">Action</a>
+                        </li>
+                        <li><a class="dropdown-item" href="javascript:;">Another action</a>
+                        </li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+                        <li><a class="dropdown-item" href="javascript:;">Something else here</a>
+                        </li>
+                    </ul> -->
+                </div>
+            </div>
+            <div class="chart-container-2 mt-4">
+                <canvas id="chart-orderes"></canvas>
+                </div>
+            </div>
+            <ul class="list-group list-group-flush">
+            <li class="list-group-item d-flex bg-transparent justify-content-between align-items-center">Pending <span class="badge bg-danger rounded-pill">{{$orderStatusCount->Pending??0}}</span>
+            </li> 
+            <li class="list-group-item d-flex bg-transparent justify-content-between align-items-center">Confirm <span class="badge bg-warning rounded-pill">{{$orderStatusCount->Confirm??0}}</span>
+            </li>
+            <li class="list-group-item d-flex bg-transparent justify-content-between align-items-center">Processing <span class="badge bg-info rounded-pill">{{($orderStatusCount->VisitVerification??0)+($orderStatusCount->Documentation??0)+($orderStatusCount->PartsDelivered??0)+($orderStatusCount->Installation??0)+($orderStatusCount->Netmeeting??0)}}</span>
+            </li>
+            <li class="list-group-item d-flex bg-transparent justify-content-between align-items-center">Completed <span class="badge bg-success rounded-pill">{{$orderStatusCount->Completed??0}}</span>
             </li>
         </ul>
         </div>
     </div>
 </div><!--end row-->
 
-    <div class="card radius-10">
-        <div class="card-body">
-            <div class="d-flex align-items-center">
-                <div>
-                    <h6 class="mb-0">Recent Orders</h6>
-                </div>
-            </div>
-            <div class="table-responsive">
-                <table class="table align-middle mb-0">
-                    <thead class="table-light">
-                        <tr>
-                        <th>Product</th>
-                        <th>Photo</th>
-                        <th>Product ID</th>
-                        <th>Status</th>
-                        <th>Amount</th>
-                        <th>Date</th>
-                        <th>Shipping</th>
-                        </tr>
-                        </thead>
-                        <tbody><tr>
-                        <td>Iphone 5</td>
-                        <td><img src="{{ asset('admin/assets/images/products/01.png') }}" class="product-img-2" alt="product img"></td>
-                        <td>#9405822</td>
-                        <td><span class="badge bg-gradient-quepal text-white shadow-sm w-100">Paid</span></td>
-                        <td>$1250.00</td>
-                        <td>03 Feb 2020</td>
-                        <td><div class="progress" style="height: 6px;">
-                            <div class="progress-bar bg-gradient-quepal" role="progressbar" style="width: 100%"></div>
-                            </div></td>
-                        </tr>
-
-                        <tr>
-                        <td>Earphone GL</td>
-                        <td><img src="{{ asset('admin/assets/images/products/02.png') }}" class="product-img-2" alt="product img"></td>
-                        <td>#8304620</td>
-                        <td><span class="badge bg-gradient-blooker text-white shadow-sm w-100">Pending</span></td>
-                        <td>$1500.00</td>
-                        <td>05 Feb 2020</td>
-                        <td><div class="progress" style="height: 6px;">
-                            <div class="progress-bar bg-gradient-blooker" role="progressbar" style="width: 60%"></div>
-                            </div></td>
-                        </tr>
-
-                        <tr>
-                        <td>HD Hand Camera</td>
-                        <td><img src="{{ asset('admin/assets/images/products/03.png') }}" class="product-img-2" alt="product img"></td>
-                        <td>#4736890</td>
-                        <td><span class="badge bg-gradient-bloody text-white shadow-sm w-100">Failed</span></td>
-                        <td>$1400.00</td>
-                        <td>06 Feb 2020</td>
-                        <td><div class="progress" style="height: 6px;">
-                            <div class="progress-bar bg-gradient-bloody" role="progressbar" style="width: 70%"></div>
-                            </div></td>
-                        </tr>
-
-                        <tr>
-                        <td>Clasic Shoes</td>
-                        <td><img src="{{ asset('admin/assets/images/products/04.png') }}" class="product-img-2" alt="product img"></td>
-                        <td>#8543765</td>
-                        <td><span class="badge bg-gradient-quepal text-white shadow-sm w-100">Paid</span></td>
-                        <td>$1200.00</td>
-                        <td>14 Feb 2020</td>
-                        <td><div class="progress" style="height: 6px;">
-                            <div class="progress-bar bg-gradient-quepal" role="progressbar" style="width: 100%"></div>
-                            </div></td>
-                        </tr>
-                        <tr>
-                        <td>Sitting Chair</td>
-                        <td><img src="{{ asset('admin/assets/images/products/06.png') }}" class="product-img-2" alt="product img"></td>
-                        <td>#9629240</td>
-                        <td><span class="badge bg-gradient-blooker text-white shadow-sm w-100">Pending</span></td>
-                        <td>$1500.00</td>
-                        <td>18 Feb 2020</td>
-                        <td><div class="progress" style="height: 6px;">
-                            <div class="progress-bar bg-gradient-blooker" role="progressbar" style="width: 60%"></div>
-                            </div></td>
-                        </tr>
-                        <tr>
-                        <td>Hand Watch</td>
-                        <td><img src="{{ asset('admin/assets/images/products/05.png') }}" class="product-img-2" alt="product img"></td>
-                        <td>#8506790</td>
-                        <td><span class="badge bg-gradient-bloody text-white shadow-sm w-100">Failed</span></td>
-                        <td>$1800.00</td>
-                        <td>21 Feb 2020</td>
-                        <td><div class="progress" style="height: 6px;">
-                            <div class="progress-bar bg-gradient-bloody" role="progressbar" style="width: 40%"></div>
-                            </div></td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-
 
 <div class="row">
-    <div class="col-12 col-lg-7 col-xl-8 d-flex">
+    <!-- <div class="col-12 col-lg-7 col-xl-8 d-flex"> -->
+    <div class="col-12 d-flex">
         <div class="card radius-10 w-100">
         <div class="card-header bg-transparent">
             <div class="d-flex align-items-center">
                 <div>
                     <h6 class="mb-0">Recent Orders</h6>
                 </div>
-                <div class="dropdown ms-auto">
-                    <a class="dropdown-toggle dropdown-toggle-nocaret" href="#" data-bs-toggle="dropdown"><i class='bx bx-dots-horizontal-rounded font-22 text-option'></i>
-                    </a>
-                    <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="javascript:;">Action</a>
-                        </li>
-                        <li><a class="dropdown-item" href="javascript:;">Another action</a>
-                        </li>
-                        <li>
-                            <hr class="dropdown-divider">
-                        </li>
-                        <li><a class="dropdown-item" href="javascript:;">Something else here</a>
-                        </li>
-                    </ul>
-                </div>
             </div>
             </div>
             <div class="card-body">
-            <div class="row">
-                <div class="col-lg-7 col-xl-8 border-end">
-                    <div id="geographic-map-2"></div>
-                </div>
-                <div class="col-lg-5 col-xl-4">
-                
-                <div class="mb-4">
-                <p class="mb-2"><i class="flag-icon flag-icon-us me-1"></i> USA <span class="float-end">70%</span></p>
-                <div class="progress" style="height: 7px;">
-                        <div class="progress-bar bg-primary progress-bar-striped" role="progressbar" style="width: 70%"></div>
-                    </div>
-                </div>
+                <div class="table-responsive">
+                    <table class="table align-middle mb-0">
+                        <thead class="table-light">
+                            <tr>
+                            <th>SKU ID</th>
+                            <th>User</th>
+                            <th>Status</th>
+                            <th>Payment</th>
+                            <th>Final Amount</th>
+                            <th>Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($orders as $order)
+                            <tr>
+                                <td>#{{ $order->code }}</td>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <img src="{{ asset('images/profile/' .($order->user->image ?? '') ) }}" onerror="this.onerror=null;this.src='{{ asset($profile) }}';" class="product-img-2" alt="product img" style="margin-right: 8px;"> 
+                                        <span>{{ $order->user->name??'' }}<p class="m-0"><small>{{ $order->user->code??'' }}</small></p></span>
+                                    </div>
+                                </td>
+                                <td>
+                                    @php
+                                        $hex = ltrim($order->status->color, '#');
 
-                <div class="mb-4">
-                    <p class="mb-2"><i class="flag-icon flag-icon-ca me-1"></i> Canada <span class="float-end">65%</span></p>
-                    <div class="progress" style="height: 7px;">
-                        <div class="progress-bar bg-danger progress-bar-striped" role="progressbar" style="width: 65%"></div>
-                    </div>
-                </div>
+                                        [$r, $g, $b] = [
+                                            hexdec(substr($hex, 0, 2)),
+                                            hexdec(substr($hex, 2, 2)),
+                                            hexdec(substr($hex, 4, 2)),
+                                        ];
+                                    @endphp
 
-                <div class="mb-4">
-                    <p class="mb-2"><i class="flag-icon flag-icon-gb me-1"></i> England <span class="float-end">60%</span></p>
-                    <div class="progress" style="height: 7px;">
-                        <div class="progress-bar bg-success progress-bar-striped" role="progressbar" style="width: 60%"></div>
-                    </div>
-                </div>
+                                    <div class="badge rounded-pill p-2 text-uppercase px-3"
+                                        style="color: {{ $order->status->color }};
+                                                background-color: rgba({{ $r }}, {{ $g }}, {{ $b }}, 0.18);">
+                                        <i class="bx bxs-circle align-middle me-1"></i>
+                                        {{ $order->status->name ?? '' }}
+                                    </div>
+                                </td>
+                                <td>
+                                    @php
+                                        $hex = ltrim($order->payment->color, '#');
 
-                <div class="mb-4">
-                    <p class="mb-2"><i class="flag-icon flag-icon-au me-1"></i> Australia <span class="float-end">55%</span></p>
-                    <div class="progress" style="height: 7px;">
-                        <div class="progress-bar bg-warning progress-bar-striped" role="progressbar" style="width: 55%"></div>
-                    </div>
-                </div>
+                                        [$r, $g, $b] = [
+                                            hexdec(substr($hex, 0, 2)),
+                                            hexdec(substr($hex, 2, 2)),
+                                            hexdec(substr($hex, 4, 2)),
+                                        ];
+                                    @endphp
 
-                <div class="mb-4">
-                    <p class="mb-2"><i class="flag-icon flag-icon-in me-1"></i> India <span class="float-end">50%</span></p>
-                    <div class="progress" style="height: 7px;">
-                        <div class="progress-bar bg-info progress-bar-striped" role="progressbar" style="width: 50%"></div>
-                    </div>
+                                    <div class="badge rounded-pill p-2 text-uppercase px-3"
+                                        style="color: {{ $order->payment->color }};
+                                                background-color: rgba({{ $r }}, {{ $g }}, {{ $b }}, 0.18);">
+                                        <i class="bx bxs-circle align-middle me-1"></i>
+                                        {{ $order->payment->name ?? '' }}
+                                    </div>
+                                </td>
+                                <td>{{ config('app.currency_symbol')}} {{ number_format($order->final_amount_with_tax) }}</td>
+                                <td>{{ $order->created_at }}</td>
+                            </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
                 </div>
-
-                <div class="mb-0">
-                    <p class="mb-2"><i class="flag-icon flag-icon-cn me-1"></i> China <span class="float-end">45%</span></p>
-                    <div class="progress" style="height: 7px;">
-                        <div class="progress-bar bg-dark progress-bar-striped" role="progressbar" style="width: 45%"></div>
-                        </div>
-                </div>
-
-                </div>
-            </div>
             </div>
         </div>
     </div>
-    <div class="col-12 col-lg-5 col-xl-4 d-flex">
+<!--     <div class="col-12 col-lg-5 col-xl-4 d-flex">
         <div class="card w-100 radius-10">
             <div class="card-body">
             <div class="card radius-10 border shadow-none">
@@ -379,114 +347,70 @@
 
         </div>
 
-    </div>
+    </div> -->
 </div><!--end row-->
-
-<div class="row row-cols-1 row-cols-lg-3">
-        <div class="col d-flex">
-        <div class="card radius-10 w-100">
-            <div class="card-body">
-            <p class="font-weight-bold mb-1 text-secondary">Weekly Revenue</p>
-            <div class="d-flex align-items-center mb-4">
-                <div>
-                    <h4 class="mb-0">$89,540</h4>
-                </div>
-                <div class="">
-                    <p class="mb-0 align-self-center font-weight-bold text-success ms-2">4.4% <i class="bx bxs-up-arrow-alt mr-2"></i>
-                    </p>
-                </div>
-            </div>
-            <div class="chart-container-0">
-                <canvas id="chart3"></canvas>
-                </div>
-            </div>
-        </div>
-        </div>
-        <div class="col d-flex">
-        <div class="card radius-10 w-100">
-            <div class="card-header bg-transparent">
-                <div class="d-flex align-items-center">
-                    <div>
-                        <h6 class="mb-0">Orders Summary</h6>
-                    </div>
-                    <div class="dropdown ms-auto">
-                        <a class="dropdown-toggle dropdown-toggle-nocaret" href="#" data-bs-toggle="dropdown"><i class='bx bx-dots-horizontal-rounded font-22 text-option'></i>
-                        </a>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="javascript:;">Action</a>
-                            </li>
-                            <li><a class="dropdown-item" href="javascript:;">Another action</a>
-                            </li>
-                            <li>
-                                <hr class="dropdown-divider">
-                            </li>
-                            <li><a class="dropdown-item" href="javascript:;">Something else here</a>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-            <div class="card-body">
-                <div class="chart-container-1">
-                    <canvas id="chart4"></canvas>
-                    </div>
-            </div>
-            <ul class="list-group list-group-flush">
-                <li class="list-group-item d-flex bg-transparent justify-content-between align-items-center">Completed <span class="badge bg-gradient-quepal rounded-pill">25</span>
-                </li>
-                <li class="list-group-item d-flex bg-transparent justify-content-between align-items-center">Pending <span class="badge bg-gradient-ibiza rounded-pill">10</span>
-                </li>
-                <li class="list-group-item d-flex bg-transparent justify-content-between align-items-center">Process <span class="badge bg-gradient-deepblue rounded-pill">65</span>
-                </li>
-            </ul>
-        </div>
-        </div>
-        <div class="col d-flex">
-        <div class="card radius-10 w-100">
-                <div class="card-header bg-transparent">
-                <div class="d-flex align-items-center">
-                    <div>
-                        <h6 class="mb-0">Top Selling Categories</h6>
-                    </div>
-                    <div class="dropdown ms-auto">
-                        <a class="dropdown-toggle dropdown-toggle-nocaret" href="#" data-bs-toggle="dropdown"><i class='bx bx-dots-horizontal-rounded font-22 text-option'></i>
-                        </a>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="javascript:;">Action</a>
-                            </li>
-                            <li><a class="dropdown-item" href="javascript:;">Another action</a>
-                            </li>
-                            <li>
-                                <hr class="dropdown-divider">
-                            </li>
-                            <li><a class="dropdown-item" href="javascript:;">Something else here</a>
-                            </li>
-                        </ul>
-                    </div>
-                    </div>
-                </div>
-            <div class="card-body">
-                <div class="chart-container-0">
-                    <canvas id="chart5"></canvas>
-                </div>
-            </div>
-            <div class="row row-group border-top g-0">
-                <div class="col">
-                    <div class="p-3 text-center">
-                        <h4 class="mb-0 text-danger">$45,216</h4>
-                        <p class="mb-0">Clothing</p>
-                    </div>
-                </div>
-                <div class="col">
-                    <div class="p-3 text-center">
-                        <h4 class="mb-0 text-success">$68,154</h4>
-                        <p class="mb-0">Electronic</p>
-                    </div>
-                    </div>
-            </div><!--end row-->
-        </div>
-        </div>
-</div><!--end row--> --}}
 @endsection
 @push('scripts')
+<script>
+    
+function createDoughnutChart(canvasId, labels, data) {
+    var ctx = document.getElementById(canvasId).getContext("2d");
+
+    // Gradients
+    var gradient1 = ctx.createLinearGradient(0, 0, 0, 300);
+    gradient1.addColorStop(0, '#fc4a1a');
+    gradient1.addColorStop(1, '#f7b733');
+
+    var gradient2 = ctx.createLinearGradient(0, 0, 0, 300);
+    gradient2.addColorStop(0, '#4776e6');
+    gradient2.addColorStop(1, '#8e54e9');
+
+    var gradient3 = ctx.createLinearGradient(0, 0, 0, 300);
+    gradient3.addColorStop(0, '#ee0979');
+    gradient3.addColorStop(1, '#ff6a00');
+
+    var gradient4 = ctx.createLinearGradient(0, 0, 0, 300);
+    gradient4.addColorStop(0, '#42e695');
+    gradient4.addColorStop(1, '#3bb2b8');
+
+    var gradients = [gradient1, gradient2, gradient3, gradient4];
+
+    new Chart(ctx, {
+        type: "doughnut",
+        data: {
+            labels: labels,
+            datasets: [{
+                backgroundColor: gradients,
+                hoverBackgroundColor: gradients,
+                borderWidth: 1,
+                data: data
+            }]
+        },
+        options: {
+            maintainAspectRatio: false,
+            cutoutPercentage: 75,
+            legend: {
+                display: false
+            },
+            tooltips: {
+                displayColors: false
+            }
+        }
+    });
+}
+
+createDoughnutChart("chart-fund-requests", ["Pending", "Approved", "Rejected"], ['{{$fundRequestCount->Pending??0}}', '{{$fundRequestCount->Approved??0}}', '{{$fundRequestCount->Rejected??0}}']);
+
+createDoughnutChart("chart-teams", ["Sales", "Support", "Associate"], ['{{$userCount->Sales}}', '{{$userCount->Support}}', '{{$userCount->Associate}}']);
+
+createDoughnutChart("chart-crm", ["Pending", "Prospecting", "Converted", "Closed"], ['{{$leadCount->Pending??0}}', '{{$leadCount->Prospecting??0}}', '{{$leadCount->Converted??0}}', '{{$leadCount->Closed??0}}']);
+
+
+
+createDoughnutChart("chart-orderes", ["Pending", "Confirm", "Processing", "Completed"], ['{{$orderStatusCount->Pending??0}}', '{{$orderStatusCount->Confirm??0}}', '{{($orderStatusCount->VisitVerification??0)+($orderStatusCount->Documentation??0)+($orderStatusCount->PartsDelivered??0)+($orderStatusCount->Installation??0)+($orderStatusCount->Netmeeting??0)}}', '{{$orderStatusCount->Completed??0}}']);
+
+      
+
+	  
+</script>
 @endpush

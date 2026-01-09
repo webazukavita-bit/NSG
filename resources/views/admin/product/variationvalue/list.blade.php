@@ -20,6 +20,7 @@
 								<thead>
 									<tr>
 										<th>Sn.</th>
+										<th>Type<th>
 										<th>Value</th>
                                         <th>Images</th>
 										<th>Action</th>
@@ -29,6 +30,7 @@
 									@foreach ($data as $key => $value)
 									<tr>
 										<td>{{ $key+1 }}</td>
+										<td>{{$value->type->name}}<td>
 										<td>{{ $value->name }}</td>
                                         <td>
                                             <img src="{{ asset('images/variation/value/' . $value->image) }}" onerror="this.onerror=null;this.src='{{ asset('images/missing-image.png') }}';"  class="product-img-2" alt="img" style="margin-right: 8px;">

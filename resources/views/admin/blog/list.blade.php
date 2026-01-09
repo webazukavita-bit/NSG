@@ -1,7 +1,7 @@
 @extends('admin.layouts.app')
 
 @section('content')
-				<div class="card border-top border-0 border-4 border-primary">
+				{{-- <div class="card border-top border-0 border-4 border-primary">
 					<div class="card-body p-0">
 						<div class="accordion" id="accordionExample">
 							<div class="accordion-item">
@@ -37,7 +37,7 @@
 							</div>
 						</div>
 					</div>
-				</div>
+				</div> --}}
 
 				<div class="card border-top border-0 border-4 border-primary">
 					<div class="card-body">

@@ -11059,3 +11059,21 @@ p.sticky-label {
   font-size: 30px;
   border: 1px solid #fff;
 }
+
+.book-btn {
+  display: inline-block;
+  padding: 10px 22px;
+  background: linear-gradient(135deg, #1234a4, #45318e);
+  color: #fff;
+  border-radius: 10px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  box-shadow: 0 8px 20px rgba(241, 233, 238, 0.3);
+}
+
+.book-btn:hover {
+  background: linear-gradient(135deg, #1234a4, #45318e);
+  color: #fff;
+  transform: translateY(-2px);
+}

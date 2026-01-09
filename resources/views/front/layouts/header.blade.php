@@ -91,7 +91,7 @@
                                     <i class="fal fa-map-marker-alt"></i>
                                 </div>
                                 <div class="offcanvas__contact-text">
-                                    <a target="_blank" href="#">{{ config('app.address') }}</a>
+                                    <a target="_blank" href="#">{{ config('app.contact_us') }}</a>
                                 </div>
                             </li>
                             <li class="d-flex align-items-center">
@@ -145,8 +145,8 @@
                         <a href="https://modinatheme.com/cdn-cgi/l/email-protection#274e49414867425f464a574b420944484a" class="link"><span class="__cf_email__" data-cfemail="cda4a3aba28da8b5aca0bda1a8e3aea2a0">{{ config('app.email_account') }}</span></a>
                     </li>
                     <li>
-                        <i class="fas fa-map-marker-alt"></i>
-                        {{ config('app.address') }}
+                        <i class="fas fa-phone"></i>
+                        {{ config('app.contact_us') }}
                     </li>
                 </ul>
                 <div class="header-top-right">
@@ -214,7 +214,7 @@
                                             <a href="{{url('our-services')}}"> Services </a>
                                         </li>
                                          <li>
-                                            <a href="{{url('shop')}}">Booking</a>
+                                            <a href="{{url('shop')}}">Add Order</a>
                                         </li>
                                         <li>
                                             <a href="{{url('/Articales')}}">
@@ -247,11 +247,11 @@
                             <div class="mt-3">
                                 {{-- <p>{{ Auth::user()->name }}</p></a> --}}
                             @endif
-                            <div class="menu-cart">
+                            {{-- <div class="menu-cart">
                                 <button id="openButton" class="cart-icon">
                                     <i class="far fa-shopping-cart"></i>
                                 </button>
-                            </div>
+                            </div> --}}
                             <div class="header__hamburger d-xl-none my-auto">
                                 <div class="sidebar__toggle">
                                     <img src="{{ asset('front/assets/img/toggle.svg') }}" alt="img">
