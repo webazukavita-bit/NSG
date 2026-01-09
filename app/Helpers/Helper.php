@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Helpers;
 
 
@@ -13,199 +14,191 @@ use App\Models\WhatsappLog;
 use App\Models\ActivityLog;
 use App\Models\Wallet;
 use App\Models\Ledger;
+use App\Models\ProductCategory;
 use App\Models\User;
 
 class Helper
 {
-    
-    public static function getTransId($type='')
-	{
-		if($type == 1)
-		{
-			return date('dmY').time();
-		}
-		else if ($type == 2) 
-		{
-			return config('app.shortname').date('dmy').time();
-		}
-		else if ($type == 3) 
-		{
-			return rand(000,999).date('dmy').time();
-		}
-		else if ($type == 4) 
-		{
-			return Str::random(12);
-		}
-		else
-		{
-			return $type.date('dmy').time();
-		}
-	}
+
+    public static function getTransId($type = '')
+    {
+        if ($type == 1) {
+            return date('dmY') . time();
+        } else if ($type == 2) {
+            return config('app.shortname') . date('dmy') . time();
+        } else if ($type == 3) {
+            return rand(000, 999) . date('dmy') . time();
+        } else if ($type == 4) {
+            return Str::random(12);
+        } else {
+            return $type . date('dmy') . time();
+        }
+    }
 
 
 
-    
-	public static function creadit_ledger($data)
-	{
-		if (count($data) != 10) {
-			return ['status' => 'error', 'message' => 'invalid credentials.'];
-		}
 
-		$userwallet = Wallet::where('user_id', $data['user_id'])->first();
-		if (!$userwallet) {
-			return ['status' => 'error', 'message' => 'invalid credentials.'];
-		}
+    public static function creadit_ledger($data)
+    {
+        if (count($data) != 10) {
+            return ['status' => 'error', 'message' => 'invalid credentials.'];
+        }
 
-		$walletMap = [
-			1 => ['column' => 'main_balance',  'ledger_bal_type' => 'MAIN'],
-			2 => ['column' => 'dmt_balance',   'ledger_bal_type' => 'DMT'],
-			3 => ['column' => 'aeps_balance',  'ledger_bal_type' => 'AEPS'],
-			4 => ['column' => 'digi_balance',  'ledger_bal_type' => 'DIGI'],
-			5 => ['column' => 'vps_balance',   'ledger_bal_type' => 'VPS'],
-			6 => ['column' => 'bonus_balance', 'ledger_bal_type' => 'BONUS'],
-		];
+        $userwallet = Wallet::where('user_id', $data['user_id'])->first();
+        if (!$userwallet) {
+            return ['status' => 'error', 'message' => 'invalid credentials.'];
+        }
 
-		if (!isset($walletMap[$data['wallet_type']])) {
-			return ['status' => 'error', 'message' => 'Invalid Wallet type.'];
-		}
+        $walletMap = [
+            1 => ['column' => 'main_balance',  'ledger_bal_type' => 'MAIN'],
+            2 => ['column' => 'dmt_balance',   'ledger_bal_type' => 'DMT'],
+            3 => ['column' => 'aeps_balance',  'ledger_bal_type' => 'AEPS'],
+            4 => ['column' => 'digi_balance',  'ledger_bal_type' => 'DIGI'],
+            5 => ['column' => 'vps_balance',   'ledger_bal_type' => 'VPS'],
+            6 => ['column' => 'bonus_balance', 'ledger_bal_type' => 'BONUS'],
+        ];
 
-		$walletKey = $walletMap[$data['wallet_type']]['column'];
-		$ledgerType = $walletMap[$data['wallet_type']]['ledger_bal_type'];
+        if (!isset($walletMap[$data['wallet_type']])) {
+            return ['status' => 'error', 'message' => 'Invalid Wallet type.'];
+        }
 
-		$wallet_bal = (float) $userwallet->{$walletKey};
+        $walletKey = $walletMap[$data['wallet_type']]['column'];
+        $ledgerType = $walletMap[$data['wallet_type']]['ledger_bal_type'];
 
-		$ledgerBalance = Ledger::where('user_id', $data['user_id'])
-			->where('bal_type', $ledgerType)
-			->sum(DB::raw('cramount - dramount'));
+        $wallet_bal = (float) $userwallet->{$walletKey};
 
-		if ((float)$wallet_bal !== (float)$ledgerBalance) {
-			return ['status' => 'error', 'message' => 'Wallet balance is low.'];
-		}
+        $ledgerBalance = Ledger::where('user_id', $data['user_id'])
+            ->where('bal_type', $ledgerType)
+            ->sum(DB::raw('cramount - dramount'));
 
-		$creditAmount = abs((float)$data['amount']);
-		$current_bal = $wallet_bal + $creditAmount;
+        if ((float)$wallet_bal !== (float)$ledgerBalance) {
+            return ['status' => 'error', 'message' => 'Wallet balance is low.'];
+        }
 
-		if ($current_bal < 0) {
-			return ['status' => 'error', 'message' => 'negative balance not accepted.'];
-		}
+        $creditAmount = abs((float)$data['amount']);
+        $current_bal = $wallet_bal + $creditAmount;
 
-
-		$ledgerData = [
-			"user_id"      => $data['user_id'],
-			"trans_id"     => $data['trans_id'],
-			"refrence_id"  => $data['refrence_id'],
-			"old_bal"      => $wallet_bal,
-			"current_bal"  => $current_bal,
-			"cramount"     => $creditAmount,
-			"dramount"     => 0.00,
-			"cgst"         => (float)$data['cgst'],
-			"sgst"         => (float)$data['sgst'],
-			"ledger_type"  => $data['ledger_type'],
-			"bal_type"     => $ledgerType,
-			"trans_from"   => $data['trans_from'],
-			"description"  => $data['description']
-		];
-
-		$insertId = Ledger::insertGetId($ledgerData);
-
-		if (!$insertId) {
-			return ['status' => 'error', 'message' => 'Unable to update ledger.'];
-		}
-
-		Wallet::where('user_id', $data['user_id'])->update([
-			$walletKey => $current_bal
-		]);
-
-		return [
-			'status' => 'success',
-			'message' => 'Successfully Txn.',
-			'insertGetId' => $insertId
-		];
-	}
-
-	public static function debit_ledger($data)
-	{
-		if (count($data) != 10) {
-			return ['status' => 'error', 'message' => 'invalid credentials.'];
-		}
-
-		$userwallet = Wallet::where('user_id', $data['user_id'])->first();
-		if (!$userwallet) {
-			return ['status' => 'error', 'message' => 'invalid credentials.'];
-		}
-
-		$walletMap = [
-			1 => ['column' => 'main_balance',  'ledger_bal_type' => 'MAIN'],
-			2 => ['column' => 'dmt_balance',   'ledger_bal_type' => 'DMT'],
-			3 => ['column' => 'aeps_balance',  'ledger_bal_type' => 'AEPS'],
-			4 => ['column' => 'digi_balance',  'ledger_bal_type' => 'DIGI'],
-			5 => ['column' => 'vps_balance',   'ledger_bal_type' => 'VPS'],
-			6 => ['column' => 'bonus_balance', 'ledger_bal_type' => 'BONUS'],
-		];
-
-		if (!isset($walletMap[$data['wallet_type']])) {
-			return ['status' => 'error', 'message' => 'Invalid Wallet type.'];
-		}
-
-		$walletKey = $walletMap[$data['wallet_type']]['column'];
-		$ledgerType = $walletMap[$data['wallet_type']]['ledger_bal_type'];
-
-		$wallet_bal = (float) $userwallet->{$walletKey};
-
-		if ($wallet_bal < 1) {
-			return ['status' => 'error', 'message' => 'Wallet balance is low.'];
-		}
+        if ($current_bal < 0) {
+            return ['status' => 'error', 'message' => 'negative balance not accepted.'];
+        }
 
 
-		$ledgerBalance = Ledger::where('user_id', $data['user_id'])
-			->where('bal_type', $ledgerType)
-			->sum(DB::raw('cramount - dramount'));
+        $ledgerData = [
+            "user_id"      => $data['user_id'],
+            "trans_id"     => $data['trans_id'],
+            "refrence_id"  => $data['refrence_id'],
+            "old_bal"      => $wallet_bal,
+            "current_bal"  => $current_bal,
+            "cramount"     => $creditAmount,
+            "dramount"     => 0.00,
+            "cgst"         => (float)$data['cgst'],
+            "sgst"         => (float)$data['sgst'],
+            "ledger_type"  => $data['ledger_type'],
+            "bal_type"     => $ledgerType,
+            "trans_from"   => $data['trans_from'],
+            "description"  => $data['description']
+        ];
+
+        $insertId = Ledger::insertGetId($ledgerData);
+
+        if (!$insertId) {
+            return ['status' => 'error', 'message' => 'Unable to update ledger.'];
+        }
+
+        Wallet::where('user_id', $data['user_id'])->update([
+            $walletKey => $current_bal
+        ]);
+
+        return [
+            'status' => 'success',
+            'message' => 'Successfully Txn.',
+            'insertGetId' => $insertId
+        ];
+    }
+
+    public static function debit_ledger($data)
+    {
+        if (count($data) != 10) {
+            return ['status' => 'error', 'message' => 'invalid credentials.'];
+        }
+
+        $userwallet = Wallet::where('user_id', $data['user_id'])->first();
+        if (!$userwallet) {
+            return ['status' => 'error', 'message' => 'invalid credentials.'];
+        }
+
+        $walletMap = [
+            1 => ['column' => 'main_balance',  'ledger_bal_type' => 'MAIN'],
+            2 => ['column' => 'dmt_balance',   'ledger_bal_type' => 'DMT'],
+            3 => ['column' => 'aeps_balance',  'ledger_bal_type' => 'AEPS'],
+            4 => ['column' => 'digi_balance',  'ledger_bal_type' => 'DIGI'],
+            5 => ['column' => 'vps_balance',   'ledger_bal_type' => 'VPS'],
+            6 => ['column' => 'bonus_balance', 'ledger_bal_type' => 'BONUS'],
+        ];
+
+        if (!isset($walletMap[$data['wallet_type']])) {
+            return ['status' => 'error', 'message' => 'Invalid Wallet type.'];
+        }
+
+        $walletKey = $walletMap[$data['wallet_type']]['column'];
+        $ledgerType = $walletMap[$data['wallet_type']]['ledger_bal_type'];
+
+        $wallet_bal = (float) $userwallet->{$walletKey};
+
+        if ($wallet_bal < 1) {
+            return ['status' => 'error', 'message' => 'Wallet balance is low.'];
+        }
 
 
-		if ((float)$wallet_bal !== (float)$ledgerBalance) {
-			return ['status' => 'error', 'message' => 'Wallet balance is low.'];
-		}
+        $ledgerBalance = Ledger::where('user_id', $data['user_id'])
+            ->where('bal_type', $ledgerType)
+            ->sum(DB::raw('cramount - dramount'));
 
 
-		$debitAmount = abs((float)$data['amount']);
-		$current_bal = $wallet_bal - $debitAmount;
-
-		if ($current_bal < 0) {
-			return ['status' => 'error', 'message' => 'Insufficient balance.'];
-		}
-
-		$ledgerData = [
-			"user_id"      => $data['user_id'],
-			"trans_id"     => $data['trans_id'],
-			"refrence_id"  => $data['refrence_id'],
-			"old_bal"      => $wallet_bal,
-			"current_bal"  => $current_bal,
-			"cramount"     => 0.00,
-			"dramount"     => $debitAmount,
-			"cgst"         => (float)$data['cgst'],
-			"sgst"         => (float)$data['sgst'],
-			"ledger_type"  => $data['ledger_type'],
-			"bal_type"     => $ledgerType,
-			"trans_from"   => $data['trans_from'],
-			"description"  => $data['description']
-		];
+        if ((float)$wallet_bal !== (float)$ledgerBalance) {
+            return ['status' => 'error', 'message' => 'Wallet balance is low.'];
+        }
 
 
-		$insertId = Ledger::insertGetId($ledgerData);
-		if (!$insertId) {
-			return ['status' => 'error', 'message' => 'Ledger update failed.'];
-		}
+        $debitAmount = abs((float)$data['amount']);
+        $current_bal = $wallet_bal - $debitAmount;
 
-		Wallet::where('user_id', $data['user_id'])->update([
-			$walletKey => $current_bal
-		]);
+        if ($current_bal < 0) {
+            return ['status' => 'error', 'message' => 'Insufficient balance.'];
+        }
 
-		return [
-			'status' => 'success',
-			'message' => 'Successfully Txn.',
-			'insertGetId' => $insertId
-		];
-	}
+        $ledgerData = [
+            "user_id"      => $data['user_id'],
+            "trans_id"     => $data['trans_id'],
+            "refrence_id"  => $data['refrence_id'],
+            "old_bal"      => $wallet_bal,
+            "current_bal"  => $current_bal,
+            "cramount"     => 0.00,
+            "dramount"     => $debitAmount,
+            "cgst"         => (float)$data['cgst'],
+            "sgst"         => (float)$data['sgst'],
+            "ledger_type"  => $data['ledger_type'],
+            "bal_type"     => $ledgerType,
+            "trans_from"   => $data['trans_from'],
+            "description"  => $data['description']
+        ];
+
+
+        $insertId = Ledger::insertGetId($ledgerData);
+        if (!$insertId) {
+            return ['status' => 'error', 'message' => 'Ledger update failed.'];
+        }
+
+        Wallet::where('user_id', $data['user_id'])->update([
+            $walletKey => $current_bal
+        ]);
+
+        return [
+            'status' => 'success',
+            'message' => 'Successfully Txn.',
+            'insertGetId' => $insertId
+        ];
+    }
 
 
 
@@ -218,7 +211,7 @@ class Helper
      *      Optional keys: notification_show, old_data, form_data, reference_id
      */
     public static function logActivity(array $data)
-    {   
+    {
         $user = User::where('id', auth()->user()->id)->first();
 
         ActivityLog::create([
@@ -234,12 +227,12 @@ class Helper
             'notification_show' => $data['show'],
             'deleted_at'    => $user->activity == 'On' ? now() : null
         ]);
-        
-        if($data['show'] == 'Yes'){
+
+        if ($data['show'] == 'Yes') {
             $title   = $data['title'];
             $message = $data['message'];
             $link    = route($data['route_name']);
-            $icon    = 'bx bx-cart-alt'; 
+            $icon    = 'bx bx-cart-alt';
 
             $user->notify(new NewOrderNotification($title, $message, $link, $icon));
         }
@@ -256,8 +249,8 @@ class Helper
 
         // 2. Fetch Template Configuration from DB
         $templateConfig = WhatsappTemplate::where('slug', $data['template_name'])
-                            ->where('is_active', true)
-                            ->first();
+            ->where('is_active', true)
+            ->first();
 
         if (!$templateConfig) {
             // Log error: Template not found in DB
@@ -277,10 +270,10 @@ class Helper
             // We loop through the DB mapping keys (field_1, field_2) 
             // and grab the corresponding value from your $data array.
             foreach ($templateConfig->variable_mapping as $apiField => $dataKey) {
-                
+
                 // Use generic text if data is missing, or strictly require it
-                $value = isset($data[$dataKey]) ? $data[$dataKey] : ''; 
-                
+                $value = isset($data[$dataKey]) ? $data[$dataKey] : '';
+
                 $payload[$apiField] = $value;
             }
 
@@ -300,7 +293,6 @@ class Helper
             ]);
 
             return $responseData;
-
         } catch (\Throwable $th) {
             // Log the exception
             \Log::error('WhatsApp Error: ' . $th->getMessage());
@@ -327,7 +319,7 @@ class Helper
 
         // 2. Get Access Token (Cached for 55 minutes to improve performance)
         $accessToken = Cache::remember('firebase_access_token', 3300, function () {
-            
+
             // A. Load credentials from Config
             $clientEmail = config('services.firebase.client_email');
             $privateKey  = config('services.firebase.private_key');
@@ -359,7 +351,6 @@ class Helper
 
                 $token = $credentials->fetchAuthToken();
                 return $token['access_token'] ?? null;
-
             } catch (\Exception $e) {
                 return "FCM Auth Error: " . $e->getMessage();
             }
@@ -372,7 +363,7 @@ class Helper
 
         // 4. Build the Payload
         $projectId = config('services.firebase.project_id');
-        
+
         $payload = [
             'message' => [
                 'token' => $user->fcm_token,

@@ -1,24 +1,4 @@
 @extends('front.layouts.app')
-<style>
-    .book-btn {
-    display: inline-block;
-    padding: 10px 22px;
-    background: linear-gradient(135deg, #1234a4, #45318e);
-    color: #fff;
-    border-radius: 30px;
-    font-weight: 600;
-    text-decoration: none;
-    transition: all 0.3s ease;
-    box-shadow: 0 8px 20px rgba(241, 233, 238, 0.3);
-}
-
-.book-btn:hover {
-    background: linear-gradient(135deg, #1234a4, #45318e);
-    color: #fff;
-    transform: translateY(-2px);
-}
-
-</style>
 @section('content')
 <!--<< Breadcrumb Section Start >>-->
      <div class="breadcrumb-wrapper section-padding bg-cover" style="background-image: url({{asset('front/assets/img/breadcrumb.png')}});">

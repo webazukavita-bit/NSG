@@ -124,11 +124,12 @@ class ProductController extends Controller
     {
         $category = ProductCategory::withTrashed()->latest()->get();
 
-        if (empty($request->category_id)) {
-            $request->merge(['category_id' => $category[0]->id ?? '0']);
-        }
-        $data = Product::with('category')->withTrashed()->latest()->get();
+        $query = Product::with('category')->where('parent_id', 0);
 
+        if (!empty($request->category_id)) {
+            $query->where('category_id', $request->category_id);
+        }
+        $data = $query->withTrashed()->latest()->get();
         return view('admin.product.list', compact('data', 'category'));
     }
 
@@ -987,7 +988,7 @@ class ProductController extends Controller
 
     public function variationValue()
     {
-        $data = Variation::whereNot('parent_id', 0)->latest()->get();
+        $data = Variation::with('type')->whereNot('parent_id', 0)->latest()->get();
         return view('admin.product.variationvalue.list', compact('data'));
     }
 

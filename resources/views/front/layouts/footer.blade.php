@@ -53,18 +53,18 @@
                                 </li>
                                
                                 <li>
-                                    <a href="{{url('services')}}">
+                                    <a href="{{url('our-services')}}">
                                         Services
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="{{url('blog')}}">
+                                    <a href="{{url('/Articales')}}">
                                         Blogs
                                     </a>
                                 </li>
                                 <li>
                                     <a href="{{url('/terms-and-conditions')}}">
-                                        Terms &amp; Services
+                                        Terms &amp; Condition
                                     </a>
                                 </li>
                             </ul>
@@ -76,32 +76,16 @@
                                 <h3>More Servicve</h3>
                             </div>
                             <ul class="list-items">
-                                <li>
-                                    <a href="{{ url('services') }}">
-                                        Digital Printing
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="{{ url('services') }}">
-                                        3d Printing
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="{{ url('services') }}">
-                                        Ofset Printing
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="{{ url('services') }}">
-                                        Logo Design
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="{{ url('services') }}">
-                                        Card Printing
-                                    </a>
-                                </li>
-                            </ul>
+                               
+    @foreach($categories as $cat)
+        <li>
+            <a href="{{ url('/shop?category='.$cat->slug) }}">
+                {{ $cat->name }}
+            </a>
+        </li>
+    @endforeach
+</ul>
+
                         </div>
                     </div>
                     <div class="col-xl-3 col-sm-6 col-md-6 col-lg-4 wow fadeInUp" data-wow-delay=".8s">
@@ -133,8 +117,9 @@
         <div class="footer-bottom">
             <div class="container">
                 <div class="footer-bottom-wrapper">
-                    <p class="wow fadeInUp" data-wow-delay=".3s">Copyright 2026 © . All rights reserved.</p>
-                    <img src="{{asset('front/assets/img/card.png')}}" alt="img" class="wow fadeInUp" data-wow-delay=".5s">
+                    <p class="wow fadeInUp" data-wow-delay=".3s">Copyright 2026 © . All rights Reserved by New Select Graphix.</p>
+                    <a href="{{url('terms-and-conditions')}}">Refund and Cancellation Policy & Terms of Use</a>
+                    {{-- <img src="{{asset('front/assets/img/card.png')}}" alt="img" class="wow fadeInUp" data-wow-delay=".5s"> --}}
                 </div>
             </div>
         </div>

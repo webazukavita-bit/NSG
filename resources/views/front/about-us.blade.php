@@ -119,7 +119,7 @@
                             <div class="row g-4">
                                 <div class="col-lg-6">
                                     <div class="thumb-image-1">
-                                        <img src="{{asset('front/assets/img/cards_image.webp')}}" alt="img" style="height: 350px;">
+                                        <img src="{{asset('front/assets/img/cards_image.webp')}}" alt="img" style="height: 300px;">
                                     </div>
                                     <div class="thumb-image-1 style-2">
                                         <img src="{{asset('front/assets/img/about/about-2.jpg')}}" alt="img">

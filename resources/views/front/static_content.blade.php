@@ -2,53 +2,56 @@
 
 @section('content')
 	<!-- Page Header Start -->
-	<div class="page-header parallaxie">
-		<div class="container">
-			<div class="row">
-				<div class="col-md-12">
-					<!-- Page Header Box Start -->
-					<div class="page-header-box">
-						<h1 class="text-anime">{{ $data->title }}</h1>
-						<nav class="wow fadeInUp" data-wow-delay="0.25s">
-							<ol class="breadcrumb">
-								<li class="breadcrumb-item"><a href="{{ route('home') }}">Home</a></li> 
-								<li class="breadcrumb-item"><a href="javascript:;">></a></li>
-								<li class="breadcrumb-item active" aria-current="page">{{ $data->title }}</li>
-							</ol>
-						</nav>
-					</div>
-					<!-- Page Header Box End -->
-				</div>
-			</div>
-		</div>
-	</div>
+	
+	{{-- <div class="breadcrumb-wrapper section-padding bg-cover" style="background-image: url({{asset('front/assets/img/breadcrumb.png')}});">
+        <div class="container">
+            <div class="page-heading">
+                <div class="breadcrumb-sub-title text-center">
+                    <h1 class="wow fadeInUp" data-wow-delay=".3s">{{$data->title}}</h1>
+                    <ul class="breadcrumb-items wow fadeInUp" data-wow-delay=".5s">
+                        <li>
+                            <a href="{{ route('home') }}">
+                            Home
+                            </a>
+                        </li>
+                        <li>
+                            <i class="fal fa-minus"></i>
+                        </li>
+                        <li>
+                          {{ $data->title }}
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div> --}}
 	<!-- Page Header End -->
 	<!-- Counter Section Start -->
-	<div class="our-process" style="padding-top: 40px;">
-		<div class="container">
-			<div class="section-title">
-				<h2 class="text-anime">
-					<div class="line" style="display: block; text-align:center; width:100%;">
-						@foreach(explode(' ', $data->title) as $word)
-							<div class="word" style="display:inline-block;">
-								@foreach(str_split($word) as $char)
-									<div class="char"
-										style="display:inline-block; opacity:1; visibility:inherit; transform:translate(0,0);">
-										{{ $char }}
-									</div>
-								@endforeach
-							</div>
-							{{-- space between words --}}
-							&nbsp;
-						@endforeach
-					</div>
-				</h2>
-			</div>
-			<div>
-				{!! $data->desc !!}
-			</div>
+	<div class="our-process" style="padding: 50px 0; background: linear-gradient(135deg, #f5f7fa 0%, #e8ecf1 100%);">
+	<div class="container" style="max-width: 1100px; margin: 0 auto; ">
+		<div class="section-title" style="margin-bottom: 20px;" >
+			<h2 class="text-anime" style="display: block;">
+				<div class="line" style="display: block; text-align: center; width: 100%;">
+					@foreach(explode(' ', $data->title) as $word)
+						<div class="word" style="display: inline-block;">
+							@foreach(str_split($word) as $char)
+								<div class="char text-anime"
+									style="display: inline-block; opacity: 1; visibility: inherit; transform: translate(0,0); font-size: 2.5rem; font-weight: 700; color: #f62a42;">
+									{{ $char }}
+								</div>
+							@endforeach
+						</div>
+						{{-- space between words --}}
+						&nbsp;
+					@endforeach
+				</div>
+			</h2>
+		</div>
+		<div style="background: rgb(250, 253, 252); padding: 50px; border-radius: 10px; box-shadow: 0 10px 40px rgba(0,0,0,0.08);  line-height: 1.8; color: #4a5568; font-size: 1.1rem;">
+			{!! $data->desc !!}
 		</div>
 	</div>
+</div>
 @endsection
 @push('scripts')
 

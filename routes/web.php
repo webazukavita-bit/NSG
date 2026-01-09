@@ -24,8 +24,8 @@ Auth::routes();
 Route::get('/', [HomeController::class, 'index']);
 Route::get('/home', [HomeController::class, 'index'])->name('home');
 
-// Route::get('/privacy', [HomeController::class, 'static_content'])->name('privacy-policy');
-// Route::get('/terms', [HomeController::class, 'static_content'])->name('terms');
+Route::get('/privacy', [HomeController::class, 'static_content'])->name('privacy-policy');
+Route::get('/terms-and-conditions', [HomeController::class, 'static_content'])->name('terms');
 // Route::get('/about-us', [HomeController::class, 'static_content'])->name('about-us');
 Route::get('/about-us', [HomeController::class, 'aboutUs'])->name('about-us');
 Route::get('/our-services', [HomeController::class, 'ourServices'])->name('our-services');
