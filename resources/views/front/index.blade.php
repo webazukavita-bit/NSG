@@ -878,7 +878,7 @@
                                         <a href="{{url('/shop')}}"><i class="far fa-eye"></i></a>
                                     </li>
                                 </ul>
-                                <a href="{{url('shop')}}" class="theme-btn">Booking Now</a>
+                                <a href="{{url('shop')}}" class="theme-btn">Order Now</a>
                             </div>
                             <div class="product-content">
                                 <h4><a href="{{url('/shop')}}">{{ $product->name }}</a></h4>

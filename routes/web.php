@@ -48,6 +48,12 @@ Route::get('shop-by-category/{slug}', [HomeController::class, 'shopByCategory'])
 
 Route::middleware(['permission'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    ####### for user Dashboard 10/01/2026 ######
+    Route::prefix('user')->group(function () {
+        Route::get('myprofile', [DashboardController::class, 'Myprofile'])->name('myprofile');
+        Route::get('editprofile', [UserController::class, 'editprofile'])->name('editprofile');
+        Route::get('changepwd', [UserController::class, 'changpwd'])->name('changepwd');
+    });
 
     Route::prefix('users')->group(function () {
         Route::get('/clients', [AdminController::class, 'clients'])->name('clients');

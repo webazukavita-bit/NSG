@@ -18,6 +18,8 @@
         <link rel="stylesheet" href="{{asset('front/assets/css/nice-select.css')}}">
         <link rel="stylesheet" href="{{asset('front/assets/css/main.css')}}">
         <link rel="stylesheet" href="{{asset('front/assets/css/style.css')}}">
+        <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet">
+        <link href="https://cdn.jsdelivr.net/npm/@ttskch/select2-bootstrap4-theme@1.5.2/dist/select2-bootstrap4.min.css" rel="stylesheet">
     </head>
 
     <body>
@@ -30,5 +32,6 @@
 
     <!-- Footer Section Start -->
     @include('front.layouts.footer')
+    @stack('scripts')
 </body>
 </html>

@@ -23,7 +23,7 @@ class User extends Authenticatable implements JWTSubject
      */
 
     protected $primaryKey = 'id';
-    
+
     protected $fillable = [
         'code',
         'name',
@@ -65,7 +65,7 @@ class User extends Authenticatable implements JWTSubject
             'password' => 'hashed',
         ];
     }
- 
+
     public function getJWTIdentifier()
     {
         return $this->getKey();
@@ -86,10 +86,10 @@ class User extends Authenticatable implements JWTSubject
     {
         return $this->hasOne(Address::class);
     }
-   public function orders()
-{
-    return $this->hasMany(Order::class, 'user_id');
-}
+    public function orders()
+    {
+        return $this->hasMany(Order::class, 'user_id');
+    }
 
 
     public function user_steps()
@@ -105,6 +105,10 @@ class User extends Authenticatable implements JWTSubject
     public function kyc()
     {
         return $this->hasOne(Kyc::class);
+    }
+    public function wallet()
+    {
+        return $this->hasOne(Wallet::class);
     }
 
     public function children()

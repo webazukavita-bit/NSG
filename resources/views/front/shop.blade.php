@@ -71,29 +71,27 @@
         <div class="col-xl-4 col-lg-4 col-md-6 wow fadeInUp" data-wow-delay=".2s">
             <div class="feature-product-items">
                 <div class="product-thumb">
-                    <img src="{{ asset('images/product/'.$product->image[0]) }}" alt="{{ $product->name }}" style="height: 200px; widht:300px; border-radius:15px;">
-
-                    <ul class="product-icon d-grid justify-content-center align-items-center">
-                        <li><a href="#"><i class="far fa-heart"></i></a></li>
-                        <li><a href="{{ url('shop-details/'.$product->id) }}"><i class="far fa-eye"></i></a></li>
-                        {{-- <li><a href="#"><i class="fal fa-cart-plus"></i></a></li> --}}
-                    </ul>
+                    <a href="{{ url('shop-details/'.$product->slug) }}">
+                    <img src="{{ asset('images/product/'.$product->image[0]) }}" alt="{{ $product->name }}" style="height: 200px; widht:300px; border-radius:15px;" onerror="this.onerror=null;this.src='{{ asset('images/missing-image.png') }}';" >
+                     </a>
+                   
                 </div>
 
                 <div class="product-content text-center mt-3">
 
                     
-                          <p style="height: 80px;"><a href="{{ url('shop-details/'.$product->id) }}">
+                          <p style="height: 80px;"><a href="{{ url('shop-details/'.$product->slug) }}">
                         {{ $product->category->name }}
-                        </a>|<a href="{{ url('shop-details/'.$product->id) }}" 
+                        </a>|<a href="{{ url('shop-details/'.$product->slug) }}" 
                             style="text-transform: capitalize;">
                         {{ $product->name }}
                         </a></p>
 
                     
 
-                    <ul class="price-list mt-2 justify-content-center">                       
-                      <a href="{{ url('shop-details/'.$product->slug) }}" class="btn book-btn text-white">Order Now</a>
+                    <ul class="price-list mt-2 justify-content-center">   
+                       
+                      <a href="{{ url('shop-details',['slug' => $product->slug]) }}" class="btn book-btn text-white">Order Now</a>
                     </ul>
                 </div>
             </div>

@@ -34,22 +34,12 @@
                  @foreach($data as $category)
                 <div class="col-xl-3 col-lg-4 col-md-6 wow fadeInUp" data-wow-delay=".2s">
                     <div class="feature-product-items">
+                  <a href="{{ url('/shop?category='.$category->slug) }}">
                         <div class="product-thumb">
                             <img src="{{ asset('images/product/category/'.$category->image) }}" alt="img" style="height: 200px; widht:300px; border-radius:15px;">
-                            <ul class="product-icon d-flex justify-content-center align-items-center">
-                                {{-- <li>
-                                   <a href="{{ url('/shop?category/'.$category->slug) }}"><i class="fal fa-heart"></i></a>
-                                </li>
-                                <li>
-                                    <a href="Javascript:void(0)">
-                                        <i class="far fa-shopping-bag"></i>
-                                    </a>
-                                </li> --}}
-                                <li>
-                                   <a href="{{ url('/shop?category='.$category->slug) }}"><i class="far fa-eye"></i></a>
-                                </li>
-                            </ul>
+                            
                         </div>
+                        </a>
                         <div class="product-content text-center mt-3">
                             <h4> <a href="{{ url('/shop?category='.$category->slug) }}">
                             {{ $category->name }}
