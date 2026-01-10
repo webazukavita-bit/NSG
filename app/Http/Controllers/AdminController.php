@@ -25,6 +25,7 @@ use App\Models\User;
 use App\Models\Role;
 use App\Models\Wallet;
 use App\Models\Kyc;
+use Illuminate\Support\Facades\Auth;
 
 class AdminController extends Controller
 {
@@ -48,12 +49,12 @@ class AdminController extends Controller
         return view('home');
     }
 
-    
+
     public function clients(Request $request)
     {
-        $clients = User::withTrashed()->whereHas('roles', function($query) {
-                                        $query->where('type', 'User');
-                                    });
+        $clients = User::withTrashed()->whereHas('roles', function ($query) {
+            $query->where('type', 'User');
+        });
 
         // Deleted clients (soft deleted)
         $deleted = (clone $clients)->onlyTrashed()->count();
@@ -66,12 +67,12 @@ class AdminController extends Controller
         $endOfMonth   = Carbon::now()->endOfMonth();
 
         $thisMonth = (clone $clients)->whereBetween('created_at', [$startOfMonth, $endOfMonth])->count();
-        
+
         $total = (clone $clients)->count();
 
         $data = (clone $clients)->get();
-        
-        return view('admin.user.clients.list', compact('data','total','deleted','notDeleted','thisMonth'));
+
+        return view('admin.user.clients.list', compact('data', 'total', 'deleted', 'notDeleted', 'thisMonth'));
     }
 
 
@@ -79,8 +80,8 @@ class AdminController extends Controller
     {
         $roles = Role::where('type', 'User')->get();
         $countrie = Countrie::orderBy('name', 'asc')->get();
-        $country_id = $countrie[0]->id??'';
-        return view('admin.user.clients.create', compact('roles','countrie','country_id'));
+        $country_id = $countrie[0]->id ?? '';
+        return view('admin.user.clients.create', compact('roles', 'countrie', 'country_id'));
     }
 
 
@@ -152,7 +153,7 @@ class AdminController extends Controller
                 $panFile->move(public_path('images/user/pan'), $panFileName);
             }
 
-            
+
             $user = User::create([
                 'code' => $request->code,
                 'name' => $request->name,
@@ -175,7 +176,7 @@ class AdminController extends Controller
                 'aadhar_image_back' => $aadharBackName,
                 'pan_image' => $panFileName
             ]);
-            
+
             Address::create([
                 'user_id' => $user->id,
                 'type' => 'Home',
@@ -205,15 +206,22 @@ class AdminController extends Controller
             ]);
 
             return redirect()->route('clients')->with('success', 'Client created successfully!');
-
         } catch (\Exception $e) {
 
             DB::rollBack();
 
-            if ($profileFileName && file_exists(public_path('images/profile/'.$profileFileName))) { unlink(public_path('images/profile/'.$profileFileName)); }
-            if ($aadharFrontName && file_exists(public_path('images/user/aadhar/'.$aadharFrontName))) { unlink(public_path('images/user/aadhar/'.$aadharFrontName)); }
-            if ($aadharBackName && file_exists(public_path('images/user/aadhar/'.$aadharBackName))) { unlink(public_path('images/user/aadhar/'.$aadharBackName)); }
-            if ($panFileName && file_exists(public_path('images/user/pan/'.$panFileName))) { unlink(public_path('images/user/pan/'.$panFileName)); }
+            if ($profileFileName && file_exists(public_path('images/profile/' . $profileFileName))) {
+                unlink(public_path('images/profile/' . $profileFileName));
+            }
+            if ($aadharFrontName && file_exists(public_path('images/user/aadhar/' . $aadharFrontName))) {
+                unlink(public_path('images/user/aadhar/' . $aadharFrontName));
+            }
+            if ($aadharBackName && file_exists(public_path('images/user/aadhar/' . $aadharBackName))) {
+                unlink(public_path('images/user/aadhar/' . $aadharBackName));
+            }
+            if ($panFileName && file_exists(public_path('images/user/pan/' . $panFileName))) {
+                unlink(public_path('images/user/pan/' . $panFileName));
+            }
 
             return redirect()->route('clients')->withInput()->with('error', 'Something went wrong: ' . $e->getMessage());
         }
@@ -221,27 +229,27 @@ class AdminController extends Controller
         return redirect()->route('clients')->with('success', 'Client added successfully!');
     }
 
-    
+
     public function clientEdit($id)
-    {    
-        $data = User::findOrFail($id); 
+    {
+        $data = User::findOrFail($id);
         $address = Address::where('user_id', $id)->first();
         $kyc = Kyc::where('user_id', $id)->first();
-           
+
         $roles = Role::where('type', 'User')->get();
         $countrie = Countrie::orderBy('name', 'asc')->get();
-        $country_id = $address->country_id??'';
+        $country_id = $address->country_id ?? '';
         $states = [];
         $cities = [];
-        if(!empty($country_id)) {
+        if (!empty($country_id)) {
             $states = State::where(['country_id' => $country_id])->orderBy('name', 'asc')->get();
         }
-        if(!empty($address->state_id)) {
+        if (!empty($address->state_id)) {
             $cities = Citie::where(['state_id' => $address->state_id])->orderBy('name', 'asc')->get();
         }
-        
 
-        return view('admin.user.clients.edit', compact('data','address','kyc','roles','countrie','country_id','states','cities'));
+
+        return view('admin.user.clients.edit', compact('data', 'address', 'kyc', 'roles', 'countrie', 'country_id', 'states', 'cities'));
     }
 
 
@@ -283,8 +291,8 @@ class AdminController extends Controller
             ----------------------------------------------------*/
             if ($request->hasFile('profile_image')) {
 
-                if ($user->image && file_exists(public_path('images/profile/'.$user->image))) {
-                    unlink(public_path('images/profile/'.$user->image));
+                if ($user->image && file_exists(public_path('images/profile/' . $user->image))) {
+                    unlink(public_path('images/profile/' . $user->image));
                 }
 
                 $profileFile = $request->file('profile_image');
@@ -299,8 +307,8 @@ class AdminController extends Controller
             $kyc = Kyc::where('user_id', $user->id)->first();
 
             if ($request->hasFile('aadhar_image_front')) {
-                if ($kyc->aadhar_front_image && file_exists(public_path('images/user/aadhar/'.$kyc->aadhar_front_image))) {
-                    unlink(public_path('images/user/aadhar/'.$kyc->aadhar_front_image));
+                if ($kyc->aadhar_front_image && file_exists(public_path('images/user/aadhar/' . $kyc->aadhar_front_image))) {
+                    unlink(public_path('images/user/aadhar/' . $kyc->aadhar_front_image));
                 }
 
                 $file = $request->file('aadhar_image_front');
@@ -310,8 +318,8 @@ class AdminController extends Controller
             }
 
             if ($request->hasFile('aadhar_image_back')) {
-                if ($kyc->aadhar_back_image && file_exists(public_path('images/user/aadhar/'.$kyc->aadhar_back_image))) {
-                    unlink(public_path('images/user/aadhar/'.$kyc->aadhar_back_image));
+                if ($kyc->aadhar_back_image && file_exists(public_path('images/user/aadhar/' . $kyc->aadhar_back_image))) {
+                    unlink(public_path('images/user/aadhar/' . $kyc->aadhar_back_image));
                 }
 
                 $file = $request->file('aadhar_image_back');
@@ -321,8 +329,8 @@ class AdminController extends Controller
             }
 
             if ($request->hasFile('pan_image')) {
-                if ($kyc->pan_image && file_exists(public_path('images/user/pan/'.$kyc->pan_image))) {
-                    unlink(public_path('images/user/pan/'.$kyc->pan_image));
+                if ($kyc->pan_image && file_exists(public_path('images/user/pan/' . $kyc->pan_image))) {
+                    unlink(public_path('images/user/pan/' . $kyc->pan_image));
                 }
 
                 $file = $request->file('pan_image');
@@ -380,7 +388,6 @@ class AdminController extends Controller
             ]);
 
             return redirect()->route('clients')->with('success', 'Client updated successfully!');
-
         } catch (\Exception $e) {
 
             DB::rollBack();
@@ -392,9 +399,9 @@ class AdminController extends Controller
 
     public function clientDelete($id)
     {
-        $data = User::withTrashed()->whereHas('roles', function($query) {
-                                $query->where('type', 'User');
-                            })->findOrFail($id);
+        $data = User::withTrashed()->whereHas('roles', function ($query) {
+            $query->where('type', 'User');
+        })->findOrFail($id);
 
         if ($data->trashed()) {
             $data->restore();
@@ -410,11 +417,10 @@ class AdminController extends Controller
                 'ref_id'        => $user->id,
                 'show'          => 'No',
             ]);
-
         } else {
             $data->delete();
             $message = 'Account deleted successfully!';
-            
+
             Helper::logActivity([
                 'type'          => 'Delete',
                 'title'         => "Client account deleted",
@@ -429,7 +435,7 @@ class AdminController extends Controller
 
         return redirect()->back()->with('success', 'Account deleted successfully!');
     }
- 
+
 
     public function clientChnagePassword(Request $request)
     {
@@ -457,13 +463,13 @@ class AdminController extends Controller
 
         return redirect()->back()->with('success', 'Password chnage successfully!');
     }
-    
+
 
     public function employees(Request $request)
     {
-        $employees = User::withTrashed()->whereHas('roles', function($query) {
-                                        $query->where('type', 'Employee');
-                                    });
+        $employees = User::withTrashed()->whereHas('roles', function ($query) {
+            $query->where('type', 'Employee');
+        });
 
         // Deleted employees (soft deleted)
         $deleted = (clone $employees)->onlyTrashed()->count();
@@ -476,12 +482,12 @@ class AdminController extends Controller
         $endOfMonth   = Carbon::now()->endOfMonth();
 
         $thisMonth = (clone $employees)->whereBetween('created_at', [$startOfMonth, $endOfMonth])->count();
-        
+
         $total = (clone $employees)->count();
 
         $data = (clone $employees)->get();
-        
-        return view('admin.user.employees.list', compact('data','total','deleted','notDeleted','thisMonth'));
+
+        return view('admin.user.employees.list', compact('data', 'total', 'deleted', 'notDeleted', 'thisMonth'));
     }
 
 
@@ -489,8 +495,8 @@ class AdminController extends Controller
     {
         $roles = Role::where('type', 'Employee')->get();
         $countrie = Countrie::orderBy('name', 'asc')->get();
-        $country_id = $countrie[0]->id??'';
-        return view('admin.user.employees.create', compact('roles','countrie','country_id'));
+        $country_id = $countrie[0]->id ?? '';
+        return view('admin.user.employees.create', compact('roles', 'countrie', 'country_id'));
     }
 
 
@@ -562,7 +568,7 @@ class AdminController extends Controller
                 $panFile->move(public_path('images/user/pan'), $panFileName);
             }
 
-            
+
             $user = User::create([
                 'code' => $request->code,
                 'name' => $request->name,
@@ -585,7 +591,7 @@ class AdminController extends Controller
                 'aadhar_image_back' => $aadharBackName,
                 'pan_image' => $panFileName
             ]);
-            
+
             Address::create([
                 'user_id' => $user->id,
                 'type' => 'Home',
@@ -615,15 +621,22 @@ class AdminController extends Controller
             ]);
 
             return redirect()->route('employees')->with('success', 'Employee created successfully!');
-
         } catch (\Exception $e) {
 
             DB::rollBack();
 
-            if ($profileFileName && file_exists(public_path('images/profile/'.$profileFileName))) { unlink(public_path('images/profile/'.$profileFileName)); }
-            if ($aadharFrontName && file_exists(public_path('images/user/aadhar/'.$aadharFrontName))) { unlink(public_path('images/user/aadhar/'.$aadharFrontName)); }
-            if ($aadharBackName && file_exists(public_path('images/user/aadhar/'.$aadharBackName))) { unlink(public_path('images/user/aadhar/'.$aadharBackName)); }
-            if ($panFileName && file_exists(public_path('images/user/pan/'.$panFileName))) { unlink(public_path('images/user/pan/'.$panFileName)); }
+            if ($profileFileName && file_exists(public_path('images/profile/' . $profileFileName))) {
+                unlink(public_path('images/profile/' . $profileFileName));
+            }
+            if ($aadharFrontName && file_exists(public_path('images/user/aadhar/' . $aadharFrontName))) {
+                unlink(public_path('images/user/aadhar/' . $aadharFrontName));
+            }
+            if ($aadharBackName && file_exists(public_path('images/user/aadhar/' . $aadharBackName))) {
+                unlink(public_path('images/user/aadhar/' . $aadharBackName));
+            }
+            if ($panFileName && file_exists(public_path('images/user/pan/' . $panFileName))) {
+                unlink(public_path('images/user/pan/' . $panFileName));
+            }
 
             return redirect()->route('employees')->withInput()->with('error', 'Something went wrong: ' . $e->getMessage());
         }
@@ -631,27 +644,27 @@ class AdminController extends Controller
         return redirect()->route('employees')->with('success', 'Employee added successfully!');
     }
 
-    
+
     public function employeeEdit($id)
-    {    
-        $data = User::findOrFail($id); 
+    {
+        $data = User::findOrFail($id);
         $address = Address::where('user_id', $id)->first();
         $kyc = Kyc::where('user_id', $id)->first();
-           
+
         $roles = Role::where('type', 'Employee')->get();
         $countrie = Countrie::orderBy('name', 'asc')->get();
-        $country_id = $address->country_id??'';
+        $country_id = $address->country_id ?? '';
         $states = [];
         $cities = [];
-        if(!empty($country_id)) {
+        if (!empty($country_id)) {
             $states = State::where(['country_id' => $country_id])->orderBy('name', 'asc')->get();
         }
-        if(!empty($address->state_id)) {
+        if (!empty($address->state_id)) {
             $cities = Citie::where(['state_id' => $address->state_id])->orderBy('name', 'asc')->get();
         }
-        
 
-        return view('admin.user.employees.edit', compact('data','address','kyc','roles','countrie','country_id','states','cities'));
+
+        return view('admin.user.employees.edit', compact('data', 'address', 'kyc', 'roles', 'countrie', 'country_id', 'states', 'cities'));
     }
 
 
@@ -693,8 +706,8 @@ class AdminController extends Controller
             ----------------------------------------------------*/
             if ($request->hasFile('profile_image')) {
 
-                if ($user->image && file_exists(public_path('images/profile/'.$user->image))) {
-                    unlink(public_path('images/profile/'.$user->image));
+                if ($user->image && file_exists(public_path('images/profile/' . $user->image))) {
+                    unlink(public_path('images/profile/' . $user->image));
                 }
 
                 $profileFile = $request->file('profile_image');
@@ -709,8 +722,8 @@ class AdminController extends Controller
             $kyc = Kyc::where('user_id', $user->id)->first();
 
             if ($request->hasFile('aadhar_image_front')) {
-                if ($kyc->aadhar_front_image && file_exists(public_path('images/user/aadhar/'.$kyc->aadhar_front_image))) {
-                    unlink(public_path('images/user/aadhar/'.$kyc->aadhar_front_image));
+                if ($kyc->aadhar_front_image && file_exists(public_path('images/user/aadhar/' . $kyc->aadhar_front_image))) {
+                    unlink(public_path('images/user/aadhar/' . $kyc->aadhar_front_image));
                 }
 
                 $file = $request->file('aadhar_image_front');
@@ -720,8 +733,8 @@ class AdminController extends Controller
             }
 
             if ($request->hasFile('aadhar_image_back')) {
-                if ($kyc->aadhar_back_image && file_exists(public_path('images/user/aadhar/'.$kyc->aadhar_back_image))) {
-                    unlink(public_path('images/user/aadhar/'.$kyc->aadhar_back_image));
+                if ($kyc->aadhar_back_image && file_exists(public_path('images/user/aadhar/' . $kyc->aadhar_back_image))) {
+                    unlink(public_path('images/user/aadhar/' . $kyc->aadhar_back_image));
                 }
 
                 $file = $request->file('aadhar_image_back');
@@ -731,8 +744,8 @@ class AdminController extends Controller
             }
 
             if ($request->hasFile('pan_image')) {
-                if ($kyc->pan_image && file_exists(public_path('images/user/pan/'.$kyc->pan_image))) {
-                    unlink(public_path('images/user/pan/'.$kyc->pan_image));
+                if ($kyc->pan_image && file_exists(public_path('images/user/pan/' . $kyc->pan_image))) {
+                    unlink(public_path('images/user/pan/' . $kyc->pan_image));
                 }
 
                 $file = $request->file('pan_image');
@@ -790,7 +803,6 @@ class AdminController extends Controller
             ]);
 
             return redirect()->route('employees')->with('success', 'Employee Info updated successfully!');
-
         } catch (\Exception $e) {
 
             DB::rollBack();
@@ -802,11 +814,11 @@ class AdminController extends Controller
 
     public function employeeDelete($id)
     {
-        $data = User::withTrashed()->whereHas('roles', function($query) {
-                                        $query->where('type', 'Employee');
-                                    })->findOrFail($id);
+        $data = User::withTrashed()->whereHas('roles', function ($query) {
+            $query->where('type', 'Employee');
+        })->findOrFail($id);
 
-       if ($data->trashed()) {
+        if ($data->trashed()) {
             $data->restore();
 
             $message = 'Account restored successfully!';
@@ -821,7 +833,6 @@ class AdminController extends Controller
                 'ref_id'        => $user->id,
                 'show'          => 'No',
             ]);
-
         } else {
             $data->delete();
             $message = 'Account deleted successfully!';
@@ -836,12 +847,11 @@ class AdminController extends Controller
                 'ref_id'        => $user->id,
                 'show'          => 'No',
             ]);
-
         }
 
         return redirect()->back()->with('success', 'Account deleted successfully!');
     }
- 
+
 
     public function employeeChnagePassword(Request $request)
     {
@@ -874,7 +884,7 @@ class AdminController extends Controller
 
     public function notifications(Request $request)
     {
-        $query = ActivityLog::withTrashed(); 
+        $query = ActivityLog::withTrashed();
 
         // Default date range (last 1 month)
         $default_from = now()->subMonth()->startOfDay()->toDateString();
@@ -895,7 +905,7 @@ class AdminController extends Controller
         }
 
         $query->where('notification_show', 'Yes');
-        
+
         // Execute query
         $data = $query->get();
 
@@ -905,7 +915,7 @@ class AdminController extends Controller
 
     public function activityLog(Request $request)
     {
-        $query = ActivityLog::with('user')->withTrashed(); 
+        $query = ActivityLog::with('user')->withTrashed();
 
         // Default date range (last 1 month)
         $default_from = now()->subMonth()->startOfDay()->toDateString();
@@ -937,7 +947,7 @@ class AdminController extends Controller
 
     public function loginActivity(Request $request)
     {
-        $query = LoginLog::with('user')->withTrashed(); 
+        $query = LoginLog::with('user')->withTrashed();
 
         // Default date range (last 1 month)
         $default_from = now()->subMonth()->startOfDay()->toDateString();
@@ -959,30 +969,30 @@ class AdminController extends Controller
 
         $data = $query->get()->map(function ($log) {
 
-                $agent = new Agent();
-                $agent->setUserAgent($log->device_info);
+            $agent = new Agent();
+            $agent->setUserAgent($log->device_info);
 
-                return [
-                    'id'          => $log->id,
-                    'user_image'  => $log->user->image,
-                    'user_name'   => $log->user->name,
-                    'user_code'   => $log->user->code,
-                    'user_gender' => $log->user->gender,
-                    'ip'          => $log->ip_address,
-                    'request'     => $log->request,
-                    'server'      => $log->server,
-                    'browser'     => $agent->browser(),
-                    'browser_ver' => $agent->version($agent->browser()),
-                    'os'          => $agent->platform(),
-                    'os_ver'      => $agent->version($agent->platform()),
-                    'device'      => $agent->device(),
-                    'is_phone'    => $agent->isPhone(),
-                    'is_desktop'  => $agent->isDesktop(),
-                    'location'    => $log->location,
-                    'created_at'  => $log->created_at,
-                    'updated_at'  => $log->updated_at,
-                ];
-            });
+            return [
+                'id'          => $log->id,
+                'user_image'  => $log->user->image,
+                'user_name'   => $log->user->name,
+                'user_code'   => $log->user->code,
+                'user_gender' => $log->user->gender,
+                'ip'          => $log->ip_address,
+                'request'     => $log->request,
+                'server'      => $log->server,
+                'browser'     => $agent->browser(),
+                'browser_ver' => $agent->version($agent->browser()),
+                'os'          => $agent->platform(),
+                'os_ver'      => $agent->version($agent->platform()),
+                'device'      => $agent->device(),
+                'is_phone'    => $agent->isPhone(),
+                'is_desktop'  => $agent->isDesktop(),
+                'location'    => $log->location,
+                'created_at'  => $log->created_at,
+                'updated_at'  => $log->updated_at,
+            ];
+        });
 
         return view('admin.log.login-log', compact('data'));
     }
@@ -992,12 +1002,16 @@ class AdminController extends Controller
     public function fundAdd(Request $request)
     {
         $banks = CompanyBank::get();
-        return view('admin.fund.add',compact('banks'));
+        if (Auth::user()->role_id == 4) {
+            return view('front.wallet.add', compact('banks'));
+        } else {
+            return view('admin.fund.add', compact('banks'));
+        }
     }
-    
+
     public function fundAddStore(Request $request)
     {
-        $user = auth()->user();
+        $user = Auth::user();
         $data = $request->validate([
             'bank_id'       => 'required|integer|exists:company_banks,id',
             'amount'        => 'required|numeric|min:1',
@@ -1006,37 +1020,37 @@ class AdminController extends Controller
             'description'   => 'nullable|string',
             'utr_img'       => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
         ]);
-        
+
         if ($request->hasFile('utr_img')) {
             $file = $request->file('utr_img');
 
-            $newName = auth()->user()->phone_number . '_' . time() . '.' . $file->getClientOriginalExtension();
+            $newName = $user->phone_number . '_' . time() . '.' . $file->getClientOriginalExtension();
             $file->move(public_path('images/fund_request'), $newName);
 
             $data['utr_img'] = $newName;
         }
 
-        $bank = CompanyBank::findOrFail($request->bank_id); 
+        $bank = CompanyBank::findOrFail($request->bank_id);
 
         $data['trans_id'] = Helper::getTransId();
         $data['from_user_id'] = $user->id;
         $data['to_user_id'] = $bank->user_id;
         $data['desc'] = $request->description;
-        
+
         $check = FundRequest::create($data);
 
         if ($check) {
-                return redirect()->route('fund-requests')->with(['success' => 'Fund request send Successfully,']);
+            return redirect()->route('fund-requests')->with(['success' => 'Fund request send Successfully,']);
         } else {
-                return redirect()->route('fund-requests')->with(['error' => 'Fund request Not send.']);
+            return redirect()->route('fund-requests')->with(['error' => 'Fund request Not send.']);
         }
     }
-    
+
 
     public function fundSend(Request $request)
     {
         $banks = CompanyBank::get();
-        return view('admin.fund.send',compact('banks'));
+        return view('admin.fund.send', compact('banks'));
     }
 
 
@@ -1106,8 +1120,8 @@ class AdminController extends Controller
 
         // ---------- Execute ledger action ----------
         $action = $request->ledger_type == 1
-                    ? Helper::creadit_ledger($payload)
-                    : Helper::debit_ledger($payload);
+            ? Helper::creadit_ledger($payload)
+            : Helper::debit_ledger($payload);
 
         // ---------- Final response ----------
         if ($action["status"] === "success") {
@@ -1118,7 +1132,7 @@ class AdminController extends Controller
     }
 
 
-    
+
 
 
     public function fundTransfers(Request $request)
@@ -1129,9 +1143,9 @@ class AdminController extends Controller
         $defaultFrom = request('from_date') ?? now()->subMonths(3)->format('Y-m-d');
         $defaultTo   = request('to_date') ?? now()->format('Y-m-d');
 
-        $query = Ledger::whereIn('ledger_type', ['WALLET CREDIT ADMIN','WALLET DEBIT BY ADMIN'])->latest();
+        $query = Ledger::whereIn('ledger_type', ['WALLET CREDIT ADMIN', 'WALLET DEBIT BY ADMIN'])->latest();
 
-  
+
         // ---------- Date Filter ----------
         if ($request->filled('from_date') && $request->filled('to_date')) {
 
@@ -1139,7 +1153,6 @@ class AdminController extends Controller
                 $request->from_date . ' 00:00:00',
                 $request->to_date . ' 23:59:59'
             ]);
-
         } else {
             // ---------- Default: Last 3 Months ----------
             $query->where('created_at', '>=', now()->subMonths(3));
@@ -1149,7 +1162,7 @@ class AdminController extends Controller
         if ($role_type !== "Admin") {
             $query->where(function ($q) use ($user) {
                 $q->where('user_id', $user->id)
-                ->orWhere('refrence_id', $user->id);
+                    ->orWhere('refrence_id', $user->id);
             });
         } else {
             // ---------- Phone Filter ----------
@@ -1168,58 +1181,68 @@ class AdminController extends Controller
 
         $data = $query->get();
 
-        return view('admin.fund.transfer-list', compact('data','defaultFrom','defaultTo'));
+        return view('admin.fund.transfer-list', compact('data', 'defaultFrom', 'defaultTo'));
     }
 
-    
+
     public function fundRequests(Request $request)
     {
-        $role_type = auth()->user()->roles->type;
-        $user = auth()->user();
+        // Get the authenticated user
+        $user = Auth::user();
 
-        $defaultFrom = request('from_date') ?? now()->subMonths(3)->format('Y-m-d');
-        $defaultTo   = request('to_date') ?? now()->format('Y-m-d');
+        // Check user role
+        $isAdmin = $user->role_id == 1; // Assuming 1 is admin role
+        $isUser = $user->role_id == 4; // Assuming 4 is user role
 
-        $query = FundRequest::where('to_user_id', $user->id)->latest();
+        // Set default date range
+        $defaultFrom = $request->input('from_date') ?? now()->subMonths(3)->format('Y-m-d');
+        $defaultTo = $request->input('to_date') ?? now()->format('Y-m-d');
 
-  
-        // ---------- Date Filter ----------
-        if ($request->filled('from_date') && $request->filled('to_date')) {
+        // Start query based on role
+        if ($isAdmin) {
+            // Admin can see all fund requests
+            $query = FundRequest::query()->latest();
 
-            $query->whereBetween('created_at', [
-                $request->from_date . ' 00:00:00',
-                $request->to_date . ' 23:59:59'
-            ]);
-
-        } else {
-            // ---------- Default: Last 3 Months ----------
-            $query->where('created_at', '>=', now()->subMonths(3));
-        }
-
-
-        if ($role_type !== "Admin") {
-            $query->where(function ($q) use ($user) {
-                $q->where('from_user_id', $user->id);
-            });
-        } else {
+            // Apply phone filter for admin if provided
             if ($request->filled('phone_number')) {
                 $phone = $request->phone_number;
-
                 $query->where(function ($q) use ($phone) {
-                    $q->whereHas('users', function ($u) use ($phone) {
+                    $q->whereHas('fromUser', function ($u) use ($phone) {
                         $u->where('phone_number', $phone);
-                    })->orWhereHas('referenceUser', function ($r) use ($phone) {
+                    })->orWhereHas('toUser', function ($r) use ($phone) {
                         $r->where('phone_number', $phone);
                     });
                 });
             }
+        } else {
+            // Regular users can only see their own requests
+            $query = FundRequest::where(function ($q) use ($user) {
+                $q->where('from_user_id', $user->id)
+                    ->orWhere('to_user_id', $user->id);
+            })->latest();
+        }
+
+        // Apply date filter
+        if ($request->filled('from_date') && $request->filled('to_date')) {
+            $query->whereBetween('created_at', [
+                $request->from_date . ' 00:00:00',
+                $request->to_date . ' 23:59:59'
+            ]);
+        } else {
+            // Default: Last 3 Months
+            $query->where('created_at', '>=', now()->subMonths(3));
         }
 
         $data = $query->get();
 
-        return view('admin.fund.request-list', compact('data','defaultFrom','defaultTo')); 
+        // Return appropriate view based on role
+        if ($isUser) {
+            return view('front.wallet.request-list', compact('data', 'defaultFrom', 'defaultTo'));
+        } else {
+            return view('admin.fund.request-list', compact('data', 'defaultFrom', 'defaultTo'));
+        }
     }
-     
+
     public function fundRequestUpdate($status, $id, Request $request)
     {
         $user = auth()->user();
@@ -1292,8 +1315,8 @@ class AdminController extends Controller
 
         return back()->with('error', 'Action not allowed.');
     }
-        
-    
+
+
     public function availableBalance(Request $request)
     {
         $data = Wallet::latest()->get();
@@ -1306,7 +1329,7 @@ class AdminController extends Controller
 
         $query = FundRequest::where('to_user_id', $user->id)->latest();
 
-  
+
         // ---------- Date Filter ----------
         if ($request->filled('from_date') && $request->filled('to_date')) {
 
@@ -1314,7 +1337,6 @@ class AdminController extends Controller
                 $request->from_date . ' 00:00:00',
                 $request->to_date . ' 23:59:59'
             ]);
-
         } else {
             // ---------- Default: Last 3 Months ----------
             $query->where('created_at', '>=', now()->subMonths(3));
@@ -1341,9 +1363,9 @@ class AdminController extends Controller
 
         $data = $query->get();
 
-        return view('admin.fund.wallet-list',compact('data'));
+        return view('admin.fund.wallet-list', compact('data'));
     }
-  
+
     public function mainLedger(Request $request)
     {
         $role_type = auth()->user()->roles->type;
@@ -1352,9 +1374,9 @@ class AdminController extends Controller
         $defaultFrom = request('from_date') ?? now()->subMonths(3)->format('Y-m-d');
         $defaultTo   = request('to_date') ?? now()->format('Y-m-d');
 
-        $query = Ledger::whereIn('ledger_type', ['WALLET CREDIT ADMIN','WALLET DEBIT BY ADMIN'])->latest();
+        $query = Ledger::whereIn('ledger_type', ['WALLET CREDIT ADMIN', 'WALLET DEBIT BY ADMIN'])->latest();
 
-  
+
         // ---------- Date Filter ----------
         if ($request->filled('from_date') && $request->filled('to_date')) {
 
@@ -1362,7 +1384,6 @@ class AdminController extends Controller
                 $request->from_date . ' 00:00:00',
                 $request->to_date . ' 23:59:59'
             ]);
-
         } else {
             // ---------- Default: Last 3 Months ----------
             $query->where('created_at', '>=', now()->subMonths(3));
@@ -1372,7 +1393,7 @@ class AdminController extends Controller
         if ($role_type !== "Admin") {
             $query->where(function ($q) use ($user) {
                 $q->where('user_id', $user->id)
-                ->orWhere('refrence_id', $user->id);
+                    ->orWhere('refrence_id', $user->id);
             });
         } else {
             // ---------- Phone Filter ----------
@@ -1391,7 +1412,7 @@ class AdminController extends Controller
 
         $data = $query->get();
 
-        return view('admin.fund.transfer-list', compact('data','defaultFrom','defaultTo'));
+        return view('admin.fund.transfer-list', compact('data', 'defaultFrom', 'defaultTo'));
     }
 
     public function pointsLedger(Request $request)
@@ -1402,9 +1423,9 @@ class AdminController extends Controller
         $defaultFrom = request('from_date') ?? now()->subMonths(3)->format('Y-m-d');
         $defaultTo   = request('to_date') ?? now()->format('Y-m-d');
 
-        $query = Ledger::whereIn('ledger_type', ['WALLET CREDIT ADMIN','WALLET DEBIT BY ADMIN'])->latest();
+        $query = Ledger::whereIn('ledger_type', ['WALLET CREDIT ADMIN', 'WALLET DEBIT BY ADMIN'])->latest();
 
-  
+
         // ---------- Date Filter ----------
         if ($request->filled('from_date') && $request->filled('to_date')) {
 
@@ -1412,7 +1433,6 @@ class AdminController extends Controller
                 $request->from_date . ' 00:00:00',
                 $request->to_date . ' 23:59:59'
             ]);
-
         } else {
             // ---------- Default: Last 3 Months ----------
             $query->where('created_at', '>=', now()->subMonths(3));
@@ -1422,7 +1442,7 @@ class AdminController extends Controller
         if ($role_type !== "Admin") {
             $query->where(function ($q) use ($user) {
                 $q->where('user_id', $user->id)
-                ->orWhere('refrence_id', $user->id);
+                    ->orWhere('refrence_id', $user->id);
             });
         } else {
             // ---------- Phone Filter ----------
@@ -1441,7 +1461,7 @@ class AdminController extends Controller
 
         $data = $query->get();
 
-        return view('admin.fund.transfer-list', compact('data','defaultFrom','defaultTo'));
+        return view('admin.fund.transfer-list', compact('data', 'defaultFrom', 'defaultTo'));
     }
 
 
@@ -1449,39 +1469,35 @@ class AdminController extends Controller
     public function withdrawAdd(Request $request)
     {
         $user = auth()->user();
-        $banks=BankDetail::where('user_id',$user->id)->whereNotNull('bank_id')->orWhere('status','Verified')->get();
-        return view('admin.withdraw.add',compact('banks'));
-        
+        $banks = BankDetail::where('user_id', $user->id)->whereNotNull('bank_id')->orWhere('status', 'Verified')->get();
+        return view('admin.withdraw.add', compact('banks'));
     }
 
     public function withdrawAddStore(Request $request)
     {
-      
+
         $user = auth()->user();
         $data = $request->validate([
             'amount'        => 'required|numeric|min:1',
             'description'   => 'nullable|string',
         ]);
 
-        $bank = BankDetail::findOrFail($request->bank_id); 
+        $bank = BankDetail::findOrFail($request->bank_id);
 
         $data['trans_id'] = Helper::getTransId();
         $data['user_id'] = $user->id;
         $data['user_bank_id'] = $bank->id;
-        $data['referral_id'] = 1; 
+        $data['referral_id'] = 1;
 
-          
+
         $check = WithdrawRequest::create($data);
-        
+
 
         if ($check) {
-                return redirect()->route('withdraw-requests')->with(['success' => 'Withdraw request send Successfully,']);
+            return redirect()->route('withdraw-requests')->with(['success' => 'Withdraw request send Successfully,']);
         } else {
-                return redirect()->route('withdraw-requests')->with(['error' => 'withdraw request Not send.']);
-            
-            }
-
-        
+            return redirect()->route('withdraw-requests')->with(['error' => 'withdraw request Not send.']);
+        }
     }
 
     public function withdrawRequests(Request $request)
@@ -1494,7 +1510,7 @@ class AdminController extends Controller
 
         $query = WithdrawRequest::latest();
 
-  
+
         // ---------- Date Filter ----------
         if ($request->filled('from_date') && $request->filled('to_date')) {
 
@@ -1502,7 +1518,6 @@ class AdminController extends Controller
                 $request->from_date . ' 00:00:00',
                 $request->to_date . ' 23:59:59'
             ]);
-
         } else {
             // ---------- Default: Last 3 Months ----------
             $query->where('created_at', '>=', now()->subMonths(3));
@@ -1530,20 +1545,20 @@ class AdminController extends Controller
 
         $data = $query->get();
 
-        return view('admin.withdraw.request-list', compact('data','defaultFrom','defaultTo')); 
+        return view('admin.withdraw.request-list', compact('data', 'defaultFrom', 'defaultTo'));
     }
 
     public function withdrawRequestUpdate($status, $id, Request $request)
     {
 
 
-            $request->validate([
+        $request->validate([
             'remarks'   => 'nullable|string',
-            'mode'=>'required|string|in:ATM Transfer,CASH,CHEQUE,UPI,DMR WALLET,IMPS,MAIN WALLET,NEFT / RTGS,SAME BANK FUND TRANSFER,Wallet',
-            'utr_no'=>'nullable|string',
-            ]);
-      
-         
+            'mode' => 'required|string|in:ATM Transfer,CASH,CHEQUE,UPI,DMR WALLET,IMPS,MAIN WALLET,NEFT / RTGS,SAME BANK FUND TRANSFER,Wallet',
+            'utr_no' => 'nullable|string',
+        ]);
+
+
         $user = auth()->user();
 
         // Fetch Withdraw request
@@ -1551,7 +1566,7 @@ class AdminController extends Controller
             'referral_id'   => $user->id,
             'id'           => $id
         ])->first();
-    
+
 
         if (!$data) {
             return back()->with('error', 'Invalid Request.');
@@ -1559,12 +1574,12 @@ class AdminController extends Controller
 
         // ---- Reject ----
         if ($status === 'reject') {
-          
+
             if ((float)$data->amount <= 0) {
                 return back()->with('error', 'Amount must be greater than zero.');
             }
-            
-            $data['mode']=$request->mode;
+
+            $data['mode'] = $request->mode;
             //   dd($data);
 
             // Wallet mapping
@@ -1574,7 +1589,7 @@ class AdminController extends Controller
             // ];
 
             $wallet_type = 1; //$walletMap[$data->wallet_type] ?? 0;
-           
+
             if ($wallet_type == 0) {
                 return back()->with('error', 'Invalid wallet type!');
             }
@@ -1621,6 +1636,4 @@ class AdminController extends Controller
 
         return back()->with('error', 'Action not allowed.');
     }
-
-
 }

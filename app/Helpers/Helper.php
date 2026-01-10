@@ -10,12 +10,13 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
-use App\Models\WhatsappLog;
 use App\Models\ActivityLog;
 use App\Models\Wallet;
 use App\Models\Ledger;
 use App\Models\ProductCategory;
 use App\Models\User;
+use App\Models\WhatsappTemplate;
+use App\Models\WhatsappLog;
 
 class Helper
 {
@@ -295,7 +296,7 @@ class Helper
             return $responseData;
         } catch (\Throwable $th) {
             // Log the exception
-            \Log::error('WhatsApp Error: ' . $th->getMessage());
+            Log::error('WhatsApp Error: ' . $th->getMessage());
             return null;
         }
     }

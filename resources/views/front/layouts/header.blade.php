@@ -213,9 +213,13 @@
                                         <li>
                                             <a href="{{url('our-services')}}"> Services </a>
                                         </li>
+                                         @if(Auth::check())
                                          <li>
                                             <a href="{{url('shop')}}">Add Order</a>
                                         </li>
+                                        @else
+                                         <li><a href="{{url('shop')}}">Add Order</a></li>
+                                        @endif
                                         <li>
                                             <a href="{{url('/Articales')}}">
                                                 Articles
@@ -238,27 +242,46 @@
                 $profile = 'images/user-2.svg';
             }
         @endphp
-                        <div class="header-right d-flex justify-content-end align-items-center">
-                            <a href="#0" class="search-trigger search-icon"><i class="fal fa-search"></i></a>
-                            @if(!Auth::check())
-                            <a href="{{url('login')}}" class="user-icon"><i class="far fa-user"></i></a>
-                            @else
-                            <a href="{{ url('dashboard') }}" class="user-icon"><img src="{{ asset('images/profile/' . Auth::user()->image) }}" onerror="this.onerror=null;this.src='{{ asset($profile) }}';" alt="Admin" class="rounded-circle bg-primary p-1" style="height: 50px; width:50px;"> </a>
-                            <div class="mt-3">
-                                {{-- <p>{{ Auth::user()->name }}</p></a> --}}
-                            @endif
-                            {{-- <div class="menu-cart">
-                                <button id="openButton" class="cart-icon">
-                                    <i class="far fa-shopping-cart"></i>
-                                </button>
-                            </div> --}}
-                            <div class="header__hamburger d-xl-none my-auto">
-                                <div class="sidebar__toggle">
-                                    <img src="{{ asset('front/assets/img/toggle.svg') }}" alt="img">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                       <div class="header-right d-flex justify-content-end align-items-center">
+    <a href="#0" class="search-trigger search-icon"><i class="fal fa-search"></i></a>
+    
+    @if(!Auth::check())
+        <a href="{{ url('login') }}" class="user-icon"><i class="far fa-user"></i></a>
+    @else
+        @if(Auth::user()->role_id == 4)
+            <div class="dropdown user-dropdown">
+                <a href="#" class="user-icon dropdown-toggle d-flex align-items-center" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                    <img src="{{ asset('images/profile/' . Auth::user()->image) }}" 
+                         onerror="this.onerror=null;this.src='{{ asset($profile ?? 'front/assets/img/default-avatar.png') }}';" 
+                         alt="User" 
+                         class="rounded-circle bg-primary p-1" 
+                         style="height: 40px; width: 40px;">
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                    <li><a class="dropdown-item" href="{{ route('myprofile') }}">Profile</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li>
+                        <a class="dropdown-item" href="{{ route('logout') }}"
+                           onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                            Logout
+                        </a>
+                        <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+                            @csrf
+                        </form>
+                    </li>
+                </ul>
+            </div>
+        @else
+            <a href="{{ url('login') }}" class="user-icon"><i class="far fa-user"></i></a>
+        @endif
+    @endif
+    
+    <div class="header__hamburger d-xl-none my-auto">
+        <div class="sidebar__toggle">
+            <img src="{{ asset('front/assets/img/toggle.svg') }}" alt="img">
+        </div>
+    </div>
+</div>
                 </div>
             </div>
         </div>

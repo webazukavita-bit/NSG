@@ -10,9 +10,12 @@ use Illuminate\Support\Facades\Route;
 use App\Models\StaticContent;
 use App\Models\ContactUs;
 use App\Models\Blog;
+use App\Models\Citie;
+use App\Models\Countrie;
 use App\Models\Product;
 use App\Models\ProductCategory;
 use App\Models\State;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class HomeController extends Controller
@@ -84,9 +87,35 @@ class HomeController extends Controller
     }
 
 
-    public function shopDetails()
+    // public function shopDetails()
+    // {
+    //     return view('front.shop-details');
+    // }
+    public function shopDetails($slug,)
     {
-        return view('front.shop-details');
+
+        if (!Auth::check()) {
+            return redirect('/login');
+        }
+        $user = Auth::user();
+
+        $data = Product::where('slug', $slug)->first();
+        $product = Product::with(['variations.variationType', 'variations.variationValue', 'variations.allValues'])
+            ->where('parent_id', $data->id)
+            ->get();
+
+        $countrie = Countrie::orderBy('name', 'asc')->get();
+        $country_id = '101';
+        $states = [];
+        $cities = [];
+        if (!empty($country_id)) {
+            $states = State::where(['country_id' => $country_id])->orderBy('name', 'asc')->get();
+        }
+        if (!empty($request->state_id)) {
+            $cities = Citie::where(['state_id' => $request->state_id])->orderBy('name', 'asc')->get();
+        }
+        //  return view('admin.order.booking.add_booking',compact('product'));
+        return view('front.shop-details', compact('product', 'countrie', 'country_id', 'states', 'cities',));
     }
     public function static_content()
     {

@@ -33,10 +33,32 @@ class UserController extends Controller
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
+    public function editprofile()
+    {
+        if (Auth::user()->role_id == 4) {
+            return view('front.editprofile');
+        } else {
+            return redirect('/');
+        }
+    }
+    public function changpwd()
+    {
+        if (Auth::user()->role_id == 4) {
+            return view('front.change-password');
+        } else {
+            return redirect('/');
+        }
+    }
+
     public function profile()
     {
-        return view('admin.user.profile');
+        if (Auth::user()->role_id !== 4) {
+            return view('admin.user.profile');
+        } else {
+            return redirect('/');
+        }
     }
+
 
     public function profileUpdate(Request $request)
     {
@@ -57,8 +79,11 @@ class UserController extends Controller
             'mother_name' => $request->mother_name,
             'dob' => $request->dob,
         ]);
-
-        return redirect()->route('profile')->with('success', 'Profile updated successfully.');
+        if (Auth::user()->role_id == 4) {
+            return redirect()->route('editprofile')->with('success', 'Profile updated successfully.');
+        } else {
+            return redirect()->route('profile')->with('success', 'Profile updated successfully.');
+        }
     }
 
     public function profileUploadImage(Request $request)
@@ -280,4 +305,6 @@ class UserController extends Controller
         //     );
         //    dd($check);
     }
+    ##add fund in wallet##
+
 }

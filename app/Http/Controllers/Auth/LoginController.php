@@ -11,21 +11,8 @@ use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use App\Models\LoginLog;
 use App\Helpers\Helper;
 
-// usually this is hidden inside 'use AuthenticatesUsers;'
-
 class LoginController extends Controller
 {
-        /*
-    |--------------------------------------------------------------------------
-    | Login Controller
-    |--------------------------------------------------------------------------
-    |
-    | This controller handles authenticating users for the application and
-    | redirecting them to your home screen. The controller uses a trait
-    | to conveniently provide its functionality to your applications.
-    |
-    */
-
     use AuthenticatesUsers, ThrottlesLogins;
 
     /**
@@ -35,7 +22,6 @@ class LoginController extends Controller
      */
     protected $redirectTo = '/dashboard';
 
-    
     /**
      * Create a new controller instance.
      *
@@ -47,17 +33,24 @@ class LoginController extends Controller
         $this->middleware('auth')->only('logout');
     }
 
-    // -------------------------------------------------------
-    // 1. SHOW LOGIN FORM
-    // -------------------------------------------------------
+    /**
+     * Show the application's login form.
+     *
+     * @return \Illuminate\View\View
+     */
     public function showLoginForm()
     {
         return view('auth.login');
     }
 
-    // -------------------------------------------------------
-    // 2. MAIN LOGIN ACTION
-    // -------------------------------------------------------
+    /**
+     * Handle a login request to the application.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Http\Response|\Illuminate\Http\JsonResponse
+     *
+     * @throws \Illuminate\Validation\ValidationException
+     */
     public function login(Request $request)
     {
         $this->validateLogin($request);
@@ -65,8 +58,10 @@ class LoginController extends Controller
         // If the class is using the ThrottlesLogins trait, we can automatically throttle
         // the login attempts for this application. We'll key this by the username and
         // the IP address of the client making these requests into this application.
-        if (method_exists($this, 'hasTooManyLoginAttempts') &&
-            $this->hasTooManyLoginAttempts($request)) {
+        if (
+            method_exists($this, 'hasTooManyLoginAttempts') &&
+            $this->hasTooManyLoginAttempts($request)
+        ) {
             $this->fireLockoutEvent($request);
 
             return $this->sendLockoutResponse($request);
@@ -88,9 +83,14 @@ class LoginController extends Controller
         return $this->sendFailedLoginResponse($request);
     }
 
-    // -------------------------------------------------------
-    // 3. VALIDATE THE REQUEST
-    // -------------------------------------------------------
+    /**
+     * Validate the user login request.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return void
+     *
+     * @throws \Illuminate\Validation\ValidationException
+     */
     protected function validateLogin(Request $request)
     {
         $request->validate([
@@ -99,27 +99,37 @@ class LoginController extends Controller
         ]);
     }
 
-    // -------------------------------------------------------
-    // 4. ATTEMPT TO LOGIN (Check DB)
-    // -------------------------------------------------------
+    /**
+     * Attempt to log the user into the application.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return bool
+     */
     protected function attemptLogin(Request $request)
     {
         return $this->guard()->attempt(
-            $this->credentials($request), $request->filled('remember')
+            $this->credentials($request),
+            $request->filled('remember')
         );
     }
 
-    // -------------------------------------------------------
-    // 5. GET CREDENTIALS (Email & Password)
-    // -------------------------------------------------------
+    /**
+     * Get the needed authorization credentials from the request.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return array
+     */
     protected function credentials(Request $request)
     {
         return $request->only($this->username(), 'password');
     }
 
-    // -------------------------------------------------------
-    // 6. SEND SUCCESS RESPONSE
-    // -------------------------------------------------------
+    /**
+     * Send the response after the user was authenticated.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Http\JsonResponse
+     */
     protected function sendLoginResponse(Request $request)
     {
         $request->session()->regenerate();
@@ -131,24 +141,27 @@ class LoginController extends Controller
         }
 
         return $request->wantsJson()
-                    ? new \Illuminate\Http\JsonResponse([], 204)
-                    : redirect()->intended($this->redirectPath());
+            ? new \Illuminate\Http\JsonResponse([], 204)
+            : redirect()->intended($this->redirectPath());
     }
 
-    // -------------------------------------------------------
-    // 7. AUTHENTICATED (Hook for custom logic)
-    // -------------------------------------------------------
-    // The user has been authenticated. Use this to do something *after* login
-    // like updating a 'last_login_at' timestamp.
+    /**
+     * The user has been authenticated.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  mixed  $user
+     * @return mixed
+     */
     protected function authenticated(Request $request, $user)
     {
+        // Log the login activity
         LoginLog::create([
             'user_id'       => $user->id,
-            'user_type'     => 'User', // or class_basename($user)
-            'request'       => json_encode($request->except(['password', '_token'])), // Don't save password!
+            'user_type'     => 'User',
+            'request'       => json_encode($request->except(['password', '_token'])),
             'server'        => json_encode($request->server()),
             'ip_address'    => $request->ip(),
-            'location'      => null, // Requires an external GeoIP package to fill this
+            'location'      => null,
             'last_activity' => null,
         ]);
 
@@ -162,11 +175,38 @@ class LoginController extends Controller
             'ref_id'        => $user->id,
             'show'          => 'Yes',
         ]);
+
+        // Redirect based on role_id
+        if ($user->role_id == 4) {
+            return redirect()->route('myprofile'); // Redirect to home for role_id = 4
+        }
+
+        // For other roles, continue with default redirect
+        return redirect()->intended($this->redirectPath());
     }
 
-    // -------------------------------------------------------
-    // 8. SEND FAILED RESPONSE
-    // -------------------------------------------------------
+    /**
+     * Get the post login redirect path.
+     *
+     * @return string
+     */
+    public function redirectPath()
+    {
+        if (method_exists($this, 'redirectTo')) {
+            return $this->redirectTo();
+        }
+
+        return property_exists($this, 'redirectTo') ? $this->redirectTo : '/dashboard';
+    }
+
+    /**
+     * Get the failed login response instance.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Symfony\Component\HttpFoundation\Response
+     *
+     * @throws \Illuminate\Validation\ValidationException
+     */
     protected function sendFailedLoginResponse(Request $request)
     {
         throw ValidationException::withMessages([
@@ -174,18 +214,22 @@ class LoginController extends Controller
         ]);
     }
 
-    // -------------------------------------------------------
-    // 9. GET USERNAME COLUMN
-    // -------------------------------------------------------
-    // Change this return value to 'username' if you want to login with username instead of email
+    /**
+     * Get the login username to be used by the controller.
+     *
+     * @return string
+     */
     public function username()
     {
         return 'email';
     }
 
-    // -------------------------------------------------------
-    // 10. LOGOUT
-    // -------------------------------------------------------
+    /**
+     * Log the user out of the application.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Http\JsonResponse
+     */
     public function logout(Request $request)
     {
         $this->guard()->logout();
@@ -200,20 +244,25 @@ class LoginController extends Controller
 
         return $request->wantsJson()
             ? new \Illuminate\Http\JsonResponse([], 204)
-            : redirect('/');
+            : redirect('/login');
     }
 
-    // -------------------------------------------------------
-    // 11. LOGGED OUT (Hook)
-    // -------------------------------------------------------
+    /**
+     * The user has logged out of the application.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return mixed
+     */
     protected function loggedOut(Request $request)
     {
-        // Default is empty
+        // Custom logic after logout (if needed)
     }
 
-    // -------------------------------------------------------
-    // 12. GET GUARD
-    // -------------------------------------------------------
+    /**
+     * Get the guard to be used during authentication.
+     *
+     * @return \Illuminate\Contracts\Auth\StatefulGuard
+     */
     protected function guard()
     {
         return Auth::guard();

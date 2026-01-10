@@ -23,14 +23,6 @@
                                      <input type="number" class="form-control" name="phone_number" value="">
 								</div>
                                 @endif
-								<div class="col-md-3">
-									<label for="from_date" class="form-label">From Date</label>
-                                     <input type="date" class="form-control" name="from_date" value="{{ $defaultFrom }}">
-								</div>
-								<div class="col-md-3">
-									<label for="to_date" class="form-label">To Date</label>
-                                    <input type="date" class="form-control" name="to_date" value="{{ $defaultTo }}">
-								</div>
 								
 								<div class="col-12 text-center">
 									<button type="submit" class="btn btn-primary"><i class="bx bx-search"></i> Filter</button>
@@ -68,14 +60,25 @@
                             {{-- <th>Points</th> --}}
 						</tr>
 					</thead>
+					@php
+							$profile = 'images/user-1.svg';
+							if (auth()->user()->gender == 'Female') {
+								$profile = 'images/user-2.svg';
+							}
+						@endphp
 					<tbody>
-                        @foreach($walletData as $key => $value)
+                        @foreach($data as $key => $value)
                         <tr>
                             <td>{{$key+1}}</td>
-                            <td>{{$value->users->name}}</td>
-                            <td>{{$value->users->email}}</td>
-                            <td>{{$value->users->phone_number}}</td>
-                            <td><span class="badge badge-rounded {{$value->users->roles->role_name == 'User'?'badge-danger':'badge-success'}}">{{$value->users->roles->role_name}}</span></td>
+							<td>
+                                <div class="d-flex align-items-center">
+                                    	<img src="{{ asset('images/profile/' . auth()->user()->image) }}" onerror="this.onerror=null;this.src='{{ asset($profile) }}';" class="user-img" alt="user avatar">
+                                    <span>{{ Auth::user()->name }}<p class="m-0"><small>{{Auth::user()->code}}</small></p></span>
+                                </div>
+                            </td>
+                            <td>{{Auth::user()->email}}</td>
+                            <td>{{Auth::user()->phone_number}}</td>
+                            <td>{{Auth::user()->roles->name}}</td>
                             <td>{{$value->main_balance}}</td>
                             {{-- <td>{{$value->dmt_balance}}</td> --}}
                         </tr>
