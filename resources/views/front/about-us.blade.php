@@ -36,11 +36,11 @@
                                     <span>More about us</span>
                                 </div>
                                 <h2 class="split-text right">
-                                    How Print On Demand Drop Shipping Works
+                                   How Professional Printing & Custom Orders Work
                                 </h2>
                             </div>
                             <p class="mt-3 mt-md-0 wow fadeInUp" data-wow-delay=".5s">
-                                Beautiful, customizable template, with a ton of web blocks to create an amazing website that looks and digita chapakhana in City
+                              At New Select Graphix (NSG), we offer end-to-end printing solutions with customizable designs, modern machinery, and reliable delivery to help businesses build a strong brand presence.
                             </p>
                             <div class="icon-box-items">
                                 <div class="icon-items wow fadeInUp" data-wow-delay=".3s">
@@ -69,7 +69,7 @@
                                     <div class="content">
                                         <h4>Free Consultations</h4>
                                         <p>
-                                            Monotonectally parallel task cross-unit experiences and front-end. Energistically harness ubiquitous.
+                                            Discover a wide range of professional printing services designed to meet business, branding, and promotional needs with premium quality and customization.
                                         </p>
                                     </div>
                                 </div>
@@ -81,20 +81,33 @@
                                             Smooth Automation
                                         </h6>
                                         <span class="point">
-                                            80%
+                                            90%
                                         </span>
                                     </div>
                                     <div class="progress">
                                         <div class="progress-value"></div>
                                     </div>
-                                </div>
+                                </div> 
                                 <div class="pro-items wow fadeInUp" data-wow-delay=".5s">
                                     <div class="pro-head">
                                         <h6 class="title">
                                             Reliable Quality
                                         </h6>
                                         <span class="point">
-                                            70%
+                                            90%
+                                        </span>
+                                    </div>
+                                    <div class="progress">
+                                        <div class="progress-value style-two"></div>
+                                    </div>
+                                </div>
+                                 <div class="pro-items wow fadeInUp" data-wow-delay=".5s">
+                                    <div class="pro-head">
+                                        <h6 class="title">
+                                            On-Time Delivery
+                                        </h6>
+                                        <span class="point">
+                                            85%
                                         </span>
                                     </div>
                                     <div class="progress">
@@ -103,12 +116,12 @@
                                 </div>
                             </div>
                             <div class="about-author">
-                                <a href="about.html" class="theme-btn wow fadeInUp" data-wow-delay=".3s">MORE ABOUT US</a>
+                                <a href="{{url('Articales')}}" class="theme-btn wow fadeInUp" data-wow-delay=".3s">MORE ABOUT US</a>
                                 <div class="author-image wow fadeInUp" data-wow-delay=".5s">
                                     <img src="{{asset('front/assets/img/about/author.png')}}" alt="author-img">
                                     <div class="content">
                                         <span class="mb-2">Call to Expert</span>
-                                        <h4><a href="tel:+389993938386">+389 993 93 8386</a></h4>
+                                        <h4><a href="tel:+389993938386">{{config('app.contact_us')}}</a></h4>
                                     </div>
                                 </div>
                             </div>
@@ -142,6 +155,7 @@
     </section>
 
 
+
     <section class="service-section section-padding pt-0">
         <div class="bg-shape">
             <img src="{{asset('front/assets/img/service/bg-shape.png')}}" alt="img">
@@ -158,7 +172,7 @@
                                     </div>
                                     <div class="content">
                                         <h3><a href="javascript:void(0)">Printing Services</a></h3>
-                                        <p>It is a long established fact xbliuthat a reader will be distracteda the readable content of a page when looking</p>
+                                        <p>We offer high-quality digital and offset printing solutions including visiting cards, brochures, banners, labels, packaging, and more with precision and consistency.</p>
                                     </div>
                                 </div>
                                 <div class="service-box-items wow fadeInUp" data-wow-delay=".3s">
@@ -167,7 +181,7 @@
                                     </div>
                                     <div class="content">
                                         <h3><a href="javascript:void(0)">Design Service</a></h3>
-                                        <p>It is a long established fact xbliuthat a reader will be distracteda the readable content of a page when looking</p>
+                                        <p>Our creative team provides professional design support for branding, layouts, and print-ready artwork to ensure flawless final output.</p>
                                     </div>
                                 </div>
                             </div>
@@ -178,7 +192,7 @@
                                     </div>
                                     <div class="content">
                                         <h3><a href="javascript:void(0)">Promotional Product</a></h3>
-                                        <p>It is a long established fact xbliuthat a reader will be distracteda the readable content of a page when looking</p>
+                                        <p>Custom-printed promotional items designed to increase brand visibility, including merchandise, corporate gifts, and marketing materials..</p>
                                     </div>
                                 </div>
                                 <div class="service-box-items wow fadeInUp" data-wow-delay=".5s">
@@ -186,8 +200,8 @@
                                         <i class="fal fa-user"></i>
                                     </div>
                                     <div class="content">
-                                        <h3><a href="javascript:void(0)">T-Shirt Printing</a></h3>
-                                        <p>It is a long established fact xbliuthat a reader will be distracteda the readable content of a page when looking</p>
+                                        <h3><a href="javascript:void(0)">Custom Print Solutions</a></h3>
+                                        <p>Tailor-made printing solutions for bulk orders, corporate requirements, and specialized print needs with reliable turnaround times.</p>
                                     </div>
                                 </div>
                             </div>
@@ -200,20 +214,19 @@
                                     <span>Printing made easy</span>
                                 </div>
                                 <h2 class="split-text right">
-                                    Fast And Quality <br> Service
+                                   Fast And High-Quality <br> Printing Service
                                 </h2>
                             </div>
                             <p class="mt-3 mt-md-0 wow fadeInUp" data-wow-delay=".5s">
-                                It is a long established fact that a reader will be distracted the readable content of a page when looking at layout the point of using lorem the is Ipsum Xbuild less normal  distribution best company in world of letters.
-                                It is a long established fact that a reader will be distracted the readable content point.
+                               At New Select Graphix (NSG), we simplify the printing process by combining advanced technology, skilled professionals, and quality materials. From order placement to final delivery, we ensure smooth execution and premium results for every print job.
                             </p>
                             <div class="icon-items wow fadeInUp" data-wow-delay=".3s">
                                 <div class="icon">
                                     <img src="{{asset('front/assets/img/service/icon-1.png')}}" alt="img">
                                 </div>
                                 <div class="content">
-                                    <h4>Payment Secure</h4>
-                                    <span>Payment Secure</span>
+                                    <h4>Secure Order Processing</h4>
+                                    <span>Your order details and files are handled safely with complete confidentiality.</span>
                                 </div>
                             </div>
                             <div class="icon-items wow fadeInUp" data-wow-delay=".5s">
@@ -221,8 +234,8 @@
                                     <img src="{{asset('front/assets/img/service/icon-2.png')}}" alt="img">
                                 </div>
                                 <div class="content">
-                                    <h4>Payment Secure</h4>
-                                    <span>Payment Secure</span>
+                                    <h4>Reliable Production Workflow</h4>
+                                    <span>Streamlined processes ensure accuracy, consistency, and on-time completion of every project.</span>
                                 </div>
                             </div>
                             <a href="javascript:void(0)" class="theme-btn wow fadeInUp" data-wow-delay=".3s">Learn More</a>
@@ -244,81 +257,24 @@
         <div class="container">
             <div class="cta-content text-center">
                 <div class="section-title">
-                    <h2 class="split-text right">Ready To Buy In Bulk & <br> Save Up To 30%?</h2>
+                    <h2 class="split-text right">Ready To Place Bulk Printing  <br>Orders With Us?</h2>
                 </div>
-                <a href="contact.html" class="theme-btn wow fadeInUp" data-wow-delay=".5s">Contact Us</a>
+                <a href="{{url('contact-us')}}" class="theme-btn wow fadeInUp" data-wow-delay=".5s">Contact Us</a>
             </div>
         </div>
     </section>
 
     <!-- Testimonial Section Start -->
-    <section class="testimonial-section fix section-padding">
-        <div class="shape-1">
-            <img src="{{asset('front/assets/img/testimonial/shape-1.png')}}" alt="img">
-        </div>
-        <div class="shape-2">
-            <img src="{{asset('front/assets/img/testimonial/shape-2.png')}}" alt="img">
-        </div>
-        <div class="container">
-            <div class="row justify-content-center">
-                <div class="col-lg-10">
-                    <div class="swiper testimonial-slider-2">
-                        <div class="swiper-wrapper">
-                            <div class="swiper-slide">
-                                <div class="testimonial-single-items">
-                                    <div class="testi-img bg-cover" style="background-image: url('{{asset('front/assets/img/testimonial/01.jpg')}}');"></div>
-                                    <p>
-                                        “Aenean eget pulvinar enim. Quisque consectetur lacinia blandit. Proin iaculis quam a elementum pharetra. Nunc tempus ipsum lectus, adipiscing est non. Bibendum blandit fusce letius commodo  Vulputate porta nam leo condim entum lacinia metus adipiscing. ac cursus libero sodales sed.”
-                                    </p>
-                                    <div class="client-info">
-                                        <h3>Shikhon Islam</h3>
-                                        <span>CEO & Founder</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="swiper-slide">
-                                <div class="testimonial-single-items">
-                                    <div class="testi-img bg-cover" style="background-image: url('{{asset('front/assets/img/testimonial/01.jpg')}}');"></div>
-                                    <p>
-                                        “Aenean eget pulvinar enim. Quisque consectetur lacinia blandit. Proin iaculis quam a elementum pharetra. Nunc tempus ipsum lectus, adipiscing est non. Bibendum blandit fusce letius commodo  Vulputate porta nam leo condim entum lacinia metus adipiscing. ac cursus libero sodales sed.”
-                                    </p>
-                                    <div class="client-info">
-                                        <h3>Shikhon Islam</h3>
-                                        <span>CEO & Founder</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="swiper-slide">
-                                <div class="testimonial-single-items">
-                                    <div class="testi-img bg-cover" style="background-image: url('{{asset('front/assets/img/testimonial/01.jpg')}}');"></div>
-                                    <p>
-                                        “Aenean eget pulvinar enim. Quisque consectetur lacinia blandit. Proin iaculis quam a elementum pharetra. Nunc tempus ipsum lectus, adipiscing est non. Bibendum blandit fusce letius commodo  Vulputate porta nam leo condim entum lacinia metus adipiscing. ac cursus libero sodales sed.”
-                                    </p>
-                                    <div class="client-info">
-                                        <h3>Shikhon Islam</h3>
-                                        <span>CEO & Founder</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="swiper-dot mt-5">
-                            <div class="dot"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
+ 
     <!-- Cta  Section Start -->
     <div class="cta-section bg-cover" style="background-image: url('{{asset('front/assets/img/cta-bg.png')}}');">
         <div class="container">
             <div class="cta-wrapper-2">
                 <div class="content">
                     <h2 class="split-text right">Ready To Get Started?</h2>
-                    <h3 class="wow fadeInUp" data-wow-delay=".5s">Printed and shipped on demand!</h3>
+                    <h3 class="wow fadeInUp" data-wow-delay=".5s">Ready To Place Bulk Printing  <br>Orders With Us?!</h3>
                     <div class="button-items wow fadeInUp" data-wow-delay=".7s">
-                        <a href="{{url('shop-details')}}" class="theme-btn">Shop Now</a>
+                        <a href="{{url('shop')}}" class="theme-btn">Shop Now</a>
                         <a href="{{url('contact-us')}}" class="theme-btn style-2">Contact Us</a>
                     </div>
                 </div>
@@ -347,8 +303,8 @@
                             <img src="{{asset('front/assets/img/process-icon/01.svg')}}" alt="img">
                         </div>
                         <div class="content">
-                            <h3>Connect your store</h3>
-                            <p>Lorem ipsum dolor sit amet consectetur. Dolo a viver ra lectus egestas.</p>
+                            <h3>Place Your Order</h3>
+                            <p>Share your printing requirement by placing an order or contacting our team with your specifications..</p>
                         </div>
                     </div>
                 </div>
@@ -358,8 +314,8 @@
                             <img src="{{asset('front/assets/img/process-icon/02.svg')}}" alt="img">
                         </div>
                         <div class="content">
-                            <h3>Customer places order</h3>
-                            <p>Lorem ipsum dolor sit amet consectetur. Dolo a viver ra lectus egestas.</p>
+                            <h3>Design & Approval</h3>
+                            <p>Upload your design or get assistance from our creative team. Final files are reviewed and approved before printing.</p>
                         </div>
                     </div>
                 </div>
@@ -369,8 +325,8 @@
                             <img src="{{asset('front/assets/img/process-icon/03.svg')}}" alt="img">
                         </div>
                         <div class="content">
-                            <h3>Printe fulfills the order</h3>
-                            <p>Lorem ipsum dolor sit amet consectetur. Dolo a viver ra lectus egestas.</p>
+                            <h3>Printing & Quality Check</h3>
+                            <p>Your order is printed using advanced machines and goes through strict quality checks to ensure perfect results..</p>
                         </div>
                     </div>
                 </div>
@@ -380,8 +336,8 @@
                             <img src="{{asset('front/assets/img/process-icon/04.svg')}}" alt="img">
                         </div>
                         <div class="content">
-                            <h3>Execution & Delivery</h3>
-                            <p>Lorem ipsum dolor sit amet consectetur. Dolo a viver ra lectus egestas.</p>
+                            <h3>Production & Delivery</h3>
+                            <p>Once approved, the final products are packed securely and delivered on time to your location..</p>
                         </div>
                     </div>
                 </div>
@@ -420,8 +376,7 @@
                                     <span>FREQUENTLY ASKED QUESTION</span>
                                 </div>
                                 <h2 class="split-text right">
-                                    What Our Clients Ask
-                                    About Printnow
+                                    What Our Clients Ask About NSG Printing Services
                                 </h2>
                             </div>
                             <div class="faq-accordion mt-3 mt-md-0">
@@ -429,36 +384,36 @@
                                     <div class="accordion-item mb-4 wow fadeInUp" data-wow-delay=".3s">
                                         <h5 class="accordion-header">
                                             <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#faq1" aria-expanded="true" aria-controls="faq1">
-                                               <span>1.</span> I'm a total beginner. Can I still follow along?
+                                               <span>1.</span> I’m New to Printing. Can I Still Place an Order?
                                             </button>
                                         </h5>
                                         <div id="faq1" class="accordion-collapse show" data-bs-parent="#accordion">
                                             <div class="accordion-body">
-                                                It is a long established fact that a reader will be distr acted bioiiy the rea dablea content of a page when looking at its layout  Thoiie point of the most useful that is so beauiful
+                                               Yes, absolutely. Our team assists you at every step—from selecting the right product and paper to final design approval—so even first-time customers can place orders confidently.
                                             </div>
                                         </div>
                                     </div>
                                     <div class="accordion-item mb-4 wow fadeInUp" data-wow-delay=".5s">
                                         <h5 class="accordion-header">
                                             <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq2" aria-expanded="false" aria-controls="faq2">
-                                                <span>2.</span>What Let your interior tell your story?
+                                                <span>2.</span>Do You Provide Design Support for Printing?
                                             </button>
                                         </h5>
                                         <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#accordion">
                                             <div class="accordion-body">
-                                                It is a long established fact that a reader will be distr acted bioiiy the rea dablea content of a page when looking at its layout  Thoiie point of the most useful that is so beauiful
+                                                Yes. We offer professional design assistance to help you create print-ready artwork or improve existing designs for the best printing results.
                                             </div>
                                         </div>
                                     </div>
                                     <div class="accordion-item mb-4 wow fadeInUp" data-wow-delay=".7s">
                                         <h5 class="accordion-header">
                                             <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq3" aria-expanded="false" aria-controls="faq3">
-                                               <span>3.</span> What do Logical Drives do?
+                                               <span>3.</span>What Types of Printing Services Do You Offer?
                                             </button>
                                         </h5>
                                         <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#accordion">
                                             <div class="accordion-body">
-                                                It is a long established fact that a reader will be distr acted bioiiy the rea dablea content of a page when looking at its layout  Thoiie point of the most useful that is so beauiful
+                                                We provide a wide range of printing services including business cards, brochures, banners, labels, stickers, packaging, promotional materials, and bulk corporate printing solutions.
                                             </div>
                                         </div>
                                     </div>

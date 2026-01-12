@@ -1,6 +1,16 @@
 @extends('front.layouts.app')
 @section('content')
   <!--<< Breadcrumb Section Start >>-->
+
+  @if ($errors->any())
+    <div class="alert alert-danger">
+        <ul class="mb-0">
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+@endif
      <div class="breadcrumb-wrapper section-padding bg-cover" style="background-image: url({{asset('front/assets/img/breadcrumb.png')}});">
         <div class="container">
             <div class="page-heading">
@@ -28,7 +38,7 @@
     <section class="shop-details-section section-padding pt-2">
         <div class="container">
         <div class="shop-details-wrapper">
-        <form action="#" method="POST" enctype="multipart/form-data">
+        <form action="{{route('ordere-store')}}" method="POST" enctype="multipart/form-data">
           @csrf   
          <div class="row justify-content-start mb-4">
            <div class="col-lg-6 col-md-8 col-sm-12">  
@@ -53,7 +63,8 @@
                                                 data-charge_details='@json($pro->charge_details)'
                                                 data-disc_price="{{ $pro->disc_price }}"
                                                data-specifications="{{ htmlentities($pro->specifications) }}"
-                                                data-quantity="{{ $pro->stock_quantity }}">
+                                                data-max_quantity="{{ $pro->max_quantity }}"
+                                                data-min_quantity="{{ $pro->min_quantity }}">
                                                 {{ $pro->name }}
                                                 {{-- @foreach ($pro->variations as $variant)
                                           {{$variant->variationType->name?' + '.$variant->variationType->name:''}} @endforeach --}}
@@ -94,7 +105,36 @@
                                             <div class="card border-rounded p-2">
                                                 <h6 class="text-base ps-2 border-bottom fs-6 py-1">SELECT DETAIL</h6>
 
-                                                <div class="row px-2 pt-1" id="variationContainer"></div>
+
+                                                <div class="row px-2 pt-1" id="variationContainer">
+                                                    @php
+                                                      $grouped = [];
+                                                        foreach ($parentVariations as $v) {
+                                                            if (!$v->variationType || !$v->variationValue) continue;
+
+                                                            $type  = $v->variationType->name;
+                                                            $value = $v->variationValue->name;
+
+                                                            $grouped[$type][] = $value;
+                                                        }
+                                                    @endphp
+
+                                                @foreach ($grouped as $type => $values)
+                                                    <div class="row mb-2 border-bottom">
+                                                        <div class="col-md-3">
+                                                            <label class="form-label pt-2 text-dark">{{ $type }}</label>
+                                                        </div>
+                                                        <div class="col-md-8 ms-2">
+                                                            <select name="variations[{{ $type }}]" class="form-select" required>
+                                                                <option value="">-- Select {{ $type }} --</option>
+                                                                @foreach (array_unique($values) as $val)
+                                                                    <option value="{{ $val }}">{{ $val }}</option>
+                                                                @endforeach
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                @endforeach
+                                                </div>
 
                                                 <h6 class="text-base border-top ps-2 pt-1 fs-6">SELECT FILE OPTION</h6>
                                                 <div class="row px-2 mb-2">
@@ -132,12 +172,13 @@
                                                             <label class="form-label text-dark pt-1 small">Quantity</label>
                                                         </div>
                                                         <div class="col-md-3 ms-2">
-                                                            <input type="number" name="quantity" id="stock_quantity" class="form-control form-control-sm" step="1">
+                                                            <input type="number" name="quantity" id="maxQty" class="form-control form-control-sm" step="1">
                                                         </div>
                                                         <div class="col-md-3 pt-1 text-muted small">
                                                             (Min Qty : <span id="minQty"></span>)
                                                         </div>
                                                     </div>  
+
                                                     <div class="row py-1 border-top">
                                                         <div class="col-6 small">Cost</div>
                                                         <div class="col-6 text-end small" id="disc_price"></div>
@@ -192,22 +233,22 @@
 
                                                                     <div class="col-md-6 border-top mb-2 pt-2">
                                                                         <label class="form-label text-dark">Full Name <strong class="text-danger">*</strong></label>
-                                                                        <input type="text" name="name" class="form-control" required>
+                                                                        <input type="text" name="name" class="form-control" required value="{{Auth::user()->name}}">
                                                                     </div>
 
                                                                     <div class="col-md-6 border-top mb-2 pt-2">
                                                                         <label class="form-label text-dark">Phone <strong class="text-danger">*</strong></label>
-                                                                        <input type="text" name="phone" class="form-control" required>
+                                                                        <input type="text" name="phone" class="form-control" required value="{{Auth::user()->phone_number}}">
                                                                     </div>
 
                                                                     <div class="col-md-6 border-top mb-2 pt-2">
                                                                         <label class="form-label text-dark">Email <strong class="text-danger">*</strong></label>
-                                                                        <input type="email" name="email" class="form-control" required>
+                                                                        <input type="email" name="email" class="form-control" readonly value="{{Auth::user()->email}}">
                                                                     </div>
 
                                                                     <div class="col-lg-6 border-top mb-2 pt-2">
                                                                         <label class="form-label text-dark">Address <strong class="text-danger">*</strong></label>
-                                                                        <textarea name="address" class="form-control" rows="1" required></textarea>
+                                                                        <textarea name="address" class="form-control" rows="1" required>{{Auth::user()->address->address}}</textarea>
                                                                     </div>
 
                                                         <div class="col-md-6 mb-3 border-top">
@@ -254,33 +295,13 @@
                                                                         <input type="text" name="zipcode" class="form-control" required>
                                                                     </div>
 
-                                                                    <!-- PAYMENT METHOD -->
-                                                                    <h6 class="text-base border-top pt-2 fs-6 mt-3">
-                                                                        SELECT PAYMENT OPTION <strong class="text-danger">*</strong>
-                                                                    </h6>
-                                                                    <div class="row px-2 mb-2 border-bottom pb-2">
-                                                                        <div class="col-md-6 d-flex flex-column">
-                                                                            <div>
-                                                                                <input type="radio" name="payment_option" id="file_online" value="cod">
-                                                                                <label class="fw-semibold small text-dark" for="file_online">Cash On Delivery</label>
-                                                                            </div>
-                                                                        </div>
-
-                                                                        <div class="col-md-6 d-flex flex-column">
-                                                                            <div>
-                                                                                <input type="radio" name="payment_option" id="file_email" value="online">
-                                                                                <label class="fw-semibold small text-dark" for="file_email">Online</label>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-
                                                                     <div class="col-md-12 mt-2 d-flex gap-2">
                                                                         <button type="button" class="btn btn-secondary" onclick="backToProduct()">
                                                                             Back
                                                                         </button>
 
                                                                         <button type="submit" class="btn theme-btn">
-                                                                            Place Order
+                                                                            Place Order With Wallet
                                                                         </button>
                                                                     </div>
 
@@ -291,7 +312,7 @@
                                            </div>
                                             </form>                       
                                             <div class="col-lg-5 ">
-                                            <div class="shop-details-image "  style="margin-top: 105px;">
+                                            <div class="shop-details-image"  style="margin-top: 105px;">
                                                 @foreach ($product as $pro)
                                                     <div class="product-images d-none" id="product-images-{{ $pro->id }}">
                                                         <div class="tab-content">
@@ -351,6 +372,9 @@
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
 <script>
+ 
+     let CURRENT_MIN_QTY = 1;
+     let CURRENT_PRICE = 0;
 
     function validateProductStep() {
         let productSelect = document.getElementById('productSelect');
@@ -368,10 +392,10 @@
                 return;
             }
         }
-        let qty = document.getElementById('stock_quantity').value;
+        let qty = document.getElementById('maxQty').value;
         if (!qty || qty <= 0) {
             alert('Please enter valid quantity');
-            document.getElementById('stock_quantity').focus();
+            document.getElementById('maxQty').focus();
             return;
         }
         let fileSelected = document.querySelector('input[name="file_option"]:checked');
@@ -403,7 +427,6 @@
 
 
 
-
     window.productDetails = function () {
 
     let select = document.getElementById('productSelect');
@@ -414,103 +437,49 @@
 
     document.getElementById('productFields').style.display = 'flex';
 
-    document.getElementById('product_name').innerText =
-    option.getAttribute('data-name');
-     document.getElementById('product_sku').innerText = option.getAttribute('data-sku');
+    document.getElementById('product_name').innerText = option.dataset.name;
+    document.getElementById('product_sku').innerText = option.dataset.sku;
+    document.getElementById('product_category').innerText = option.dataset.category;
 
-   document.getElementById('product_category').innerText = option.getAttribute('data-category');
+    //  unified product data (parent or child)
+    let productData = getSelectedProductData();
 
-     let discPrice = parseFloat(option.getAttribute('data-disc_price')) || 0;
-    let qty = parseInt(option.getAttribute('data-quantity')) || 1;
-  
-    document.getElementById('stock_quantity').value = qty;
-    document.getElementById('minQty').innerText = qty;
+    CURRENT_PRICE = productData.price;
+    CURRENT_MIN_QTY = productData.minQty;
 
-     // Initialize payable
-    updatePayable(discPrice, qty);
+    $('#maxQty').val(productData.maxQty);
+    $('#minQty').text(CURRENT_MIN_QTY);
 
-    // Listen for quantity changes
-    let qtyInput = document.getElementById('stock_quantity');
-    qtyInput.addEventListener('input', function() {
-        let newQty = parseInt(this.value) || 1;
-        updatePayable(discPrice, newQty);
+    renderDynamicCharges(option);
+    resetPayable();
+
+    //  FIXED quantity validation
+    $('#maxQty').off('input').on('input', function () {
+        let qty = parseInt(this.value);
+
+        if (!qty || qty < CURRENT_MIN_QTY) {
+            alert(`Minimum quantity allowed is ${CURRENT_MIN_QTY}`);
+            this.value = CURRENT_MIN_QTY;
+            qty = CURRENT_MIN_QTY;
+        }
+
+        if (allRequiredSelected()) {
+            updatePayable(CURRENT_PRICE, qty);
+        } else {
+            resetPayable();
+        }
     });
 
-    document.querySelectorAll('.product-images').forEach(el => {
-        el.classList.add('d-none');
-    });
+    // Images
+    $('.product-images').addClass('d-none');
+    $('#product-images-' + productId).removeClass('d-none');
 
-    let activeImages = document.getElementById('product-images-' + productId);
-    if (activeImages) {
-        activeImages.classList.remove('d-none');
-    }
-    
-        let rawSpecs = option.getAttribute('data-specifications') || '';
+    // Specs
+    let textarea = document.createElement('textarea');
+    textarea.innerHTML = option.dataset.specifications || '';
+    document.getElementById('productSpecifications').innerHTML = textarea.value;
+};
 
-        let textarea = document.createElement('textarea');
-        textarea.innerHTML = rawSpecs;
-
-        document.getElementById('productSpecifications').innerHTML = textarea.value;
-
-
-  
-        let variations = JSON.parse(option.getAttribute('data-variations') || '[]');
-        let container = document.getElementById('variationContainer');
-        let descContainer = document.getElementById('productVariationsDesc');
-         descContainer.innerHTML = '';
-
-         container.innerHTML = '';
-
-         let grouped = {};
-
-        variations.forEach(v => {
-            let type = v.variation_type?.name;
-            let value = v.variation_value?.name;
-
-            if (!type || !value) return;
-
-            if (!grouped[type]) grouped[type] = [];
-            if (!grouped[type].includes(value)) grouped[type].push(value);
-        });
-
-        Object.keys(grouped).forEach(type => {
-            container.innerHTML += `
-                <div class="row mb-2 border-bottom">
-                    <div class="col-md-3">
-                        <label class="form-label pt-2 text-dark">${type}</label>
-                    </div>
-                    <div class="col-md-8 ms-2">
-                        <select class="form-select">
-                            <option value="">-- Select ${type} --</option>
-                            ${grouped[type].map(v => `<option>${v}</option>`).join('')}
-                        </select>
-                    </div>
-                </div>
-            `;
-        });
-
-        /* -------- SHOW VARIATIONS BELOW DESCRIPTION -------- */
-            if (Object.keys(grouped).length > 0) {
-
-                let html = '<ul class="description-list">';
-
-                Object.entries(grouped).forEach(([type, values]) => {
-                    html += `
-                        <li>
-                            ${type}:
-                            <span>${values.join(', ')}</span>
-                        </li>
-                    `;
-                });
-
-                html += '</ul>';
-
-                descContainer.innerHTML = html;
-            }
-
-            renderDynamicCharges(option);
-
-}
 
 
 
@@ -518,7 +487,9 @@
 
     function renderDynamicCharges(option) {
 
-        let charges = JSON.parse(option.getAttribute('data-charge_details') || '[]');
+        let productData = getSelectedProductData();
+        let charges = productData.charges;
+
         let container = document.getElementById('dynamicChargeSection');
 
         container.innerHTML = '';
@@ -552,14 +523,13 @@
                 </div>
             `;
 
-            // attach event listener
             $(document).on('change', `input[name="${key}"]`, function () {
 
                 let select = document.getElementById('productSelect');
                 let opt = select.options[select.selectedIndex];
 
                 let price = parseFloat(opt.getAttribute('data-disc_price')) || 0;
-                let qty = parseInt($('#stock_quantity').val()) || 1;
+                let qty = parseInt($('#maxQty').val()) || CURRENT_MIN_QTY;
 
                 if (this.id === `${key}_required`) {
                     $(`#${key}_charge`).removeClass('d-none');
@@ -568,45 +538,67 @@
                     $(`#${key}_charge`).addClass('d-none');
                     delete activeCharges[key];
                 }
+                
+                if (allRequiredSelected()) {
+                    updatePayable(price, qty);
+                } else {
+                    resetPayable();
+                }
 
-                updatePayable(price, qty);
             });
         });
     }
 
 
 
-    function updatePayable(price, quantity) {
+function updatePayable(price, quantity) {
 
-        let cost = price * quantity;
-
-        let extraChargeTotal = Object.values(activeCharges)
-            .reduce((sum, val) => sum + val, 0);
-
-        let subtotal = cost + extraChargeTotal;
-        let gst = subtotal * 0.18;
-        let payable = subtotal + gst;
-
-        $('#disc_price').text(`Rs. ${cost.toFixed(2)}/-`);
-        $('#gst_amount').text(`Rs. ${gst.toFixed(2)}/-`);
-        $('#amount_payable').text(`Rs. ${payable.toFixed(2)}/-`);
+    if (!allRequiredSelected()) {
+        resetPayable();
+        return;
     }
+
+    let cost = price * quantity;
+
+    let extraChargeTotal = Object.values(activeCharges)
+        .reduce((sum, val) => sum + (val * quantity), 0);
+
+    let subtotal = cost + extraChargeTotal;
+    let gst = subtotal * 0.18;
+    let payable = subtotal + gst;
+
+
+    $('#disc_price').text(`Rs. ${cost.toFixed(2)}/-`);
+    $('#gst_amount').text(`Rs. ${gst.toFixed(2)}/-`);
+    $('#amount_payable').text(`Rs. ${payable.toFixed(2)}/-`);
+}
+
+
+
 
      
 
 
 
-        $(document).ready(function () {
-        $('input[name="file_option"]').on('change', function () {
-            $('#online_info, #email_info').addClass('d-none');
+    $('input[name="file_option"]').on('change', function () {
 
-            if (this.id === 'file_online') {
+        $('#online_info, #email_info').addClass('d-none');
+
+        if (this.id === 'file_online') {
             $('#online_info').removeClass('d-none');
-            } else if (this.id === 'file_email') {
+        } else if (this.id === 'file_email') {
             $('#email_info').removeClass('d-none');
-            }
-        });
-        });
+        }
+
+        let qty = parseInt($('#maxQty').val()) || CURRENT_MIN_QTY;
+
+        if (allRequiredSelected()) {
+            updatePayable(CURRENT_PRICE, qty);
+        } else {
+            resetPayable();
+        }
+    });
+
 
 
         function getStates(countryId, selectedStateId = null, stateSelectId = '#state') {
@@ -685,6 +677,51 @@
         $('#state').on('change', function () {
             getCities(this.value);
         });
+
+
+    function allRequiredSelected() {
+
+        // Product
+        if (!$('#productSelect').val()) return false;
+
+        // Variations
+        let valid = true;
+        $('#variationContainer select').each(function () {
+            if (!$(this).val()) valid = false;
+        });
+        if (!valid) return false;
+
+        // File option
+        if (!$('input[name="file_option"]:checked').length) return false;
+
+        // Quantity
+        let qty = parseInt($('#maxQty').val()) || 0;
+        if (qty < CURRENT_MIN_QTY) return false;
+
+        return true;
+    }
+
+
+   function getSelectedProductData() {
+    let select = document.getElementById('productSelect');
+    let option = select.options[select.selectedIndex];
+
+    return {
+        price: parseFloat(option.getAttribute('data-disc_price')) || 0,
+        minQty: parseInt(option.getAttribute('data-min_quantity')) || 1,
+        maxQty: parseInt(option.getAttribute('data-max_quantity')) || 1,
+        charges: JSON.parse(option.getAttribute('data-charge_details') || '[]')
+    };
+}
+
+
+
+function resetPayable() {
+    $('#disc_price').text('Rs. 0/-');
+    $('#gst_amount').text('Rs. 0/-');
+    $('#amount_payable').text('Rs. 0/-');
+}
+
 
 
 

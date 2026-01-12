@@ -97,25 +97,33 @@ class HomeController extends Controller
         if (!Auth::check()) {
             return redirect('/login');
         }
-        $user = Auth::user();
+        $parent = Product::with([
+            'variations.variationType',
+            'variations.variationValue',
+        ])->where('slug', $slug)->firstOrFail();
 
-        $data = Product::where('slug', $slug)->first();
-        $product = Product::with(['variations.variationType', 'variations.variationValue', 'variations.allValues'])
-            ->where('parent_id', $data->id)
-            ->get();
+        $parentVariations = $parent->variations;
+
+        if ($parent->children->count() > 0) {
+            $product = $parent->children;
+        } else {
+            $product = collect([$parent]);
+        }
 
         $countrie = Countrie::orderBy('name', 'asc')->get();
-        $country_id = '101';
-        $states = [];
+        $country_id = 101;
+
+        $states = State::where('country_id', $country_id)->orderBy('name', 'asc')->get();
         $cities = [];
-        if (!empty($country_id)) {
-            $states = State::where(['country_id' => $country_id])->orderBy('name', 'asc')->get();
-        }
-        if (!empty($request->state_id)) {
-            $cities = Citie::where(['state_id' => $request->state_id])->orderBy('name', 'asc')->get();
-        }
-        //  return view('admin.order.booking.add_booking',compact('product'));
-        return view('front.shop-details', compact('product', 'countrie', 'country_id', 'states', 'cities',));
+
+        return view('front.shop-details', compact(
+            'product',
+            'parentVariations',
+            'countrie',
+            'country_id',
+            'states',
+            'cities'
+        ));
     }
     public function static_content()
     {

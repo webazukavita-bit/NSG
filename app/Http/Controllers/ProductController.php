@@ -136,11 +136,10 @@ class ProductController extends Controller
     public function productAdd()
     {
         $category = ProductCategory::get();
-        $brand = Brand::get();
         $variationType = Variation::where('parent_id', 0)->get();
         $variationValue = Variation::whereNot('parent_id', 0)->get();
 
-        return view('admin.product.add', compact('category', 'brand', 'variationType', 'variationValue'));
+        return view('admin.product.add', compact('category', 'variationType', 'variationValue'));
     }
 
     public function productStore(Request $request)
@@ -149,7 +148,6 @@ class ProductController extends Controller
 
         $validated = $request->validate([
             'category_id' => 'required|integer|exists:categories,id',
-            'brand_id' => 'required|integer|exists:brands,id',
             'slug' => 'required|string|unique:products,slug|min:3|max:255',
             'name' => 'required|string|max:255',
             'images' => 'required|array|min:1',
@@ -157,7 +155,8 @@ class ProductController extends Controller
             'sku' => 'required|string|max:100',
             'price' => 'required|numeric',
             'disc_price' => 'required|numeric',
-            'stock_quantity' => 'required|integer',
+            'max_quantity' => 'required|integer',
+            'min_quantity' => 'required|integer',
             'content' => 'required|string',
             'additional_name.*' => 'nullable|string',
             'charge.*' => 'nullable|numeric',
@@ -191,13 +190,13 @@ class ProductController extends Controller
 
             $product = new Product();
             $product->category_id = $request->category_id;
-            $product->brand_id = $request->brand_id;
             $product->name = $request->name;
             $product->slug = $request->slug;
             $product->sku = $request->sku;
             $product->price = $request->price;
             $product->disc_price = $request->disc_price;
-            $product->stock_quantity = $request->stock_quantity;
+            $product->max_quantity = $request->max_quantity;
+            $product->min_quantity = $request->min_quantity;
             $product->specifications = $request->content;
             $product->charge_details = $charges;
             $product->parent_id = 0;
@@ -222,8 +221,13 @@ class ProductController extends Controller
             $variationValues = $request->variation_value;
 
             foreach ($variationTypes as $index => $typeId) {
-                $valueId = $variationValues[$index] ?? null;
-                if ($valueId) {
+
+                if (!isset($variationValues[$index])) {
+                    continue;
+                }
+
+                foreach ($variationValues[$index] as $valueId) {
+
                     ProductVariation::create([
                         'product_id' => $product->id,
                         'variation_type_id' => $typeId,
@@ -231,6 +235,7 @@ class ProductController extends Controller
                     ]);
                 }
             }
+
 
             DB::commit();
         } catch (\Exception $e) {
@@ -250,12 +255,11 @@ class ProductController extends Controller
     {
         $category = ProductCategory::get();
         $data = Product::withTrashed()->findOrFail($id);
-        $brand = Brand::get();
 
         $variationType = Variation::where('parent_id', 0)->get();
 
         $variationValue = Variation::where('parent_id', '!=', 0)->get();
-        return view('admin.product.edit', compact('data', 'category', 'brand', 'variationType', 'variationValue'));
+        return view('admin.product.edit', compact('data', 'category', 'variationType', 'variationValue'));
     }
 
     public function productUpdate(Request $request, $id)
@@ -264,12 +268,12 @@ class ProductController extends Controller
 
         $request->validate([
             'category_id' => 'required|integer|exists:categories,id',
-            'brand_id' => 'required|integer|exists:brands,id',
             'name' => 'required|string|max:255',
             'sku' => 'required|string|max:100',
             'price' => 'required|numeric',
             'disc_price' => 'required|numeric',
-            'stock_quantity' => 'required|integer',
+            'max_quantity' => 'required|integer',
+            'min_quantity' => 'required|integer',
             'slug' => 'required|string|min:3|max:255|unique:products,slug,' . $id,
             'content' => 'required|string',
             'images' => 'nullable|array|min:1',
@@ -302,16 +306,15 @@ class ProductController extends Controller
 
             $product = Product::withTrashed()->findOrFail($id);
             $product->category_id = $request->category_id;
-            $product->brand_id = $request->brand_id;
             $product->name = $request->name;
             $product->sku = $request->sku;
             $product->price = $request->price;
             $product->disc_price = $request->disc_price;
-            $product->stock_quantity = $request->stock_quantity;
+            $product->max_quantity = $request->max_quantity;
+            $product->min_quantity = $request->min_quantity;
             $product->slug = $request->slug;
             $product->specifications = $request->content;
             $product->charge_details = $charges;
-            $product->parent_id = 0;
 
 
             if ($request->hasFile('images')) {
@@ -339,9 +342,15 @@ class ProductController extends Controller
 
             $variationTypes = $request->variation_type;
             $variationValues = $request->variation_value;
+
             foreach ($variationTypes as $index => $typeId) {
-                $valueId = $variationValues[$index] ?? null;
-                if ($valueId) {
+
+                if (!isset($variationValues[$index])) {
+                    continue;
+                }
+
+                foreach ($variationValues[$index] as $valueId) {
+
                     ProductVariation::create([
                         'product_id' => $product->id,
                         'variation_type_id' => $typeId,
@@ -374,7 +383,6 @@ class ProductController extends Controller
 
         return redirect()->route('products')->with('success', $message);
     }
-
     public function variant(Request $request)
     {
         $category = ProductCategory::withTrashed()->latest()->get();
