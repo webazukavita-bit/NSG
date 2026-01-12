@@ -92,10 +92,10 @@ class User extends Authenticatable implements JWTSubject
     }
 
 
-    public function user_steps()
-    {
-        return $this->hasMany(UserSteps::class);
-    }
+    // public function user_steps()
+    // {
+    //     return $this->hasMany(UserSteps::class);
+    // }
 
     public function bank()
     {
@@ -123,7 +123,7 @@ class User extends Authenticatable implements JWTSubject
 
     public function lead()
     {
-        return $this->hasMany(Leads::class);
+        return $this->hasMany(Lead::class);
     }
 
     public function task()
@@ -131,20 +131,20 @@ class User extends Authenticatable implements JWTSubject
         return $this->hasMany(Task::class);
     }
 
-    public function package()
-    {
-        return $this->hasOne(Packages::class);
-    }
+    // public function package()
+    // {
+    //     return $this->hasOne(Packages::class);
+    // }
 
-    public function user_document()
-    {
-        return $this->hasMany(UserDocument::class);
-    }
+    // public function user_document()
+    // {
+    //     return $this->hasMany(UserDocument::class);
+    // }
 
-    public function camps()
-    {
-        return $this->hasMany(Camps::class, 'owner_id', 'id');
-    }
+    // public function camps()
+    // {
+    //     return $this->hasMany(Camps::class, 'owner_id', 'id');
+    // }
 
     public function getCreatedAtAttribute($value)
     {
