@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Product extends Model
 {
-        use SoftDeletes;
+    use SoftDeletes;
     protected $table = 'products';
 
     protected $fillable = [
@@ -15,16 +15,16 @@ class Product extends Model
         'name',
         'slug',
         'image',
-         'sku',
-         'category_id',
-         'brand_id',
-         'parent_id',
+        'sku',
+        'category_id',
+        'parent_id',
         'specifications',
         'price',
         'disc_price',
-        'stock_quantity',
+        'max_quantity',
+        'min_quantity',
         'charge_details',
-        
+
 
     ];
 
@@ -39,17 +39,18 @@ class Product extends Model
     {
         return $this->belongsTo(ProductCategory::class, 'category_id');
     }
-    public function brand()
-    {
-        return $this->belongsTo(Brand::class, 'brand_id');
-    }
 
     public function variations()
     {
-       return $this->hasMany(ProductVariation::class, 'product_id', 'id');
+        return $this->hasMany(ProductVariation::class, 'product_id', 'id');
     }
 
-        
+
+    public function children()
+    {
+        return $this->hasMany(Product::class, 'parent_id');
+    }
+
     public function getCreatedAtAttribute($value)
     {
         return \Carbon\Carbon::parse($value)->format('d-m-Y H:i A');

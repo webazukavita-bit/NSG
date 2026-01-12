@@ -287,6 +287,7 @@ Route::middleware(['permission'])->group(function () {
 
 
     Route::prefix('booking')->group(function () {
+        Route::post('/booking-add', [OrderController::class, 'ordereStore'])->name('ordere-store');
         Route::get('/categories', [OrderController::class, 'categories'])->name('booking-categories');
         Route::get('/sub-categories/{slug?}/{id}', [OrderController::class, 'subCategories'])->name('booking-sub-category');
         Route::get('/products/{slug}', [OrderController::class, 'bookingDetails'])->name('booking-details');

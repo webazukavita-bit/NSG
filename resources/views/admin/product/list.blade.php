@@ -7,16 +7,18 @@
 							<div class="accordion-item">
 								<h2 class="accordion-header" id="headingOne">
 									<button class="accordion-button text-primary" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
-										<i class="bx bx-filter-alt font-18 text-primary"></i> Filter
+										<i class="bx bx-filter-alt font-18 text-primary me-1"></i> Filter
 									</button>
 								</h2>
 								<div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
 									<div class="accordion-body">	
-										<form action="{{ route('products') }}" method="GET" class="row g-3">
+										<form action="{{ route('products') }}" method="POST" class="row g-3" enctype="multipart/form-data">
+											@csrf
+
 											<div class="col-md-3">
 												<label for="category_id" class="form-label">Category</label>
 												<select name="category_id" class="single-select @error('category_id') is-invalid @enderror" id="category_id">
-													<option value="">Choose...</option>
+													<option selected disabled value="">Choose...</option>
 													@foreach ($category as $cat)
 													<option value="{{ $cat->id }}" @selected($cat->id == request()->category_id)>{{ $cat->name }}</option>
 													@endforeach
@@ -24,7 +26,10 @@
 												@error('category_id')
 													<div class="invalid-feedback">{{ $message }}</div>
 												@enderror
-													<button type="submit" class="btn btn-primary mt-2"><i class="bx bx-search"></i> Filter</button>
+											</div>
+											
+											<div class="col-12 text-center">
+												<button type="submit" class="btn btn-primary"><i class="bx bx-search"></i> Filter</button>
 											</div>
 										</form>
 									</div>

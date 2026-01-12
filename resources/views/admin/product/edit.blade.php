@@ -40,18 +40,6 @@
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>
-                <div class="col-md-3">
-                    <label for="brand_id" class="form-label">Brand</label>
-                    <select name="brand_id" class="single-select @error('brand_id') is-invalid @enderror" id="brand_id">
-                        <option selected disabled value="">Choose...</option>
-                        @foreach ($brand as $cat)
-                        <option value="{{ $cat->id }}" @selected($cat->id == old('brand_id', $data->brand_id))>{{ $cat->name }}</option>
-                        @endforeach
-                    </select>
-                    @error('brand_id')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                    @enderror
-                </div>
                     <div class="col-md-3">
                     <label for="name" class="form-label">Name</label>
                     <input type="text" name="name" class="form-control @error('name') is-invalid @enderror" id="name" placeholder="Enter Name" value="{{ old('name', $data->name) }}">
@@ -62,7 +50,7 @@
 
                 <div class="col-md-3">
                     <label for="image" class="form-label">Thumbnail <code>*</code></label>
-                    <input type="file" name="images[]" multiple class="form-control @error('image') is-invalid @enderror" id="image" placeholder="Enter Name" value="{{ old('image') }}" required>
+                    <input type="file" name="images[]" multiple class="form-control @error('image') is-invalid @enderror" id="image" placeholder="Enter Name" value="{{ old('image') }}">
                     @error('image')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
@@ -89,9 +77,16 @@
                     @enderror
                 </div>
                 <div class="col-md-3">
-                    <label for="stock_quantity" class="form-label">Stock Quantity <code>*</code></label>
-                    <input type="number" name="stock_quantity" class="form-control @error('stock_quantity') is-invalid @enderror" id="stock_quantity" placeholder="Enter Quantity" value="{{ old('stock_quantity', $data->stock_quantity) }}" required>
-                    @error('stock_quantity')
+                    <label for="max_quantity" class="form-label">Max Quantity <code>*</code></label>
+                    <input type="number" name="max_quantity" class="form-control @error('max_quantity') is-invalid @enderror" id="max_quantity" placeholder="Enter Quantity" value="{{ old('max_quantity', $data->max_quantity) }}" required>
+                    @error('max_quantity')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
+                </div>
+                <div class="col-md-3">
+                    <label for="min_quantity" class="form-label">Min Quantity <code>*</code></label>
+                    <input type="number" name="min_quantity" class="form-control @error('min_quantity') is-invalid @enderror" id="min_quantity" placeholder="Enter Quantity" value="{{ old('min_quantity', $data->min_quantity) }}" required>
+                    @error('min_quantity')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>
@@ -131,11 +126,17 @@
 
                             <div class="col-md-4">
                                 <label class="form-label">Variation Value</label>
-                                <select name="variation_value[]" 
-                                        class="form-control variation_value"
-                                        data-selected="{{ $v->variation_value_id }}">
-                                    <option disabled selected>Choose...</option>
+                                <select name="variation_value[{{ $index }}][]"
+                                        class="form-control variation_value multi-select"
+                                        multiple
+                                        data-selected='@json(
+                                            $data->variations
+                                                ->where("variation_type_id", $v->variation_type_id)
+                                                ->pluck("variation_value_id")
+                                                ->toArray()
+                                        )'>
                                 </select>
+
                             </div>
 
                             <div class="col-md-4">
@@ -166,10 +167,8 @@
 
                             <div class="col-md-4">
                                 <label class="form-label">Variation Value</label>
-                                <select name="variation_value[]"
-                                        class="form-control variation_value">
-                                    <option disabled selected>Choose...</option>
-                                </select>
+                                 <select class="variation_value multi-select form-control w-100" name="variation_value[0][]"  multiple  data-placeholder="Select values">
+                                       </select>
                             </div>
 
                             <div class="col-md-4">
@@ -195,9 +194,8 @@
 
                     <div class="col-md-4">
                         <label class="form-label">Variation Value</label>
-                        <select name="variation_value[]" class="form-control variation_value">
-                            <option disabled selected>Choose...</option>
-                        </select>
+                      <select class="variation_value multi-select form-control w-100" name="variation_value[0][]"   multiple  data-placeholder="Select values">
+                                       </select>
                     </div>
 
                     <div class="col-md-4">
@@ -333,55 +331,71 @@
             }, 10);
         });
 
+
+    function initMultiSelect($el) {
+
+    if ($el.hasClass("select2-hidden-accessible")) {
+        $el.select2('destroy');
+    }
+
+    $el.select2({
+        theme: 'bootstrap4',
+        width: '100%',
+        placeholder: $el.data('placeholder') || 'Select values',
+        closeOnSelect: false,
+        allowClear: true,
+        hideSelected: true 
+    });
+}
+
+$('.variation_value').each(function () {
+    initMultiSelect($(this));
+    $(this).prop('disabled', true);
+});
+
 $(document).ready(function () {
+
     $('#variation-wrapper .variation-row').each(function () {
         let $row = $(this);
         let typeId = $row.find('.variation_type').val();
-        let selectedValue = $row.find('.variation_value').data('selected');
+        let selected = $row.find('.variation_value').data('selected') || [];
 
         if (typeId) {
-            getVariationvalue(typeId, $row.find('.variation_value'), selectedValue);
+            getVariationvalue(typeId, $row.find('.variation_value'), selected);
         }
     });
+
 });
+;
 
 
 
-    function getVariationvalue(variationTypeId,valueSelectId, selectedValueId= null) {
+function getVariationvalue(typeId, $valueSelect, selectedValues = []) {
 
-    const $valueSelect = $(valueSelectId);
-
-    $valueSelect.empty();
-    $valueSelect.html('<option disabled selected>Loading...</option>');
-    $valueSelect.trigger('change');
-
-    const isSelectedValid = selectedValueId !== null && selectedValueId !== undefined && selectedValueId !== '';
+    $valueSelect.empty().prop('disabled', true);
 
     $.ajax({
-        url: "{{ route('get-variation-value', ':id') }}".replace(':id', variationTypeId),
+        url: "{{ route('get-variation-value', ':id') }}".replace(':id', typeId),
         method: 'GET',
-        success: function(data) {
+        success: function (data) {
 
-            $valueSelect.empty();
-
-            if (!isSelectedValid) {
-                $valueSelect.append('<option disabled selected>Choose...</option>');
-            }
-
-            data.forEach(function(item) {
-                const isSelected = isSelectedValid && item.id == selectedValueId;
-                const option = new Option(item.name, item.id, isSelected, isSelected);
+            data.forEach(item => {
+                let selected = selectedValues.includes(item.id);
+                let option = new Option(item.name, item.id, selected, selected);
                 $valueSelect.append(option);
             });
 
-            $valueSelect.trigger('change');
-        },
-        error: function(xhr, status, error) {
-            $valueSelect.empty();
-            $valueSelect.trigger('change');
+            $valueSelect.prop('disabled', false);
+
+            // re-init select2
+            if ($valueSelect.hasClass('select2-hidden-accessible')) {
+                $valueSelect.select2('destroy');
+            }
+            initMultiSelect($valueSelect);
         }
     });
 }
+
 
 
 function handleVariationTypeChange(selectElement) {
@@ -414,34 +428,29 @@ function handleVariationTypeChange(selectElement) {
 
 
 $(document).on('click', '.btn-add', function () {
+
     let $row = $(this).closest('.variation-row');
 
-    let typeVal = $row.find('.variation_type').val();
-    let valueVal = $row.find('.variation_value').val();
-
-    if (!typeVal || !valueVal) {
-        alert('Please select both Variation Type and Value before adding.');
+    if (!$row.find('.variation_type').val() || !$row.find('.variation_value').val()?.length) {
+        alert('Please select variation type and values');
         return;
     }
 
-    // Clone template
-    let $clone = $('.variation-row.template-row').first().clone();
-    $clone.removeClass('template-row').show();
+    // Lock current row
+    $row.find('select').prop('disabled', true);
+    $(this).text('-').removeClass('btn-add btn-primary').addClass('btn-remove btn-danger');
 
-      $clone.find('.variation_type').val('');
-      $clone.find('.variation_value')
-        .html('<option disabled selected>Choose...</option>')
-        .removeAttr('data-selected');
+    let index = $('#variation-wrapper .variation-row').length;
 
+    let $clone = $('.variation-row.template-row').clone().removeClass('template-row').show();
 
-    // Convert + to -
-    $clone.find('.btn-add')
-        .text('-')
-        .removeClass('btn-add btn-primary')
-        .addClass('btn-remove btn-danger');
+    $clone.find('.variation_value')
+        .attr('name', `variation_value[${index}][]`)
+        .empty();
 
     $('#variation-wrapper').append($clone);
 });
+
 
 
 

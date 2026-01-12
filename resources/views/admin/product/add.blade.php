@@ -4,6 +4,14 @@
 
 @section('content')
 
+<style>
+    .select2-container--bootstrap4 .select2-selection--multiple {
+    min-height: 38px !important;
+    padding: 4px 6px;
+    border-radius: 4px;
+}
+
+</style>
   <div class="card border-top border-0 border-4 border-primary">
         <div class="card-body">
             
@@ -30,18 +38,6 @@
                         @endforeach
                     </select>
                     @error('category_id')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                    @enderror
-                </div>
-                <div class="col-md-3">
-                    <label for="brand_id" class="form-label">Brand</label>
-                    <select name="brand_id" class="single-select @error('brand_id') is-invalid @enderror" id="brand_id">
-                        <option selected disabled value="">Choose...</option>
-                        @foreach ($brand as $cat)
-                        <option value="{{ $cat->id }}" @selected($cat->id == old('brand_id'))>{{ $cat->name }}</option>
-                        @endforeach
-                    </select>
-                    @error('brand_id')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>
@@ -85,9 +81,16 @@
                     @enderror
                 </div>
                 <div class="col-md-3">
-                    <label for="stock_quantity" class="form-label">Stock Quantity <code>*</code></label>
-                    <input type="number" name="stock_quantity" class="form-control @error('stock_quantity') is-invalid @enderror" id="stock_quantity" placeholder="Enter Quantity" value="{{ old('stock_quantity') }}" required>
-                    @error('stock_quantity')
+                    <label for="max_quantity" class="form-label">Max Quantity <code>*</code></label>
+                    <input type="number" name="max_quantity" class="form-control @error('max_quantity') is-invalid @enderror" id="max_quantity" placeholder="Enter Max Quantity" value="{{ old('max_quantity') }}" required>
+                    @error('max_quantity')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
+                </div>
+                <div class="col-md-3">
+                    <label for="min_quantity" class="form-label">Min Quantity <code>*</code></label>
+                    <input type="number" name="min_quantity" class="form-control @error('min_quantity') is-invalid @enderror" id="min_quantity" placeholder="Enter Min Quantity" value="{{ old('min_quantity') }}" required>
+                    @error('min_quantity')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>
@@ -116,18 +119,12 @@
                                 @enderror
                                     </div>
 
+
                                     <div class="col-md-4">
                                         <label class="form-label">Variation Value</label>
-                                        <select name="variation_value[]" class="form-control variation_value">
-                                            <option value="" selected disabled>Choose...</option>
-                                            @foreach ($variationValue as $variation)
-                                    <option value="{{ $variation->id }}" 
-                                        @selected(is_array(old('variation_value')) && in_array($variation->id, old('variation_value')))>
-                                        {{ $variation->name }}
-                                    </option>
-                                            @endforeach
-                                        </select>
-                                             @error('variation_value')
+                                       <select class="variation_value multi-select form-control w-100" name="variation_value[0][]"  multiple  data-placeholder="Select values">
+                                       </select>
+                                               @error('variation_value')
                                                 <div class="invalid-feedback">{{ $message }}</div>
                                             @enderror
                                     </div>
@@ -209,43 +206,61 @@
                 
             }, 10);
         });
+        
+    function initMultiSelect($el) {
+
+    if ($el.hasClass("select2-hidden-accessible")) {
+        $el.select2('destroy');
+    }
+
+    $el.select2({
+        theme: 'bootstrap4',
+        width: '100%',
+        placeholder: $el.data('placeholder') || 'Select values',
+        closeOnSelect: false,
+        allowClear: true,
+        hideSelected: true   // KEY LINE
+    });
+}
 
 
-function getVariationvalue(variationTypeId,valueSelectId, selectedValueId= null) {
+    $('.variation_value').each(function () {
+    initMultiSelect($(this));
+    $(this).prop('disabled', true);
+});
 
-    const $valueSelect = $(valueSelectId);
 
+
+
+function getVariationvalue(typeId, $valueSelect) {
+
+    // Enable select
+    $valueSelect.prop('disabled', false);
+
+    // Clear old options
     $valueSelect.empty();
-    $valueSelect.html('<option disabled selected>Loading...</option>');
-    $valueSelect.trigger('change');
-
-    const isSelectedValid = selectedValueId !== null && selectedValueId !== undefined && selectedValueId !== '';
 
     $.ajax({
-        url: "{{ route('get-variation-value', ':id') }}".replace(':id', variationTypeId),
-        method: 'GET',
-        success: function(data) {
+        url: "{{ route('get-variation-value', ':id') }}".replace(':id', typeId),
+        type: 'GET',
+        success: function (data) {
 
-            $valueSelect.empty();
-
-            if (!isSelectedValid) {
-                $valueSelect.append('<option disabled selected>Choose...</option>');
-            }
-
-            data.forEach(function(item) {
-                const isSelected = isSelectedValid && item.id == selectedValueId;
-                const option = new Option(item.name, item.id, isSelected, isSelected);
-                $valueSelect.append(option);
+            data.forEach(item => {
+                $valueSelect.append(
+                    $('<option>', {
+                        value: item.id,
+                        text: item.name
+                    })
+                );
             });
 
-            $valueSelect.trigger('change');
-        },
-        error: function(xhr, status, error) {
-            $valueSelect.empty();
+            // Refresh Select2
             $valueSelect.trigger('change');
         }
     });
 }
+
+
 
 
 function handleVariationTypeChange(selectElement) {
@@ -274,6 +289,8 @@ function handleVariationTypeChange(selectElement) {
 }
 
 
+
+
 $(document).on('click', '.btn-add', function () {
     let $row = $(this).closest('.variation-row');
 
@@ -300,10 +317,15 @@ $(document).on('click', '.btn-add', function () {
     $('#variation-wrapper').append($clone);
 
     // Reset template row
-    let $template = $('.variation-row.template-row');
-    $template.find('.variation_type').val('').trigger('change');
-    $template.find('.variation_value').html('<option disabled selected>Choose...</option>');
+        let $template = $('.variation-row.template-row');
+        $template.find('.variation_type').val('').trigger('change');
+
+        let $valueSelect = $template.find('.variation_value');
+        $valueSelect.val(null).trigger('change');
+        $valueSelect.prop('disabled', true);
+
 });
+
 
 
 

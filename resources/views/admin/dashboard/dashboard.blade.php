@@ -275,7 +275,7 @@
                                 </td>
                                 <td>
                                     @php
-                                        $hex = ltrim($order->payment->color, '#');
+                                        $hex = ltrim($order->payment->color ?? '', '#');
 
                                         [$r, $g, $b] = [
                                             hexdec(substr($hex, 0, 2)),
@@ -285,7 +285,7 @@
                                     @endphp
 
                                     <div class="badge rounded-pill p-2 text-uppercase px-3"
-                                        style="color: {{ $order->payment->color }};
+                                        style="color: {{ $order->payment->color ?? '' }};
                                                 background-color: rgba({{ $r }}, {{ $g }}, {{ $b }}, 0.18);">
                                         <i class="bx bxs-circle align-middle me-1"></i>
                                         {{ $order->payment->name ?? '' }}
