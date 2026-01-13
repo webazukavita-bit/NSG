@@ -173,7 +173,7 @@ class OrderController extends Controller
 
             DB::commit();
 
-            return back('front.shop-details')->with('success', 'Order placed successfully using wallet');
+            return back()->with('success', 'Order placed successfully using wallet');
         } catch (\Exception $e) {
 
             DB::rollBack();

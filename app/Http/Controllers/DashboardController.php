@@ -161,7 +161,12 @@ class DashboardController extends Controller
     public function Myprofile()
     {
         if (Auth::user()->role_id == 4) {
-            return view('front.Myprofile');
+            $user = Auth::user();
+            $orderCount = Order::where('order_by_id', $user->id)->count();
+            $todayorder = Order::where('order_by_id', $user->id)
+                ->whereDate('created_at', today())
+                ->count();
+            return view('front.Myprofile', compact('orderCount', 'todayorder'));
         } else {
             return redirect('/');
         }

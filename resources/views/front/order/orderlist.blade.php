@@ -1,5 +1,5 @@
-@extends('admin.layouts.app')
-@section('content')
+@extends('front.layouts.dashboard')
+@section('main')
    	@php
 		$profile = 'images/user-1.svg';
 	@endphp
@@ -15,7 +15,7 @@
                                 <h5 class="mb-0 text-primary">Order</h5>
                             </div>
 							<div>
-                                <a href="{{ route('ordere-add') }}" class="btn btn-primary"><i class="bx bx-plus"></i> Add Order</a>
+                                <a href="{{ route('shop') }}" class="btn btn-primary"><i class="bx bx-plus"></i> Add Order</a>
                             </div>
                         </div>
                         <hr>
@@ -26,13 +26,12 @@
                                         <th>Sn.</th>
 										<th>Order Id</th>
 										<th>User Name</th>
-										<th>Status</th>
+										<th> Order Status</th>
 										<th>Total</th>
 										<th>Payment Status</th>
 										<th>Payment Method</th>
 										<th>Date</th>
                                         <th>View Details</th>
-										<th>Action</th>
 									</tr>
 								</thead>
 								<tbody>
@@ -41,42 +40,16 @@
                                         <td>{{ $key + 1 }}</td>
 										<td>{{ $value->code ?? '' }}</td>
 										<td><div class="d-flex align-items-center">
-                                    <img src="{{ asset('images/profile/' .($value->user->image ?? '') ) }}" onerror="this.onerror=null;this.src='{{ asset($profile) }}';" class="product-img-2" alt="product img" style="margin-right: 8px;"> 
-                                    <span>{{ $value->user->name ?? '' }}</span></div>
+                                    <img src="{{ asset('images/profile/' .($value->user->image ?? '') ) }}" onerror="this.onerror=null;this.src='{{ asset($profile) }}';" class="product-img-2" alt="product img" style="margin-right: 8px; height:50px;border-radius:10px;"> 
+                                    <span>{{ $value->user->name ?? '' }} <br>{{ $value->user->phone_number ?? '' }}  </span></div>
                                         </td>
 										<td>
                                          <div class="badge rounded-pill  bg-light-info p-2 text-uppercase px-3"  style="color: {{ $value->status->color ?? '' }};"><i class="bx bxs-circle align-middle me-1"></i>{{$value->status->name ?? ''}}</div></td>
-										<td>{{ $value->total_amount ?? '-'}}</td>
+										<td>{{ $value->final_amount_with_tax ?? '-'}}</td>
 										<td  style="color: {{ $value->paymentStatus->color ?? '' }};font-weight:500;"><i class="bx bxs-circle align-middle me-1"></i>{{ $value->paymentStatus->name ?? '-'}}</td>
 										<td>{{ $value->payment_method ?? 'Wallet'}}</td>
 										<td>{{ $value->updated_at }}</td>
 										<td><a href="{{route('show-invoice',['id'=>$value->id])}}" type="button" class="btn btn-primary btn-sm radius-30 px-4">View Details</a></td>
-                                        <td>
-											<div class="d-flex">
-											  <span class="order-actions-primary">
-													<a href="javascript:;" class="ms-2 openStatusModel" data-bs-toggle="tooltip" data-bs-placement="top" 
-													data-id="{{ $value->id }}"
-													data-status_id="{{ $value->status->id}}"
-													data-bs-original-title="OrderStatus"><i class="bx bx-message-square-edit"></i></a>
-												</span>
-											  <span class="order-actions-primary">
-													<a href="javascript:;" class="ms-2 openPaymentModel" data-bs-toggle="tooltip" data-bs-placement="top" 
-													data-id="{{ $value->id }}"
-													data-payment_id="{{ $value->payment_status_id}}"
-													data-bs-original-title="PaymentStatus"><i class="bx bx-edit"></i></a>
-												</span>
-
-												@if(empty($value->deleted_at))
-												<span class="order-actions-primary">
-													<a href="{{ route('order-delete', ['id' => $value->id]) }}" class="ms-2" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-original-title="Delete"><i class="bx bx-trash"></i></a>
-												</span>
-												@else
-												<span class="order-actions-danger">
-													<a href="{{ route('order-delete', ['id' => $value->id]) }}" class="ms-2" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-original-title="Restore"><i class="bx bx-revision"></i></a>
-												</span>
-												@endif
-											</div>
-										</td>
 									</tr>
 									@endforeach
 								</tbody>

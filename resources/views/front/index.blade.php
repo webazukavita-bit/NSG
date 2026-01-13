@@ -680,7 +680,7 @@
     </section>
 
     <!-- Project Section Start -->
-    <section class="project-section fix section-padding pt-0">
+    {{-- <section class="project-section fix section-padding pt-0">
         <div class="container">
             <div class="section-title text-center">
                 <div class="sub-title wow fadeInUp">
@@ -763,7 +763,7 @@
             </div>
             <div class="project-dot text-center mt-5"></div>
         </div>
-    </section>
+    </section> --}}
 
     <!-- Printing Feature Section Start -->
     <section class="printing-feature-section fix section-padding bg-cover" style="background-image: url('{{asset('front/assets/img/feature-printing-bg.jpg')}}');">
@@ -1450,36 +1450,63 @@
                     </div>
                     <div class="col-xl-6">
                         <div class="contact-items">
-                            <form action="#" id="contact-form" method="POST">
+                            <form action="{{url('contact-submit')}}" method="POST" enctype="multipart/form-data">
+                                @csrf
+                                @if (session()->has('success'))
+                                    <div class="alert alert-success">
+                                        {{ session()->get('success') }}
+                                    </div>
+                                 @endif
+                                    @if (session()->has('error'))
+                                        <div class="alert alert-danger">
+                                            {{ session()->get('error') }}
+                                        </div>
+                                    @endif
                                 <div class="row g-4">
-                                    <div class="col-lg-6 wow fadeInUp" data-wow-delay=".3s">
+                                    <div class="col-lg-6">
                                         <div class="form-clt">
-                                            <input type="text" placeholder="What’s Your Name ?">
+                                            <input type="text" name="name" id="name" placeholder="Your Name*">
+                                        </div>
+                                        @error('name')
+                                            <span class="text-danger">{{ $message }}</span>
+                                        @enderror
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <div class="form-clt">
+                                            <input type="text" name="email" id="email" placeholder="Your Email*">
+                                            @error('email')
+                                                <span class="text-danger">{{ $message }}</span>
+                                                
+                                            @enderror
                                         </div>
                                     </div>
-                                    <div class="col-lg-6 wow fadeInUp" data-wow-delay=".5s">
+                                    <div class="col-lg-6">
                                         <div class="form-clt">
-                                            <input type="text" name="email" id="email2" placeholder="Email Address">
+                                            <input type="text" name="phone" id="phone" placeholder="phone*">
+                                            @error('phone')
+                                                <span class="text-danger">{{ $message }}</span>
+                                            @enderror
                                         </div>
                                     </div>
-                                    <div class="col-lg-6 wow fadeInUp" data-wow-delay=".3s">
+                                      <div class="col-lg-6">
                                         <div class="form-clt">
-                                            <input type="text"  placeholder="Select Discusson Topic">
+                                            <input type="text" name="subject" id="subject" placeholder="Subject*">
+                                            @error('subject')
+                                                <span class="text-danger">{{ $message }}</span>
+                                            @enderror
                                         </div>
                                     </div>
-                                    <div class="col-lg-6 wow fadeInUp" data-wow-delay=".5s">
+                                    <div class="col-lg-12">
                                         <div class="form-clt">
-                                            <input type="text"  placeholder="What’s your budget ?">
+                                            <textarea name="message" id="message" placeholder="Write Message*"></textarea>
+                                            @error('message')
+                                                <span class="text-danger">{{ $message }}</span>
+                                            @enderror
                                         </div>
                                     </div>
-                                    <div class="col-lg-12 wow fadeInUp" data-wow-delay=".3s">
-                                        <div class="form-clt">
-                                            <textarea placeholder="a brief discusson about this projects describe us"></textarea>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-12 wow fadeInUp" data-wow-delay=".5s">
-                                        <button type="submit" class="theme-btn w-100">
-                                            SEND mESSAGE
+                                    <div class="col-lg-7">
+                                        <button type="submit" class="theme-btn">
+                                            SEND YOUR MEASSAGE
                                         </button>
                                     </div>
                                 </div>

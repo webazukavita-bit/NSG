@@ -11,6 +11,7 @@
         </ul>
     </div>
 @endif
+
      <div class="breadcrumb-wrapper section-padding bg-cover" style="background-image: url({{asset('front/assets/img/breadcrumb.png')}});">
         <div class="container">
             <div class="page-heading">
