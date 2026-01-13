@@ -12,9 +12,9 @@
                 <span data-text-preloader="G" class="letters-loading">
                     G
                 </span>
-                 <span data-text-preloader="" class="letters-loading">
+                 {{-- <span data-text-preloader="" class="letters-loading">
                     <img src="{{asset('images/config/'.config('app.logo'))}}" alt="" style="width: 90px; height: 90px;">
-                </span>
+                </span> --}}
                 {{-- <span data-text-preloader="N" class="letters-loading">
                     N
                 </span>

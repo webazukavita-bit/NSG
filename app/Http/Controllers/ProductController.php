@@ -13,6 +13,7 @@ use App\Models\ProductVariation;
 use App\Models\User;
 use App\Models\Variation;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
@@ -763,32 +764,85 @@ class ProductController extends Controller
 
     public function orderes()
     {
-        $order = Order::with(['user', 'status', 'paymentStatus'])
-            ->latest()
-            ->get();
+        $order = Order::with(['user', 'status', 'paymentStatus'])->get();
+        $orderstatus = OrderStatus::orderBy('id')->get();
 
-        return view('admin.order.list', compact('order'));
+
+        if ($orderstatus->count() == 0) {
+            $orderstatus = collect([
+                (object)['id' => 1, 'name' => 'Pending'],
+                (object)['id' => 2, 'name' => 'Processing'],
+                (object)['id' => 3, 'name' => 'Completed'],
+                (object)['id' => 4, 'name' => 'Cancelled'],
+            ]);
+        }
+
+
+        return view('admin.order.list', compact('order', 'orderstatus'));
+    }
+    public function orderlist()
+    {
+        if (Auth::user()->role_id == 4) {
+            $order = Order::with(['user', 'status', 'paymentStatus'])->get();
+            $orderstatus = OrderStatus::orderBy('id')->get();
+
+
+            if ($orderstatus->count() == 0) {
+                $orderstatus = collect([
+                    (object)['id' => 1, 'name' => 'Pending'],
+                    (object)['id' => 2, 'name' => 'Processing'],
+                    (object)['id' => 3, 'name' => 'Completed'],
+                    (object)['id' => 4, 'name' => 'Cancelled'],
+                ]);
+            }
+
+            return view('front.order.orderlist', compact('order', 'orderstatus'));
+        }
+        return view('front.index');
     }
 
 
+    // public function showInvoice($id)
+    // {
+    //     $order = Order::withTrashed()->findOrFail($id);
+    //     $user  = User::where('id', $order->user_id)->first();
+    //     $products = json_decode($order->product_details, true) ?? [];
+    //     $address = json_decode($order->address, true);
 
+    //     $subTotal = 0;
+    //     foreach ($products as $product) {
+    //         $subTotal += $product->price * $product->quantity;
+    //     }
+
+
+    //     return view('admin.order.invoice', [
+    //         'order'       => $order,
+    //         'user'        => $user,
+    //         'products'    => $products,
+    //         'subTotal'    => $subTotal,
+    //         'address'     => $address,
+    //     ]);
+    // }
     public function showInvoice($id)
     {
         $order = Order::withTrashed()->findOrFail($id);
         $user  = User::where('id', $order->user_id)->first();
-        $products = json_decode($order->product_details, true) ?? [];
+
+        $product = json_decode($order->product_details, true) ?? [];
         $address = json_decode($order->address, true);
 
         $subTotal = 0;
-        foreach ($products as $product) {
-            $subTotal += $product['price'] * $product['quantity'];
-        }
 
+        if (is_array($product) && isset($product['price']) && isset($product['quantity'])) {
+            $price = (float) ($product['price'] ?? 0);
+            $quantity = (int) ($product['quantity'] ?? 1);
+            $subTotal = $price * $quantity;
+        }
 
         return view('admin.order.invoice', [
             'order'       => $order,
             'user'        => $user,
-            'products'    => $products,
+            'products'     => $product,
             'subTotal'    => $subTotal,
             'address'     => $address,
         ]);
@@ -810,55 +864,70 @@ class ProductController extends Controller
     }
 
 
+    // public function orderStatusUpdate(Request $request)
+    // {
+    //     $request->validate([
+    //         'order_id' => 'required|integer|exists:orders,id',
+    //         'status' => 'required|string|exists:order_status,name',
+    //     ]);
+
+    //     $order = Order::findOrFail($request->id);
+    //     $orderStatus = OrderStatus::where('name', $request->status1)->first();
+
+    //     if ($orderStatus->name == 'pending') {
+    //         $orderStatus->name = $request->status1;
+    //         $order->commision = $request->advance;
+    //         $order->order_status_id = $orderStatus->id;
+    //         $check = $order->save();
+    //     } else if ($orderStatus->name == 'Confirm') {
+    //         $orderStatus->name = $request->status2;
+    //         $order->order_status_id = $orderStatus->id;
+    //         $check = $order->save();
+    //     } else {
+
+    //         $orderStatus->name = $request->status3;
+    //         $order->order_status_id = $orderStatus->id;
+    //         $request->validate([
+    //             'documents' => 'nullable|array',
+    //             'documents.*' => 'file|mimes:pdf,jpg,jpeg,png|max:2048',
+    //         ]);
+
+    //         $doc = OrderStatusTxn::where('order_id', $request->id)->first();
+    //         if ($request->hasFile('documents')) {
+    //             $documentPaths = [];
+    //             foreach ($request->file('documents') as $file) {
+    //                 $fileName = 'order_document_' . time() . '.' . $file->getClientOriginalExtension();
+    //                 $file->move(public_path('images/orders/document'), $fileName);
+    //                 $documentPaths[] = $fileName;
+    //             }
+
+    //             $doc->documents = json_encode($documentPaths);
+    //             $doc->save();
+    //         }
+    //         $check = $order->save();
+    //     }
+    //     if ($check) {
+    //         return redirect()->route('orderes')->with('success', 'Order status updated successfully.');
+    //     } else {
+    //         return redirect()->route('orderes')->with('error', 'Order status not updated.');
+    //     }
+    // }
     public function orderStatusUpdate(Request $request)
     {
         $request->validate([
             'order_id' => 'required|integer|exists:orders,id',
-            'status' => 'required|string|exists:order_status,name',
+            'status' => 'required|integer|exists:order_status,id',
         ]);
 
-        $order = Order::findOrFail($request->id);
-        $orderStatus = OrderStatus::where('name', $request->status1)->first();
+        $order = Order::findOrFail($request->order_id);
+        $order->order_status_id = $request->status;
 
-        if ($orderStatus->name == 'pending') {
-            $orderStatus->name = $request->status1;
-            $order->commision = $request->advance;
-            $order->order_status_id = $orderStatus->id;
-            $check = $order->save();
-        } else if ($orderStatus->name == 'Confirm') {
-            $orderStatus->name = $request->status2;
-            $order->order_status_id = $orderStatus->id;
-            $check = $order->save();
-        } else {
-
-            $orderStatus->name = $request->status3;
-            $order->order_status_id = $orderStatus->id;
-            $request->validate([
-                'documents' => 'nullable|array',
-                'documents.*' => 'file|mimes:pdf,jpg,jpeg,png|max:2048',
-            ]);
-
-            $doc = OrderStatusTxn::where('order_id', $request->id)->first();
-            if ($request->hasFile('documents')) {
-                $documentPaths = [];
-                foreach ($request->file('documents') as $file) {
-                    $fileName = 'order_document_' . time() . '.' . $file->getClientOriginalExtension();
-                    $file->move(public_path('images/orders/document'), $fileName);
-                    $documentPaths[] = $fileName;
-                }
-
-                $doc->documents = json_encode($documentPaths);
-                $doc->save();
-            }
-            $check = $order->save();
-        }
-        if ($check) {
+        if ($order->save()) {
             return redirect()->route('orderes')->with('success', 'Order status updated successfully.');
-        } else {
-            return redirect()->route('orderes')->with('error', 'Order status not updated.');
         }
-    }
 
+        return redirect()->route('orderes')->with('error', 'Failed to update order status.');
+    }
 
     // public function paymentUpdate(Request $request){
 

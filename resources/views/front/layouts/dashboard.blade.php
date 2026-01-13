@@ -92,7 +92,7 @@
                     </li>
                     
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Rate List</a>
+                        <a class="nav-link" href="{{url('our-services')}}">Rate List</a>
                     </li>
                     
                     <li class="nav-item">
@@ -100,7 +100,7 @@
                     </li>
                     
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Order Status</a>
+                        <a class="nav-link" href="{{route('orderlist')}}">Order Status</a>
                     </li>
                     
                     <li class="nav-item">

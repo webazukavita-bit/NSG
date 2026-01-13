@@ -69,7 +69,7 @@ class HomeController extends Controller
     {
         $categories = ProductCategory::get();
 
-        $productsQuery = Product::with('category');
+        $productsQuery = Product::with('category')->whereNot('parent_id', 0);
 
         if ($request->filled('search')) {
             $productsQuery->where('name', 'LIKE', '%' . $request->search . '%');

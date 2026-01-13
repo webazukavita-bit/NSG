@@ -14,22 +14,11 @@
         <div class="col-12 col-md-6 col-lg-4">
             <div class="stat-card">
                 <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h3 class="h5 fw-bold text-danger mb-0">City-Wise Ranking</h3>
-                    <svg class="text-danger" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-                        <circle cx="12" cy="10" r="3"></circle>
-                    </svg>
+                    <h3 class="h5 fw-bold text-danger mb-0">Today Orders</h3>
                 </div>
-                
-                <div class="stat-box mb-3">
-                    <p class="small text-muted mb-2">Your Rank in Lucknow</p>
-                    <p class="display-4 fw-bold text-primary mb-0">46</p>
-                </div>
-                
                 <div class="stat-box">
-                    <p class="small text-muted mb-1">Total Active Printers in Lucknow</p>
-                    <p class="small text-secondary mb-2">(Who Place Orders Directly on Our Website)</p>
-                    <p class="display-6 fw-bold text-primary mb-0">253</p>
+                    <p class="small text-muted mb-2">Today Orders</p>
+                    <p class="display-6 fw-bold text-primary mb-0">{{$todayorder}}</p>
                 </div>
             </div>
         </div>
@@ -38,21 +27,15 @@
         <div class="col-12 col-md-6 col-lg-4">
             <div class="stat-card">
                 <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h3 class="h5 fw-bold text-danger mb-0">State-Wise Ranking</h3>
+                    <h3 class="h5 fw-bold text-danger mb-0">Total Balance</h3>
                     <svg class="text-danger" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
                     </svg>
                 </div>
                 
-                <div class="stat-box mb-3">
-                    <p class="small text-muted mb-2">Your Rank in UTTAR PRADESH</p>
-                    <p class="display-4 fw-bold text-primary mb-0">480</p>
-                </div>
-                
                 <div class="stat-box">
-                    <p class="small text-muted mb-1">Active Printers in UTTAR PRADESH state</p>
-                    <p class="small text-secondary mb-2">(Who Place Orders Directly on Our Website)</p>
-                    <p class="display-6 fw-bold text-primary mb-0">3577</p>
+                    <p class="small text-muted mb-2">Your wallet balance</p>
+                    <p class="display-6 fw-bold text-primary mb-0">{{Auth::user()->wallet->main_balance ?? '-'}}</p>
                 </div>
             </div>
         </div>
@@ -61,7 +44,7 @@
         <div class="col-12 col-md-6 col-lg-4">
             <div class="stat-card">
                 <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h3 class="h5 fw-bold text-danger mb-0">Order Summary</h3>
+                    <h3 class="h5 fw-bold text-danger mb-0"> Total Order Summary</h3>
                     <svg class="text-danger" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <circle cx="9" cy="21" r="1"></circle>
                         <circle cx="20" cy="21" r="1"></circle>
@@ -69,16 +52,12 @@
                     </svg>
                 </div>
                 
-                <div class="stat-box mb-3">
-                    <p class="small text-muted mb-2">Visiting Card Orders in December 2025</p>
-                    <p class="display-4 fw-bold text-primary mb-0">₹4165.00</p>
+                <div class="stat-box ">
+                    <p class="small text-muted mb-2">Total Orders</p>
+                    <p class="display-6 fw-bold text-primary mb-0">{{$orderCount}}</p>
                 </div>
                 
-                <div class="stat-box">
-                    <p class="small text-muted mb-1">Total Orders in December 2025</p>
-                    <p class="small text-secondary mb-2">(Including Visiting Card + other categories)</p>
-                    <p class="display-6 fw-bold text-primary mb-0">₹4165.00</p>
-                </div>
+              
             </div>
         </div>
     </div>

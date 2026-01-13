@@ -53,6 +53,7 @@ Route::middleware(['permission'])->group(function () {
         Route::get('myprofile', [DashboardController::class, 'Myprofile'])->name('myprofile');
         Route::get('editprofile', [UserController::class, 'editprofile'])->name('editprofile');
         Route::get('changepwd', [UserController::class, 'changpwd'])->name('changepwd');
+        Route::get('orderlist', [ProductController::class, 'orderlist'])->name('orderlist');
     });
 
     Route::prefix('users')->group(function () {
