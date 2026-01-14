@@ -15,7 +15,7 @@
                                 <h5 class="mb-0 text-primary">Order</h5>
                             </div>
 							<div>
-                                <a href="{{ route('ordere-add') }}" class="btn btn-primary"><i class="bx bx-plus"></i> Add Order</a>
+                                {{-- <a href="{{ route('ordere-add') }}" class="btn btn-primary"><i class="bx bx-plus"></i> Add Order</a> --}}
                             </div>
                         </div>
                         <hr>
@@ -31,6 +31,7 @@
 										<th>Payment Status</th>
 										<th>Payment Method</th>
 										<th>Date</th>
+										<th>File</th>
                                         <th>View Details</th>
 										<th>Action</th>
 									</tr>
@@ -50,6 +51,16 @@
 										<td  style="color: {{ $value->paymentStatus->color ?? '' }};font-weight:500;"><i class="bx bxs-circle align-middle me-1"></i>{{ $value->paymentStatus->name ?? '-'}}</td>
 										<td>{{ $value->payment_method ?? 'Wallet'}}</td>
 										<td>{{ $value->updated_at }}</td>
+										<td>
+                                         @if($value->files)
+                                        <a href="{{ asset('images/order/' . $value->files) }}" target="_blank"  class="btn btn-primary btn-sm radius-30 px-4">
+                                          View File
+                                          </a>
+                                          @else
+                                             —
+                                         @endif
+                                       </td>
+
 										<td><a href="{{route('show-invoice',['id'=>$value->id])}}" type="button" class="btn btn-primary btn-sm radius-30 px-4">View Details</a></td>
                                         <td>
 											<div class="d-flex">

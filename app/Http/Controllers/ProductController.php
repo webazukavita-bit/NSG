@@ -399,18 +399,18 @@ class ProductController extends Controller
     {
         $category = ProductCategory::get();
         $brand = Brand::get();
-
-        return view('admin.product.variant.add', compact('category', 'brand'));
+        $variationType = Variation::where('parent_id', 0)->get();
+        $variationValue = Variation::whereNot('parent_id', 0)->get();
+        return view('admin.product.variant.add', compact('category', 'brand', 'variationType', 'variationValue'));
     }
 
 
     public function variantStore(Request $request)
     {
         $request->merge(['slug' => Str::slug($request->name)]);
-        $request->validate([
+        $user = $request->validate([
             'parent_product_id' => 'required|exists:products,id',
             'category_id'       => 'required|exists:categories,id',
-            'brand_id'          => 'required|exists:brands,id',
             'name'              => 'required|string',
             'images'            => 'required|array|min:1',
             'images.*'          => 'required|image|mimes:jpeg,png,jpg,gif,svg,webp|max:2048',
@@ -418,20 +418,23 @@ class ProductController extends Controller
             'slug'              => 'required|string|unique:products,slug|min:3|max:255',
             'price'             => 'required|numeric',
             'disc_price'        => 'required|numeric',
-            'stock_quantity'    => 'required|integer',
+            'max_quantity' => 'required|integer',
+            'min_quantity' => 'required|integer',
 
             'variation_type'    => 'required|array|min:1',
             'variation_type.*'  => 'required|exists:variations,id',
 
-            'variation_value'   => 'required|array|min:1',
-            'variation_value.*' => 'required|exists:variations,id',
+            'variation_value'     => 'required|array|min:1',
+            'variation_value.*'   => 'required|array|min:1',
+            'variation_value.*.*' => 'required|exists:variations,id',
+
 
             'additional_name.*' => 'nullable|string',
             'charge.*'          => 'nullable|numeric',
 
             'content'           => 'required|string',
         ]);
-
+        // dd($user);
         DB::beginTransaction();
 
         try {
@@ -451,14 +454,15 @@ class ProductController extends Controller
             $variant = new Product();
             $variant->parent_id         = $request->parent_product_id;
             $variant->category_id       = $request->category_id;
-            $variant->brand_id          = $request->brand_id;
+            // $variant->brand_id          = $request->brand_id;
             $variant->name              = $request->name;
             $variant->slug              = $request->slug;
 
             $variant->sku               = $request->sku;
             $variant->price             = $request->price;
             $variant->disc_price        = $request->disc_price;
-            $variant->stock_quantity    = $request->stock_quantity;
+            $variant->max_quantity      =  $request->max_quantity;
+            $variant->min_quantity      =  $request->min_quantity;
             $variant->specifications    = $request->content;
             $variant->charge_details    = $charges;
 
@@ -476,19 +480,24 @@ class ProductController extends Controller
             $variant->image = $imageFiles;
             $variant->save();
 
-            $variationTypes = $request->variation_type;
+            $variationTypes  = $request->variation_type;
             $variationValues = $request->variation_value;
 
-            foreach ($variationTypes as $index => $typeId) {
-                $valueId = $variationValues[$index] ?? null;
-                if ($valueId) {
+            foreach ($variationTypes as $typeId) {
+
+                if (!isset($variationValues[$typeId])) {
+                    continue;
+                }
+
+                foreach ($variationValues[$typeId] as $valueId) {
                     ProductVariation::create([
-                        'product_id' => $variant->id,
+                        'product_id'        => $variant->id,
                         'variation_type_id' => $typeId,
                         'variation_value_id' => $valueId,
                     ]);
                 }
             }
+
 
             DB::commit();
 
@@ -508,6 +517,8 @@ class ProductController extends Controller
             return back()->with('error', $e->getMessage());
         }
     }
+
+
 
     public function variantEdit($id)
     {
@@ -654,8 +665,34 @@ class ProductController extends Controller
 
     public function getProductDetails(Request $request)
     {
-        $product = Product::with(['brand', 'variations', 'variations.variationType', 'variations.variationValue'])->findOrFail($request->product_id);
-        return response()->json(['product' => $product]);
+        $product = Product::with([
+            'variations.variationType',
+            'variations.variationValue'
+        ])->findOrFail($request->product_id);
+
+        $groupedVariations = $product->variations
+            ->groupBy('variation_type_id')
+            ->map(function ($items) {
+                return [
+                    'variation_type_id' => $items->first()->variation_type_id,
+                    'variation_type' => [
+                        'id' => $items->first()->variationType->id,
+                        'name' => $items->first()->variationType->name,
+                    ],
+                    'selected_values' => $items->pluck('variation_value_id')->toArray()
+                ];
+            })
+            ->values();
+
+        return response()->json([
+            'product' => [
+                'id' => $product->id,
+                'price' => $product->price,
+                'disc_price' => $product->disc_price,
+                'specifications' => $product->specifications,
+                'variations' => $groupedVariations
+            ]
+        ]);
     }
 
 

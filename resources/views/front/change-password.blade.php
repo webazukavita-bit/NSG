@@ -5,14 +5,27 @@
         <div class="card-body">
 
             <div class="row justify-content-center mb-5 mt-5">
-                
+                   @if(session('success'))
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <strong></strong> {{ session('success') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        @endif
+        
+        @if(session('error'))
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <strong></strong> {{ session('error') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        @endif
                 <div class="col-md-6 mb-5 mt-5">
                     <div class="card shadow-sm">
                         <div class="card-header bg-primary">
                             <h5 class="mb-0 text-white">Change Password</h5>
                         </div>
                         <div class="card-body">
-                             <form  action="{{ route('client-chnage-password') }}" method="POST">
+                             <form  action="{{ route('chnage-password') }}" method="POST">
+                                @csrf
                                  <input type="hidden" id="user_id" name="user_id">
                                <div class="mb-3">
                             <label for="password" class="form-label">Enter New Password</label>

@@ -72,9 +72,13 @@
             <div class="feature-product-items">
                 <div class="product-thumb">
                     <a href="{{ url('shop-details/'.$product->slug) }}">
+                        @if($product->parent_id == '0')
                     <img src="{{ asset('images/product/'.$product->image[0]) }}" alt="{{ $product->name }}" style="height: 200px; widht:300px; border-radius:15px;" onerror="this.onerror=null;this.src='{{ asset('images/missing-image.png') }}';" >
+                       @else
+                        <img src="{{ asset('images/variant/'.$product->image[0]) }}" alt="{{ $product->name }}" style="height: 200px; widht:300px; border-radius:15px;" onerror="this.onerror=null;this.src='{{ asset('images/missing-image.png') }}';" >
+                   @endif
                      </a>
-                   
+                  
                 </div>
 
                 <div class="product-content text-center mt-3">

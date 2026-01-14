@@ -18,7 +18,7 @@
             </div>
             <hr>
             
-            <form action="{{ route('variant-add') }}" method="POST" class="row g-3" enctype="multipart/form-data">
+            <form action="{{ route('variant-store') }}" method="POST" class="row g-3" enctype="multipart/form-data">
                 @csrf
                 <div class="col-md-3">
                     <label for="category_id" class="form-label">Category</label>
@@ -42,7 +42,7 @@
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>
-                <div class="col-md-3">
+                {{-- <div class="col-md-3">
                     <label for="brand_id" class="form-label">Brand</label>
                     <select name="brand_id" class="single-select @error('brand_id') is-invalid @enderror" id="brand_id">
                         <option selected disabled value="">Choose...</option>
@@ -53,12 +53,15 @@
                     @error('brand_id')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
-                </div>
+                </div> --}}
 
                 <div class="col-md-3">
                     <label for="name" class="form-label">Name <code>*</code></label>
                     <input type="text" name="name" class="form-control @error('name') is-invalid @enderror" id="name" placeholder="Enter Name" value="{{ old('name') }}" required>
                     @error('name')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
+                      @error('slug')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>
@@ -91,10 +94,17 @@
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>
+              <div class="col-md-3">
+                    <label for="max_quantity" class="form-label">Max Quantity <code>*</code></label>
+                    <input type="number" name="max_quantity" class="form-control @error('max_quantity') is-invalid @enderror" id="max_quantity" placeholder="Enter Max Quantity" value="{{ old('max_quantity') }}" required>
+                    @error('max_quantity')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
+                </div>
                 <div class="col-md-3">
-                    <label for="stock_quantity" class="form-label">Stock Quantity <code>*</code></label>
-                    <input type="number" name="stock_quantity" class="form-control @error('stock_quantity') is-invalid @enderror" id="stock_quantity" placeholder="Enter Quantity" value="{{ old('stock_quantity') }}" required>
-                    @error('stock_quantity')
+                    <label for="min_quantity" class="form-label">Min Quantity <code>*</code></label>
+                    <input type="number" name="min_quantity" class="form-control @error('min_quantity') is-invalid @enderror" id="min_quantity" placeholder="Enter Min Quantity" value="{{ old('min_quantity') }}" required>
+                    @error('min_quantity')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>
@@ -209,65 +219,75 @@ $('#category_id').change(function() {
 
 
 function loadProductDetails(productId) {
+
     $.get("{{ route('product-details') }}", { product_id: productId }, function(res) {
+
         let product = res.product;
-
-
-        $('#brand_id').html(`<option value="${product.brand.id}" selected>${product.brand.name}</option>`);
 
         $('#price').val(product.price);
         $('#disc_price').val(product.disc_price);
-        $('#stock_quantity').val(product.stock_quantity);
-        tinymce.get('editor').setContent(product.specifications ?? '');
 
-        // Product images
-        // $('#product-images').empty();
-        // product.image.forEach(img => {
-        //     $('#product-images').append(`<img src="/images/product/${img}" height="60">`);
-        // });
-
-        // Variations
-        $('#variation-wrapper').empty();
-product.variations.forEach(v => {
-
-    let $row = $(`
-        <div class="row mb-2">
-            <div class="col-md-4">
-                <label class="form-label">Variation Type</label>
-                <input type="hidden" name="variation_type[]" value="${v.variation_type_id}">
-                <input type="text" class="form-control" value="${v.variation_type.name}" disabled>
-            </div>
-            <div class="col-md-4">
-                <label class="form-label">Variation Value</label>
-                <select name="variation_value[]" class="form-control variation_value">
-                    <option value="">Select value</option>
-                </select>
-            </div>
-        </div>
-    `);
-
-    $('#variation-wrapper').append($row);
-
-    let $select = $row.find('.variation_value');
-
-    $.get(
-        "{{ route('get-variation-value', ':id') }}".replace(':id', v.variation_type_id),
-        function(values) {
-            $select.empty().append('<option value="">Select value</option>');
-
-            values.forEach(val => {
-                $select.append(`
-                    <option value="${val.id}" ${Number(val.id) === Number(v.variation_value_id) ? 'selected' : ''}>
-                        ${val.name}
-                    </option>
-                `);
-            });
+        if (tinymce.get('editor')) {
+            tinymce.get('editor').setContent(product.specifications ?? '');
         }
-    );
-});
 
+        /* =====================
+           VARIATIONS
+        ===================== */
+
+        $('#variation-wrapper').empty();
+
+        product.variations.forEach(v => {
+
+            let row = `
+                <div class="row mb-3 variation-row">
+                    <div class="col-md-4">
+                        <label class="form-label">Variation Type</label>
+                        <input type="hidden" name="variation_type[]" value="${v.variation_type_id}">
+                        <input type="text" class="form-control" value="${v.variation_type.name}" disabled>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label">Variation Values</label>
+                        <select 
+                            name="variation_value[${v.variation_type_id}][]" 
+                            class="form-control variation_value" 
+                            multiple>
+                        </select>
+                    </div>
+                </div>
+            `;
+
+            $('#variation-wrapper').append(row);
+
+            let $select = $('#variation-wrapper')
+                .find(`select[name="variation_value[${v.variation_type_id}][]"]`);
+
+            /* Load values */
+            $.get(
+                "{{ route('get-variation-value', ':id') }}".replace(':id', v.variation_type_id),
+                function(values) {
+
+                    values.forEach(val => {
+                        let selected = v.selected_values?.includes(val.id) ? 'selected' : '';
+                        $select.append(
+                            `<option value="${val.id}" ${selected}>${val.name}</option>`
+                        );
+                    });
+
+                    /* INIT SELECT2 */
+                    $select.select2({
+                        theme: 'bootstrap4',
+                        width: '100%',
+                        placeholder: 'Select values',
+                        closeOnSelect: false
+                    });
+                }
+            );
+        });
     });
 }
+
 
 // Trigger on product change
 $('#parent_product_id').change(function() {

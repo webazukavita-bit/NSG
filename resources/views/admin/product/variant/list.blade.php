@@ -1,7 +1,7 @@
 @extends('admin.layouts.app')
 
 @section('content')
-				<div class="card border-top border-0 border-4 border-primary">
+				{{-- <div class="card border-top border-0 border-4 border-primary">
 					<div class="card-body p-0">
 						<div class="accordion" id="accordionExample">
 							<div class="accordion-item">
@@ -37,7 +37,7 @@
 							</div>
 						</div>
 					</div>
-				</div>
+				</div> --}}
 
 				<div class="card border-top border-0 border-4 border-primary">
 					<div class="card-body">
@@ -59,12 +59,12 @@
 										<th>Sn.</th>
 										<th>Name</th>
 										<th>Category</th>
-										<th>Brand</th>
+										
 										<th>Image</th>
                                         <th>SKU</th>
 										<th>Price</th>
 										<th>Discount Price</th>
-										<th>Stock Qt.</th>
+										<th>Extra charges</th>
 										<th>Action</th>
 									</tr>
 								</thead>
@@ -74,7 +74,7 @@
 										<td>{{ $key+1 }}</td>
 										<td>{{ $value->name }}</td>
 										<td>{{ $value->category->name??'' }}</td>
-										<td>{{ $value->brand->name??'' }}</td>
+										
 										<td>
 											<div style="display: flex; align-items: center; gap: 8px;">
 											@foreach ($value->image as $img)
@@ -85,7 +85,21 @@
 										<td>{{ $value->sku }}</td>
 										<td>{{ $value->price }}</td>
 										<td>{{ $value->disc_price }}</td>
-										<td>{{ $value->stock_quantity }}</td>
+										<td>
+                                        @if(!empty($value->charge_details))
+                                      
+                                        @foreach($value->charge_details as $charge)
+                                          <li style="list-style: none;">
+                                         {{ $charge['name'] }} :
+                                       <strong>{{ number_format($charge['charge'], 2) }}</strong>
+                                       </li>
+                                       @endforeach
+                                      
+                                          @else
+                                        <span class="text-muted">—</span>
+                                      @endif
+                                     </td>
+
 										<td>
 											<div class="d-flex">
 												<span class="order-actions-primary">
