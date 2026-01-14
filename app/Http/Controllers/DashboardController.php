@@ -160,13 +160,15 @@ class DashboardController extends Controller
     //////  for user dashboard///
     public function Myprofile()
     {
+
         if (Auth::user()->role_id == 4) {
             $user = Auth::user();
+            $order = Order::with(['user', 'status', 'paymentStatus'])->latest()->limit(4)->get();
             $orderCount = Order::where('order_by_id', $user->id)->count();
             $todayorder = Order::where('order_by_id', $user->id)
                 ->whereDate('created_at', today())
                 ->count();
-            return view('front.Myprofile', compact('orderCount', 'todayorder'));
+            return view('front.Myprofile', compact('orderCount', 'todayorder', 'order'));
         } else {
             return redirect('/');
         }

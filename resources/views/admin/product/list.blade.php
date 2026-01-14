@@ -59,14 +59,14 @@
 										<th>Sn.</th>
 										<th>Name</th>
 										<th>Category</th>
-										<th>Brand</th>
+										{{-- <th>Brand</th> --}}
 										<th>Image</th>
                                         <th>SKU</th>
 										{{-- <th>Variation</th> --}}
 										{{-- <th>Additional Charge</th> --}}
 										<th>Price</th>
 										<th>Discount Price</th>
-										<th>Stock Qt.</th>
+											<th>Additional Charge</th>
 										<th>Action</th>
 									</tr>
 								</thead>
@@ -76,7 +76,7 @@
 										<td>{{ $key+1 }}</td>
 										<td>{{ $value->name }}</td>
 										<td>{{ $value->category->name??'' }}</td>
-										<td>{{ $value->brand->name??'' }}</td>
+										{{-- <td>{{ $value->brand->name??'' }}</td> --}}
 										<td>
 											@foreach ($value->image as $img)
 											<img src="{{ asset('images/product/' .$img) }}" onerror="this.onerror=null;this.src='{{ asset('images/missing-image.png') }}';"  class="product-img-2" alt="img" style="margin-right: 8px;">
@@ -85,7 +85,20 @@
 										<td>{{ $value->sku }}</td>
 										<td>{{ $value->price }}</td>
 										<td>{{ $value->disc_price }}</td>
-										<td>{{ $value->stock_quantity }}</td>
+										<td>
+                                        @if(!empty($value->charge_details))
+                                      
+                                        @foreach($value->charge_details as $charge)
+                                          <li style="list-style: none;">
+                                         {{ $charge['name'] }} :
+                                       <strong>{{ number_format($charge['charge'], 2) }}</strong>
+                                       </li>
+                                       @endforeach
+                                      
+                                          @else
+                                        <span class="text-muted">—</span>
+                                      @endif
+                                     </td>
 										<td>
 											<div class="d-flex">
 												<span class="order-actions-primary">

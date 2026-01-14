@@ -146,7 +146,7 @@
                                                         </div>
                                                         <div id="online_info" class="d-none small mt-1">
                                                             <p class="mb-0" style="font-size: 10px">(Allowed File: 96x58 mm, 30MB, PDF Only)</p>
-                                                            <button class="btn btn-primary btn-sm rounded-pill">more info</button>
+                                                          <input type="file" value="file" name ="file" class="form-control form-control-sm">more info
                                                         </div>
                                                     </div>
 
@@ -156,7 +156,7 @@
                                                             <label class="fw-semibold small" for="file_email">Send file via Email</label>
                                                         </div>
                                                         <div id="email_info" class="d-none small mt-1 text-danger">
-                                                            <p class="mb-0">(Extra Charges - Rs.20.00)</p>
+                                                            <p class="mb-0"></p>
                                                             <button class="btn btn-danger btn-sm rounded-pill">more info</button>
                                                         </div>
                                                     </div>
@@ -204,7 +204,7 @@
                                                         </div>
                                                     </div>
 
-                                                    <div class="row border-top pt-1">
+                                                    {{-- <div class="row border-top pt-1">
                                                         <div class="col-4 mb-0">Enter Pressline:
                                                             <p class="text-danger small m-0" style="font-size:12px">To be Printed on Free Gift(Card Holder)</p>
                                                             
@@ -212,7 +212,7 @@
                                                         <div class="col-8 mb-0">
                                                             <input type="text" class="form-control form-control-sm text-muted" value="A PRINT MASTER">
                                                         </div>
-                                                    </div>
+                                                    </div> --}}
 
                                                 </div>
 
@@ -499,7 +499,7 @@
         charges.forEach((item, index) => {
 
             let title = item.name.replace(/_/g, ' ').toUpperCase();
-            let charge = parseFloat(item.charge) || 0;
+            let charge = item.charge|| 0;
             let key = item.name;
 
             container.innerHTML += `
@@ -508,17 +508,17 @@
                 <div class="row px-2 mb-2">
                     <div class="col-md-6 d-flex flex-column">
                         <div>
-                            <input type="radio" name="${key}" id="${key}_required">
+                            <input type="radio" name="${key}" id="${key}_required"  value="yes">
                             <label for="${key}_required" class="fw-semibold small">Required</label>
                         </div>
 
                         <div id="${key}_charge" class="d-none small mt-1 text-danger">
-                            <small>(Extra Charges - Rs.${charge.toFixed(2)})</small>
+                            <small>(Extra Charges - Rs.${charge})</small>
                         </div>
                     </div>
 
                     <div class="col-md-6">
-                        <input type="radio" name="${key}" id="${key}_not_required" checked>
+                        <input type="radio" name="${key}" id="${key}_not_required"   value="no" checked>
                         <label for="${key}_not_required" class="fw-semibold small">Not Required</label>
                     </div>
                 </div>

@@ -54,6 +54,10 @@ Route::middleware(['permission'])->group(function () {
         Route::get('editprofile', [UserController::class, 'editprofile'])->name('editprofile');
         Route::get('changepwd', [UserController::class, 'changpwd'])->name('changepwd');
         Route::get('orderlist', [ProductController::class, 'orderlist'])->name('orderlist');
+        Route::post('change-password', [UserController::class, 'changepwd'])->name('chnage-password');
+        Route::get('thankyou', function () {
+            return view('front.order.thankyou');
+        });
     });
 
     Route::prefix('users')->group(function () {

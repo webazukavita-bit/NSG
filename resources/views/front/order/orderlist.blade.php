@@ -12,7 +12,7 @@
 						<div class="card-title d-flex align-items-center justify-content-between">
                             <div class="d-flex align-items-center">
                                 <i class="bx bxs-file me-1 font-22 text-primary"></i>
-                                <h5 class="mb-0 text-primary">Order</h5>
+                                <h5 class="mb-0 text-primary"> Your Orders</h5>
                             </div>
 							<div>
                                 <a href="{{ route('shop') }}" class="btn btn-primary"><i class="bx bx-plus"></i> Add Order</a>

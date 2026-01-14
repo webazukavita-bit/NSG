@@ -9,6 +9,7 @@ use App\Models\ProductCategory;
 use App\Models\Product;
 use App\Models\User;
 use App\Models\Wallet;
+use Illuminate\Foundation\Auth\RedirectsUsers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -59,13 +60,13 @@ class OrderController extends Controller
             'variations.*'   => 'required|string|max:255',
 
             'remark' => 'nullable|string|max:500',
-        ]);
+            'file' => 'nullable|file|mimes:pdf,jpg,png|max:30720',
 
+        ]);
+        // dd($request->all());
         DB::beginTransaction();
 
         try {
-
-            // $product = Product::with('charge_details')->findOrFail($request->product_id);
             $product = Product::findOrFail($request->product_id);
             $qty        = (int) $request->quantity;
             $basePrice = (float) $product->disc_price;
@@ -75,22 +76,27 @@ class OrderController extends Controller
 
             foreach ((array) $product->charge_details as $charge) {
 
+                $chargeName = $charge['name'] ?? null;
+                $chargeAmount = (float) ($charge['charge'] ?? 0);
+
                 if (
-                    is_array($charge) &&
-                    isset($charge['name'], $charge['charge']) &&
-                    $request->filled($charge['name'])
+                    $chargeName &&
+                    $request->has($chargeName) &&
+                    $request->input($chargeName) === 'yes'
                 ) {
-                    $extraCharges += (float) $charge['charge'];
+                    $extraCharges += $chargeAmount;
 
                     $selectedCharges[] = [
-                        'name'   => $charge['name'],
-                        'charge' => (float) $charge['charge'],
+                        'name'   => $chargeName,
+                        'charge' => $chargeAmount,
                     ];
                 }
             }
-            $subtotal = ($basePrice + $extraCharges) * $qty;
-            $gst      = round($subtotal * 0.18, 2);
+            // dd($selectedCharges);
+            $subtotal = ($basePrice * $qty) + ($extraCharges * $qty);
+            $gst = round($subtotal * 0.18, 2);
             $finalAmount = round($subtotal + $gst, 2);
+
             // dd($totalamount, $subtotal, $finalAmount);
             $wallet = Wallet::where('user_id', $user->id)
                 ->lockForUpdate()
@@ -123,6 +129,13 @@ class OrderController extends Controller
                     'default'    => 'Yes',
                 ]
             );
+            if ($request->hasFile('file')) {
+                $fileName = 'variant_' . time() . '.' . $request->file->getClientOriginalExtension();
+                $request->file->move(public_path('images/order'), $fileName);
+                $path = $fileName;
+            }
+
+
             $order = Order::create([
                 'code'       => 'ORD-' . strtoupper(uniqid()),
                 'order_by_id' => $user->id,
@@ -156,6 +169,7 @@ class OrderController extends Controller
                 'payment_status_id'        => 1,
 
                 'remark' => $request->remark,
+                'files'  => $path,
             ]);
 
             $payment = $wallet->decrement('main_balance', $finalAmount);
@@ -173,7 +187,7 @@ class OrderController extends Controller
 
             DB::commit();
 
-            return back()->with('success', 'Order placed successfully using wallet');
+            return redirect('/user/thankyou')->with('success', 'Order placed successfully using wallet');
         } catch (\Exception $e) {
 
             DB::rollBack();

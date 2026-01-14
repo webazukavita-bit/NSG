@@ -15,6 +15,7 @@ use App\Models\User;
 use App\Helpers\Helper;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
@@ -307,4 +308,30 @@ class UserController extends Controller
     }
     ##add fund in wallet##
 
+    public function changepwd(Request $request)
+    {
+        $request->validate([
+            'password'     => 'required|min:8',
+            'confirm_password' => 'required|same:password',
+        ]);
+
+        $user = User::find(Auth::id());
+
+        $user->update([
+            'password' => Hash::make($request->password)
+        ]);
+
+        Helper::logActivity([
+            'type'          => 'Update',
+            'title'         => "User account password chnage",
+            'message'       => "User account password chnaged successfully!",
+            'route_name'    => $request->route()->getName(),
+            'old_data'      => $user,
+            'form_data'     => $request->all(),
+            'ref_id'        => $user->id,
+            'show'          => 'No',
+        ]);
+
+        return redirect('/user/changepwd')->with('success', 'Password change successfully!');
+    }
 }

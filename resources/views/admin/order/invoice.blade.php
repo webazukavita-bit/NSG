@@ -54,8 +54,8 @@
         }
 
         .invoice-header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
+            /* background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); */
+            color: rgb(20, 17, 17);
             padding: 40px;
         }
 
@@ -371,12 +371,12 @@
                 padding: 20px;
             }
         }
-        @media print {
+        /* @media print {
     * {
         -webkit-print-color-adjust: exact !important;
         print-color-adjust: exact !important;
     }
-}
+} */
 .print-area {
     position: relative;
 }
@@ -458,9 +458,9 @@
                     <div class="invoice-details-grid">
                         <span class="detail-label">Invoice Date:</span>
                         <span class="detail-value">{{ now()->format('d M Y, h:i A') }}</span>
-                        
-                        <span class="detail-label">Due Date:</span>
-                        <span class="detail-value">{{ $order->created_at ? \Carbon\Carbon::parse($order->created_at)->addDays(30)->format('d/m/Y') : 'N/A' }}</span>
+                        {{--                         
+                        <span class="detail-label">Order Date:</span>
+                        <span class="detail-value">{{ $order->created_at}}</span> --}}
                     </div>
                 </div>
             </div>
@@ -511,7 +511,7 @@
                                         @endif
                                         
                                         @if($productModel)
-                                            SKU: {{ $productModel->sku ?? 'N/A' }} | Brand: {{ $productModel->brand->name ?? 'N/A' }}
+                                            SKU: {{ $productModel->sku ?? 'N/A' }} | Product: {{ $productModel->name ?? 'N/A' }}
                                         @endif
                                     </div>
                                 </td>
@@ -547,7 +547,7 @@
                     @if(isset($product['extra_charges']) && $product['extra_charges'] > 0)
                     <tr>
                         <td class="totals-label">Extra Charges</td>
-                        <td class="totals-value text-right">₹{{ number_format($product['extra_charges'] ?? 0, 2) }}</td>
+                        <td class="totals-value text-right">₹{{ number_format($product['extra_charges'] ?? 0, 2) }} /quantity</td>
                     </tr>
                     @endif
                     
@@ -557,7 +557,7 @@
                             ₹{{ number_format(
                                 ($subTotal ?? 0) + 
                                 ($order['order_tax'] ?? 0) + 
-                                ($product['extra_charges'] ?? 0), 
+                                ($product['extra_charges']*$product['quantity']  ?? 0), 
                             2) }}
                         </td>
                     </tr>

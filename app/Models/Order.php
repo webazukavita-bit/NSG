@@ -28,6 +28,7 @@ class Order extends Model
         'payment_status_id',
         'payment_method',
         'ledger_id',
+        'files',
 
     ];
 
