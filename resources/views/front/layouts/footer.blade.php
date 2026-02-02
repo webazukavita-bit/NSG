@@ -53,13 +53,13 @@
                                 </li>
                                
                                 <li>
-                                    <a href="{{url('our-services')}}">
-                                        Services
+                                    <a href="{{url('refund')}}">
+                                        Refund Policy
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="{{url('/Articales')}}">
-                                        Blogs
+                                    <a href="{{url('/shipping')}}">
+                                        Shipping Policy
                                     </a>
                                 </li>
                                 <li>
@@ -118,7 +118,7 @@
             <div class="container">
                 <div class="footer-bottom-wrapper">
                     <p class="wow fadeInUp" data-wow-delay=".3s">Copyright 2026 © . All rights Reserved by New Select Graphix.</p>
-                    <a href="{{url('terms-and-conditions')}}">Refund and Cancellation Policy & Terms of Use</a>
+                    <span>   <a href="{{url('privacy-policy')}}"> Privacy Policy &</a><a href="{{url('terms-and-conditions')}}">  Terms of Use</a></span>
                     {{-- <img src="{{asset('front/assets/img/card.png')}}" alt="img" class="wow fadeInUp" data-wow-delay=".5s"> --}}
                 </div>
             </div>

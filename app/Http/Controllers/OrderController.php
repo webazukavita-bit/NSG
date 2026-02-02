@@ -60,8 +60,6 @@ class OrderController extends Controller
             'variations.*'   => 'required|string|max:255',
 
             'remark' => 'nullable|string|max:500',
-            'file' => 'nullable|file|mimes:pdf,jpg,png|max:30720',
-
         ]);
         // dd($request->all());
         DB::beginTransaction();
@@ -103,10 +101,15 @@ class OrderController extends Controller
                 ->first();
 
             if (!$wallet || $wallet->main_balance < $finalAmount) {
-                return back()->withErrors([
-                    'wallet' => 'Insufficient wallet balance'
-                ]);
+                DB::rollBack();
+
+                return response()->json([
+                    'errors' => [
+                        'wallet' => ['Insufficient wallet balance']
+                    ]
+                ], 500);
             }
+
 
             $client = User::updateOrCreate([
                 // 'code'     => Helper::getTransId(4),
@@ -129,6 +132,14 @@ class OrderController extends Controller
                     'default'    => 'Yes',
                 ]
             );
+            $maxSizeKB = $product->category->file_size * 1024;
+
+            $request->validate([
+                'file' => "nullable|file|mimes:pdf|max:$maxSizeKB",
+            ], [
+                'file.max' => "File size must not exceed {$product->category->file_size} MB",
+            ]);
+            $path = null;
             if ($request->hasFile('file')) {
                 $fileName = 'variant_' . time() . '.' . $request->file->getClientOriginalExtension();
                 $request->file->move(public_path('images/order'), $fileName);
@@ -187,11 +198,17 @@ class OrderController extends Controller
 
             DB::commit();
 
-            return redirect('/user/thankyou')->with('success', 'Order placed successfully using wallet');
+            return response()->json([
+                'success' => true,
+                'redirect' => url('/user/thankyou')
+            ]);
         } catch (\Exception $e) {
 
             DB::rollBack();
-            return back()->withErrors(['error' => $e->getMessage()]);
+
+            return response()->json([
+                'message' => $e->getMessage()
+            ], 500);
         }
     }
 }
