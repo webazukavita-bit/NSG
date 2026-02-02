@@ -81,11 +81,13 @@ class ProductController extends Controller
             'name'  => 'required|string|max:255',
             'slug'  => 'required|string|unique:categories,slug,' . $id,
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
+            'file_size' => 'required|numeric|min:0'
         ]);
 
         $category = ProductCategory::findOrFail($id);
         $category->name = $request->name;
         $category->slug = $request->slug;
+        $category->file_size = $request->file_size;
 
         if ($request->hasFile('image')) {
 
