@@ -23,7 +23,8 @@ Auth::routes();
 
 Route::get('/', [HomeController::class, 'index']);
 Route::get('/home', [HomeController::class, 'index'])->name('home');
-
+Route::get('/refund', [HomeController::class, 'static_content'])->name('refund-policy');
+Route::get('/shipping', [HomeController::class, 'static_content'])->name('shipping');
 Route::get('/privacy', [HomeController::class, 'static_content'])->name('privacy-policy');
 Route::get('/terms-and-conditions', [HomeController::class, 'static_content'])->name('terms');
 // Route::get('/about-us', [HomeController::class, 'static_content'])->name('about-us');
@@ -256,6 +257,8 @@ Route::middleware(['permission'])->group(function () {
         Route::get('/brands-delete/{id}', [ProductController::class, 'brandDelete'])->name('brand-delete');
 
         Route::get('/orderes', [ProductController::class, 'orderes'])->name('orderes');
+        Route::post('/order-accept/{id}', [ProductController::class, 'orderaccept'])->name('order-accept');
+        Route::post('order-assign-employee', [ProductController::class, 'assignEmployeeOrder'])->name('order-assign-employee');
         Route::get('/order-add', [ProductController::class, 'orderAdd'])->name('ordere-add');
         Route::get('/order-delete/{id}', [ProductController::class, 'orderDelete'])->name('order-delete');
         Route::get('/show-invoice/{id}', [ProductController::class, 'showInvoice'])->name('show-invoice');

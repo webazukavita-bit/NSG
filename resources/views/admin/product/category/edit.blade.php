@@ -34,7 +34,13 @@
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>
-
+                <div class="col-md-3">
+                    <label for="file_size" class="form-label">File Size <code>*</code></label>
+                    <input type="number" name="file_size" class="form-control @error('file_size') is-invalid @enderror" id="file_size" placeholder="Enter File Size" value="{{ old('file_size', $data->file_size) }}" required>
+                    @error('file_size')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
+                </div>
                 <div class="col-md-3">
                     <label for="longitude" class="form-label">Old Image</label>
                     <img src="{{ asset('images/product/category/' . $data->image) }}" class="product-img-2" alt="product img" style="margin-right: 8px;">

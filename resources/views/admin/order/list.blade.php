@@ -64,6 +64,28 @@
 										<td><a href="{{route('show-invoice',['id'=>$value->id])}}" type="button" class="btn btn-primary btn-sm radius-30 px-4">View Details</a></td>
                                         <td>
 											<div class="d-flex">
+                                                	@if(Auth::user()->role_id === 1)
+											<span class="order-actions-primary">
+    <button type="button" class="ms-2 Orderassigned btn btn-primary btn-sm radius-30 px-4" 
+            data-bs-toggle="tooltip" data-bs-placement="top"
+            data-id="{{ $value->id }}"
+            data-assigned_id="{{ $value->assigned_to ?? 0 }}"
+            data-bs-original-title="Assign order">
+        Assign
+    </button>
+</span>
+											  	@endif
+											 @if($value->assigned_to == 0 && Auth::user()->role_id === 2)
+											 <span class="order-actions-primary">
+                                            <form action="{{ route('order-accept', $value->id) }}" method="POST" style="display:inline;">
+                                                @csrf
+                                         <button type="submit" class="btn btn-primary btn-sm radius-30 px-4" >
+                                           Accept Order
+                                        </button>
+                                           </form>
+                                          </span>
+											  	@endif
+
 											  <span class="order-actions-primary">
 													<a href="javascript:;" class="ms-2 openStatusModel" data-bs-toggle="tooltip" data-bs-placement="top" 
 													data-id="{{ $value->id }}"
@@ -96,7 +118,43 @@
 					</div>
 				</div>
 
+<div class="modal fade" id="Orderassign" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title">Order Assigned </h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body">
+							
+					<form action="{{route('order-assign-employee')}}" method="POST" class="row g-3" enctype="multipart/form-data">
+                          @csrf
+                          <input type="hidden" name="orderId" class="form-control" id="order_id" required>
+    
+    <div>
+        <label for="status1" class="form-label">Employee</label>
+        <select name="employee_id" class="form-select @error('employee_id') is-invalid @enderror" id="assigned_id">
+            @foreach ($employee as $data )
+			
+                <option value="{{ $data->id}}" {{ old('employee_id') == $data->id ? 'selected' : '' }}>
+                    {{ $data->name }}
+                </option>
+            @endforeach
+        </select>
+        @error('employee_id')
+            <div class="invalid-feedback">{{ $message }}</div>
+        @enderror
+    </div>
+						<div class="text-center">
+							<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+							<button type="submit" class="btn btn-primary">Change</button>
+						</div>
+					</form>
 
+				</div>
+		</div>
+	</div>
+</div>
 <div class="modal fade" id="ChangeStatus" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
 			<div class="modal-content">
@@ -149,6 +207,8 @@
 		</div>
 	</div>
 </div>
+
+
 <div class="modal fade" id="paymentStatus" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
 			<div class="modal-content">
@@ -221,7 +281,15 @@
 @endsection
 @push('scripts')
 <script>
+    $(document).on("click", ".Orderassigned", function () {
 
+        let id = $(this).data("id");
+        let assigned_id = $(this).data("assigned_id");
+        
+        $('#order_id').val(id);
+        $('#assigned_id').val(assigned_id);
+        $("#Orderassign").modal("show");
+    });
 
     $(document).on("click", ".openStatusModel", function () {
 
@@ -255,6 +323,7 @@
 		 
 
 	});
+
 
 </script>
 @endpush

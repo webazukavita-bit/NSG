@@ -114,7 +114,7 @@ class HomeController extends Controller
         $country_id = 101;
 
         $states = State::where('country_id', $country_id)->orderBy('name', 'asc')->get();
-        $cities = [];
+    $cities = Citie::whereIn('state_id', $states->pluck('id'))->orderBy('name', 'asc')->get();
 
         return view('front.shop-details', compact(
             'product',

@@ -43,11 +43,13 @@ class ProductController extends Controller
             'name'  => 'required|string|max:255',
             'slug'  => 'required|string|unique:categories,slug',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
+            'file_size' => 'required|numeric|min:0'
         ]);
 
         $category = new ProductCategory();
         $category->name = $request->name;
         $category->slug = $request->slug;
+        $category->file_size = $request->file_size;
 
         if ($request->hasFile('image')) {
             $file = $request->file('image');
@@ -798,13 +800,19 @@ class ProductController extends Controller
 
 
 
-
     public function orderes()
     {
-        $order = Order::with(['user', 'status', 'paymentStatus'])->get();
-        $orderstatus = OrderStatus::orderBy('id')->get();
-
-
+        if (Auth::user()->role_id == 1) {
+            $order = Order::with(['user', 'status', 'paymentStatus'])->get();
+            $orderstatus = OrderStatus::orderBy('id')->get();
+            $employee = User::where('role_id', 2)->get();
+            // dd($employee);
+            // $employee = User::where('role_id', 2)->orWhere('role_id', 3)->orWhere('role_id', 5)->get();
+        } else {
+            $order = Order::with(['user', 'status', 'paymentStatus'])->where('assigned_to', Auth::user()->id)->orWhere('assigned_to', 0)->get();
+            $orderstatus = OrderStatus::orderBy('id')->get();
+            $employee = User::where('role_id', 2)->get();
+        }
         if ($orderstatus->count() == 0) {
             $orderstatus = collect([
                 (object)['id' => 1, 'name' => 'Pending'],
@@ -815,7 +823,29 @@ class ProductController extends Controller
         }
 
 
-        return view('admin.order.list', compact('order', 'orderstatus'));
+        return view('admin.order.list', compact('order', 'orderstatus', 'employee'));
+    }
+    public function orderaccept($id)
+    {
+        $order = Order::findOrFail($id);
+        $order->assigned_to = Auth::user()->id;
+        $order->save();
+
+        return redirect()->route('orderes')->with('success', 'Order accepted successfully.');
+    }
+    public function assignEmployeeOrder(Request $request)
+    {
+
+        $request->validate([
+            'orderId' => 'required|integer|exists:orders,id',
+            'employee_id' => 'required|integer|exists:users,id',
+        ]);
+
+        $order = Order::findOrFail($request->orderId);
+        $order->assigned_to = $request->employee_id;
+        $order->save();
+
+        return redirect()->route('orderes')->with('success', 'Order assigned to employee successfully.');
     }
     public function orderlist()
     {

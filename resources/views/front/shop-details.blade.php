@@ -1,5 +1,16 @@
 @extends('front.layouts.app')
 @section('content')
+
+<style>
+    .input-group-sm .btn {
+        padding: 0.25rem 0.75rem;
+        font-size: 1rem;
+        line-height: 1.4;
+    }
+    .input-group-sm input {
+        max-width: 90px;
+    }
+</style>
   <!--<< Breadcrumb Section Start >>-->
 
   @if ($errors->any())
@@ -39,7 +50,8 @@
     <section class="shop-details-section section-padding pt-2">
         <div class="container">
         <div class="shop-details-wrapper">
-        <form action="{{route('ordere-store')}}" method="POST" enctype="multipart/form-data">
+<form id="orderForm" action="{{route('ordere-store')}}" method="POST" enctype="multipart/form-data">
+
           @csrf   
          <div class="row justify-content-start mb-4">
            <div class="col-lg-6 col-md-8 col-sm-12">  
@@ -169,12 +181,32 @@
                                                 <div class="px-2">
                                                         <h6 class="text-base py-1 border-top">Congratulations! Order's eligible for free delivery</h6>
                                                     <div class="row mb-2 align-items-center ps-2">
-                                                        <div class="col-md-4">
+                                                        <div class="col-md-2">
                                                             <label class="form-label text-dark pt-1 small">Quantity</label>
                                                         </div>
-                                                        <div class="col-md-3 ms-2">
-                                                            <input type="number" name="quantity" id="maxQty" class="form-control form-control-sm" step="1">
-                                                        </div>
+                                                           <div class="col-md-3">
+    <div class="input-group input-group-sm shadow-sm rounded">
+        <button class="btn btn-outline-danger fw-bold" type="button"
+            onclick="let el = document.getElementById('maxQty'); el.value = Math.max(1, Math.floor(el.value / 2))">
+            −
+        </button>
+
+        <input 
+            type="number" 
+            name="quantity" 
+            id="maxQty" 
+            class="form-control text-center fw-semibold"
+            value="50" 
+            min="1"
+        >
+
+        <button class="btn btn-outline-primary fw-bold" type="button"
+            onclick="let el = document.getElementById('maxQty'); el.value *= 2">
+            +
+        </button>
+    </div>
+</div>
+                                                        
                                                         <div class="col-md-3 pt-1 text-muted small">
                                                             (Min Qty : <span id="minQty"></span>)
                                                         </div>
@@ -249,17 +281,18 @@
 
                                                                     <div class="col-lg-6 border-top mb-2 pt-2">
                                                                         <label class="form-label text-dark">Address <strong class="text-danger">*</strong></label>
-                                                                        <textarea name="address" class="form-control" rows="1" required>{{Auth::user()->address->address}}</textarea>
+                                                                        <textarea name="address" class="form-control" rows="1" required>{{Auth::user()->address->address ?? ' '}}</textarea>
                                                                     </div>
 
                                                         <div class="col-md-6 mb-3 border-top">
                                                             <label for="country" class="form-label">country<code>*</code></label>
-                                                            <select name="country" class="single-select @error('country') is-invalid @enderror" id="country" onchange="getStates(this.value)">
+                                                            <select name="country" class="single-select @error('country') is-invalid @enderror" id="country" onchange="getStates(this.value)" required>
                                                                 {{-- <option selected disabled value="">Choose...</option> --}}
-                                                                @foreach ($countrie as $country)
-                                                                <option value="{{ $country->id }}" @selected($country->id == old('country', $country_id))>{{ $country->name }}</option>
+@foreach ($countrie as $country)
+                                                                <option value="{{ $country->id }}" @selected($country->id == (Auth::user()->address->country_id ?? '') )>{{ $country->name }}</option>
                                                                 @endforeach
                                                             </select>
+                                                            <small class="text-danger error-country"></small>
                                                             @error('country')
                                                                 <div class="invalid-feedback">{{ $message }}</div>
                                                             @enderror
@@ -267,12 +300,13 @@
 
                                                         <div class="col-md-6 mb-3 border-top">
                                                             <label for="state" class="form-label">State<code>*</code></label>
-                                                            <select name="state" class="single-select @error('state') is-invalid @enderror" id="state" onchange="getCities(this.value)">
+                                                            <select name="state" class="single-select @error('state') is-invalid @enderror" id="state" onchange="getCities(this.value)" required>
                                                                 <option selected disabled value="">Choose...</option>                    
-                                                                @foreach ($states as $state)
-                                                                <option value="{{ $state->id }}" @selected($state->id == old('state'))>{{ $state->name }}</option>
+@foreach ($states as $state)
+                                                                <option value="{{ $state->id }}" @selected($state->id == (Auth::user()->address->state_id ?? ''))>{{ $state->name }}</option>
                                                                 @endforeach
                                                             </select>
+                                                         <small class="text-danger error-state"></small>
                                                             @error('state')
                                                                 <div class="invalid-feedback">{{ $message }}</div>
                                                             @enderror
@@ -280,26 +314,31 @@
 
                                                         <div class="col-md-6 mb-3 border-top">
                                                             <label for="city" class="form-label">City<code>*</code></label>
-                                                            <select name="city" class="single-select @error('city') is-invalid @enderror" id="city">
+                                                            <select name="city"   class="single-select @error('city') is-invalid @enderror" id="city"required>
                                                                 <option selected disabled value="">Choose...</option>
-                                                                @foreach ($cities as $city)
-                                                                <option value="{{ $city->id }}" @selected($city->id == old('city'))>{{ $city->name }}</option>
+@foreach ($cities as $city)
+                                                                <option value="{{ $city->id }}" @selected($city->id == (Auth::user()->address->city_id ?? ''))>{{ $city->name }}</option>
                                                                 @endforeach
                                                             </select>
+                                                           <small class="text-danger error-city"></small>
+                                                              
                                                             @error('city')
-                                                                <div class="invalid-feedback">{{ $message }}</div>
+                                                                <div class="invalid-feedback">{{ $message }}
+                                                                </div>
                                                             @enderror
                                                         </div>
 
                                                                     <div class="col-lg-6 border-top mb-2 pt-2">
                                                                         <label class="form-label text-dark">Zip Code <strong class="text-danger">*</strong></label>
-                                                                        <input type="text" name="zipcode" class="form-control" required>
+                                                                        <input type="text" name="zipcode" class="form-control" required value = "{{Auth::user()->address->zip ?? ''}}">
+                                                                          <small class="text-danger error-zipcode"></small>
                                                                     </div>
-
+                                                                         <div class="text-danger fw-bold mb-2 error-wallet"></div>
                                                                     <div class="col-md-12 mt-2 d-flex gap-2">
                                                                         <button type="button" class="btn btn-secondary" onclick="backToProduct()">
                                                                             Back
                                                                         </button>
+                                                                 
 
                                                                         <button type="submit" class="btn theme-btn">
                                                                             Place Order With Wallet
@@ -737,5 +776,63 @@ $('.single-select').each(function () {
     });
 });
 
+
+
 </script>
+<script>
+$('#orderForm').on('submit', function(e){
+    e.preventDefault(); // stop normal submit
+
+    $('.text-danger').text(''); // clear old errors
+
+    let formData = new FormData(this);
+
+    $.ajax({
+        url: $(this).attr('action'),
+        method: "POST",
+        data: formData,
+        processData: false,
+        contentType: false,
+
+        success: function(res){
+            // order success  redirect or show message
+            window.location.href = res.redirect ?? '/user/thankyou';
+        },
+
+        error: function(xhr){
+            if(xhr.status === 422){
+                let errors = xhr.responseJSON.errors;
+
+                Object.keys(errors).forEach(function(key){
+                    $('.error-' + key).text(errors[key][0]);
+                });
+
+                alert("all feilds are required");
+            }else{
+                 let errors = xhr.responseJSON.errors;
+
+                Object.keys(errors).forEach(function(key){
+                    $('.error-' + key).text(errors[key][0]);
+                });
+
+                alert("Something went wrong");
+            }
+        }
+    });
+});
+</script>
+<script>
+function doubleValue() {
+    const input = document.getElementById('maxQty');
+    let current = parseFloat(input.value) || 0;
+    
+    // If value is very small or zero, start from 1 or 50
+    if (current <= 0) {
+        input.value = 50;
+    } else {
+        input.value = current * 2;
+    }
+}
+</script>
+
 @endpush

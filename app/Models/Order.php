@@ -29,6 +29,7 @@ class Order extends Model
         'payment_method',
         'ledger_id',
         'files',
+        'assigned_to',
 
     ];
 
