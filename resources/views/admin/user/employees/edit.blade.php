@@ -75,7 +75,18 @@
                     <div class="invalid-feedback">{{ $message }}</div>
                 @enderror
             </div>
-            
+              <div class="col-md-3">
+                <label for="department_id" class="form-label">Department <code>*</code></label>
+                <select name="department_id" class="form-select @error('department_id') is-invalid @enderror" id="department_id" required>
+                    <option selected disabled value="">Choose...</option>
+                    @foreach ($department as $departments)
+                    <option value="{{ $departments->id }}" @selected($departments->id == old('department_id',$data->department_id))>{{ $departments->name }}</option>
+                    @endforeach
+                </select>
+                @error('role_id')
+                    <div class="invalid-feedback">{{ $message }}</div>
+                @enderror
+            </div>
             <div class="col-md-3">
                 <label for="email" class="form-label">Email <code>*</code></label>
                 <input type="email" name="email" class="form-control @error('email') is-invalid @enderror" id="email" value="{{ old('email',$data->email) }}" placeholder="Enter Email Address" required>

@@ -21,6 +21,7 @@ use App\Models\Address;
 use App\Models\Ledger;
 use App\Models\State;
 use App\Models\Citie;
+use App\Models\Department;
 use App\Models\User;
 use App\Models\Role;
 use App\Models\Wallet;
@@ -496,7 +497,8 @@ class AdminController extends Controller
         $roles = Role::where('type', 'Employee')->get();
         $countrie = Countrie::orderBy('name', 'asc')->get();
         $country_id = $countrie[0]->id ?? '';
-        return view('admin.user.employees.create', compact('roles', 'countrie', 'country_id'));
+        $department = Department::get();
+        return view('admin.user.employees.create', compact('roles', 'countrie', 'country_id', 'department'));
     }
 
 
@@ -507,6 +509,7 @@ class AdminController extends Controller
         $validated = $request->validate([
             'code' => 'required|string|unique:users,code',
             'name' => 'required|string|max:255',
+            'department_id' => 'required|exists:_department,id',
             'father_name' => 'nullable|string|max:255',
             'mother_name' => 'nullable|string|max:255',
             'dob' => 'nullable|date',
@@ -580,6 +583,7 @@ class AdminController extends Controller
                 'phone_number' => $request->phone_number,
                 'password' => Hash::make($request->password),
                 'role_id' => $request->role_id,
+                'department_id' => $request->department_id,
                 'image' => $profileFileName
             ]);
 
@@ -663,8 +667,8 @@ class AdminController extends Controller
             $cities = Citie::where(['state_id' => $address->state_id])->orderBy('name', 'asc')->get();
         }
 
-
-        return view('admin.user.employees.edit', compact('data', 'address', 'kyc', 'roles', 'countrie', 'country_id', 'states', 'cities'));
+        $department = Department::get();
+        return view('admin.user.employees.edit', compact('data', 'address', 'kyc', 'roles', 'countrie', 'country_id', 'states', 'cities', 'department'));
     }
 
 
@@ -676,6 +680,7 @@ class AdminController extends Controller
             'name' => 'required|string|max:255',
             'father_name' => 'nullable|string|max:255',
             'mother_name' => 'nullable|string|max:255',
+            'department_id' => 'required|exists:_department,id',
             'dob' => 'nullable|date',
             'gender' => 'required|in:Male,Female,Other',
             'role_id' => 'required|integer|exists:roles,id',
@@ -766,6 +771,7 @@ class AdminController extends Controller
                 'email' => $request->email,
                 'phone_number' => $request->phone_number,
                 'role_id' => $request->role_id,
+                'department_id' => $request->department_id,
             ]);
 
             /*---------------------------------------------------

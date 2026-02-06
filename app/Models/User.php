@@ -41,6 +41,7 @@ class User extends Authenticatable implements JWTSubject
         'parent_id',
         'referral_id',
         'phone_number',
+        'department_id',
     ];
 
     /**
@@ -80,7 +81,10 @@ class User extends Authenticatable implements JWTSubject
     {
         return $this->belongsTo(Role::class, 'role_id', 'id');
     }
-
+    public function department()
+    {
+        return $this->belongsTo(Department::class, 'department_id', 'id');
+    }
 
     public function address()
     {

@@ -45,7 +45,6 @@ class ProductController extends Controller
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
             'file_size' => 'required|numeric|min:0'
         ]);
-
         $category = new ProductCategory();
         $category->name = $request->name;
         $category->slug = $request->slug;
@@ -1244,5 +1243,88 @@ class ProductController extends Controller
         $values = Variation::where('parent_id', $id)->get();
 
         return response()->json($values);
+    }
+    public function index()
+    {
+        $orderStatus = OrderStatus::orderBy('order_by')->get();
+        return view('admin.orderstatus.index', compact('orderStatus'));
+    }
+
+    public function create()
+    {
+        return view('admin.orderstatus.add');
+    }
+
+    public function store(Request $request)
+    {
+        $request->validate([
+            'name'       => 'required|string|max:255',
+            'color'      => 'required',
+            'image_icon' => 'required|image|mimes:png,jpg,jpeg,svg,webp|max:2048',
+        ]);
+
+        // upload image
+        $imageName = null;
+        if ($request->hasFile('image_icon')) {
+            $imageName = time() . '_' . $request->image_icon->getClientOriginalName();
+            $request->image_icon->move(public_path('images/order-status'), $imageName);
+        }
+
+        OrderStatus::create([
+            'name'       => $request->name,
+            'for'        => 'ORDER',
+            'order_by'   => $request->order_by,
+            'color'      => $request->color,
+            'image_icon' => $imageName,
+        ]);
+
+        return redirect()->route('order-status.index')
+            ->with('success', 'Order Status Created Successfully');
+    }
+
+    public function edit($id)
+    {
+        $orderStatus = OrderStatus::findOrFail($id);
+        return view('admin.orderstatus.edit', compact('orderStatus'));
+    }
+
+    public function update(Request $request, $id)
+    {
+        // dd($request->all());
+        $request->validate([
+            'name'       => 'required|string|max:255',
+            'color'      => 'required',
+            'image_icon' => 'required',
+        ]);
+
+        $orderStatus = OrderStatus::findOrFail($id);
+
+        $imageName = $orderStatus->image_icon;
+
+
+        if ($request->hasFile('image_icon')) {
+            $imageName = time() . '_' . $request->image_icon->getClientOriginalName();
+            $request->image_icon->move(public_path('images/order-status'), $imageName);
+        }
+        // dd($imageName);
+        $orderStatus->update([
+            'name'       => $request->name,
+            'for'        => 'ORDER',
+            'order_by'   => $request->order_by,
+            'color'      => $request->color,
+            'image_icon' => $imageName,
+        ]);
+
+        return redirect()->route('order-status.index')
+            ->with('success', 'Order Status Updated Successfully');
+    }
+
+
+    public function destroy($id)
+    {
+        OrderStatus::findOrFail($id)->delete();
+
+        return redirect()->route('order-status.index')
+            ->with('success', 'Order Status Deleted Successfully');
     }
 }

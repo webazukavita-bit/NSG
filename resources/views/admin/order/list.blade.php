@@ -89,7 +89,7 @@
 											  <span class="order-actions-primary">
 													<a href="javascript:;" class="ms-2 openStatusModel" data-bs-toggle="tooltip" data-bs-placement="top" 
 													data-id="{{ $value->id }}"
-													data-status_id="{{ $value->status->id}}"
+													data-status_id="{{ $value->status->id ?? 0}}"
 													data-bs-original-title="OrderStatus"><i class="bx bx-message-square-edit"></i></a>
 												</span>
 											  <span class="order-actions-primary">
@@ -172,7 +172,7 @@
         <label for="status1" class="form-label">Status</label>
         <select name="status" class="form-select @error('status') is-invalid @enderror" id="status_id">
             @foreach ($orderstatus as $data )
-                <option value="{{ $data->id}}" {{ old('status') == $data->id ? 'selected' : '' }}>
+                <option value="{{ $data->id}}" {{ old('status_id') == $data->id ? 'selected' : '' }}>
                     {{ $data->name }}
                 </option>
             @endforeach
@@ -294,7 +294,7 @@
     $(document).on("click", ".openStatusModel", function () {
 
         let id = $(this).data("id");
-        let status = $(this).data("status_id");
+        let status_id = $(this).data("status_id");
 
         $('#divCommision').hide();
         $('#divDocuments').hide();
@@ -309,7 +309,7 @@
         }
          
         $('#order_id').val(id);
-
+       $('#status_id').val(status_id);
         $("#ChangeStatus").modal("show");
     });
 

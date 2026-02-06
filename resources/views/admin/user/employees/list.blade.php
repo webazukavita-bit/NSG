@@ -85,6 +85,7 @@
                             <th>Email</th>
                             <th>Phone</th>
                             <th>Role</th>
+                            <th>Department</th>
                             <th>Gender</th>
                             <th>DOB</th>
                             <th>Updated At</th>
@@ -104,6 +105,7 @@
                             <td>{{ $value->email }}</td>
                             <td>{{ $value->phone_number }}</td>
                             <td>{{ $value->roles->name }}</td>
+                            <td>{{$value->department->name ?? '-'}}</td>
                             <td>{{ $value->gender }}</td>
                             <td>{{ $value->dob }}</td>
                             <td>{{ $value->updated_at }}</td>
