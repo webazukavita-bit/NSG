@@ -983,12 +983,14 @@ class ProductController extends Controller
     // }
     public function orderStatusUpdate(Request $request)
     {
+        // dd($request->order_id);
         $request->validate([
             'order_id' => 'required|integer|exists:orders,id',
             'status' => 'required|integer|exists:order_status,id',
         ]);
 
         $order = Order::findOrFail($request->order_id);
+        // dd($order);
         $order->order_status_id = $request->status;
 
         if ($order->save()) {
