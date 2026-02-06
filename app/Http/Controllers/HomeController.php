@@ -26,12 +26,10 @@ class HomeController extends Controller
      * @return void
      */
 
-    protected $solarService;
 
-    public function __construct(SolarCalculationService $solarService)
+    public function __construct()
     {
         // $this->middleware('auth');
-        $this->solarService = $solarService;
     }
 
     /**
@@ -230,30 +228,6 @@ class HomeController extends Controller
         return back()->with('success', 'Your message has been submitted successfully!');
     }
 
-
-    public function calculate(Request $request)
-    {
-        $validated = $request->validate([
-            'category' => 'required|in:residential,commercial,industrial',
-            'monthly_bill' => 'nullable|numeric|min:0',
-            'monthly_consumption' => 'nullable|numeric|min:0',
-            'rooftop_area' => 'nullable|numeric|min:0',
-            'desired_capacity' => 'nullable|numeric|min:0',
-            'state' => 'required|exists:states,id',
-            'panel_wattage' => 'required|in:330,550,600',
-            'consumer_type' => 'nullable|in:commercial,industrial',
-        ]);
-
-        $state = State::find($validated['state']);
-
-        $result = match ($validated['category']) {
-            'residential' => $this->solarService->calculateResidential($validated, $state),
-            'commercial' => $this->solarService->calculateCommercial($validated, $state),
-            'industrial' => $this->solarService->calculateIndustrial($validated, $state),
-        };
-
-        return response()->json($result);
-    }
 
     // public function saveCalculation(Request $request)
     // {

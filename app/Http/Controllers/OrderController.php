@@ -60,6 +60,8 @@ class OrderController extends Controller
             'variations.*'   => 'required|string|max:255',
 
             'remark' => 'nullable|string|max:500',
+            'file' => 'nullable|file|mimes:pdf,jpg,png|max:30720',
+
         ]);
         // dd($request->all());
         DB::beginTransaction();
@@ -132,6 +134,7 @@ class OrderController extends Controller
                     'default'    => 'Yes',
                 ]
             );
+            
             $maxSizeKB = $product->category->file_size * 1024;
 
             $request->validate([
@@ -195,8 +198,8 @@ class OrderController extends Controller
             Wallet::updateOrCreate([
                 'user_id' => $user->id,
             ]);
-
-            DB::commit();
+               
+  DB::commit();
 
             return response()->json([
                 'success' => true,

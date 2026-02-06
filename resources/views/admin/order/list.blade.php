@@ -324,6 +324,29 @@
 
 	});
 
+    $(document).ready(function() {
+		
+        var table = $('#example').DataTable( {
+            lengthChange: true,
+            buttons: [ 'copy', 'excel', 'csv', 'pdf', 'print'],
+        });
 
+		table.buttons().container().hide();
+
+		$('.buttons-copys').on('click', () => table.button('.buttons-copy').trigger());
+		$('.buttons-excels').on('click', () => table.button('.buttons-excel').trigger());
+		$('.buttons-pdfs').on('click', () => table.button('.buttons-pdf').trigger());
+		$('.buttons-csvs').on('click', () => table.button('.buttons-csv').trigger());
+		$('.buttons-prints').on('click', () => table.button('.buttons-print').trigger());
+    });
+		
+	
+	$('.single-select').select2({
+		theme: 'bootstrap4',
+		width: $(this).data('width') ? $(this).data('width') : $(this).hasClass('w-100') ? '100%' : 'style',
+		placeholder: $(this).data('placeholder'),
+		allowClear: Boolean($(this).data('allow-clear')),
+	});
 </script>
+
 @endpush

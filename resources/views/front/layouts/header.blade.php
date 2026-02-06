@@ -156,7 +156,7 @@
                         <a href="{{ config('app.instagram_url') }}"><i class="fab fa-instagram"></i></a>
                         <a href="{{ config('app.linkedin_url') }}"><i class="fab fa-linkedin-in"></i></a>
                     </div>
-                    <div class="nice-items">
+  <!--                   <div class="nice-items">
                         <div class="nice-select" tabindex="0">
                             <span class="current">
                                 USD
@@ -173,7 +173,7 @@
                                 </li>
                             </ul>
                         </div>
-                    </div>
+                    </div> -->
                 </div>
             </div>
         </div>

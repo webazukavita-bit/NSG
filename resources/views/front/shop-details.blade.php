@@ -72,6 +72,7 @@
                                                 data-name="{{ $pro->name }}"
                                                 data-sku="{{ $pro->sku }}"
                                                 data-category="{{ $pro->category->name }}"
+                                                data-file_size="{{ $pro->category->file_size ?? '' }}"
                                                 data-variations='@json($pro->variations)'
                                                 data-charge_details='@json($pro->charge_details)'
                                                 data-disc_price="{{ $pro->disc_price }}"
@@ -157,8 +158,10 @@
                                                             <label class="fw-semibold small" for="file_online">Attach file Online</label>
                                                         </div>
                                                         <div id="online_info" class="d-none small mt-1">
-                                                            <p class="mb-0" style="font-size: 10px">(Allowed File: 96x58 mm, 30MB, PDF Only)</p>
-                                                          <input type="file" value="file" name ="file" class="form-control form-control-sm">more info
+                                                            <p class="mb-0" style="font-size: 10px">(Allowed File: PDF Only)</p>
+                                                          <input type="file" name="file" class="form-control form-control-sm">
+                                                          <div id="file_size_info" class="small text-danger mt-1"></div>
+
                                                         </div>
                                                     </div>
 
@@ -480,6 +483,14 @@
     document.getElementById('product_name').innerText = option.dataset.name;
     document.getElementById('product_sku').innerText = option.dataset.sku;
     document.getElementById('product_category').innerText = option.dataset.category;
+     let fileSize = option.dataset.file_size || '100';
+
+if (fileSize) {
+    document.getElementById('file_size_info').innerText =
+        `Maximum File Size Allowed: ${fileSize} MB`;
+} else {
+    document.getElementById('file_size_info').innerText = '';
+}
 
     //  unified product data (parent or child)
     let productData = getSelectedProductData();
