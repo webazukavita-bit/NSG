@@ -52,50 +52,6 @@
 
 
 
-
-            {{-- <form action="" method="POST" class="row g-3" enctype="multipart/form-data">
-                @csrf
-
-                <div class="col-md-12">
-                    <label class="form-label">Select Type <code>*</code></label>
-                    <select name="parent_id" class="form-control @error('parent_id') is-invalid @enderror" required>
-                        <option value="" disabled selected>-- Select Variation Type --</option>
-
-                         @foreach ($types as $type)
-                            <option value="{{ $type->id }}">{{ $type->name }}</option>
-                        @endforeach 
-
-                    </select>
-                    @error('parent_id')
-                    <div class="invalid-feedback">{{ $message }}</div>
-                    @enderror
-                </div>
-
-                <div class="col-md-12">
-                    <label class="form-label">Value Name <code>*</code></label>
-                    <input type="text" name="value_name" class="form-control @error('value_name') is-invalid @enderror"
-                        placeholder="Enter Value (e.g., Red, Green, XL, Large)" required>
-                    @error('value_name')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                    @enderror
-                </div>
-
-                <div class="col-md-12">
-                    <label class="form-label">Image</label>
-                    <input type="file" accept="image/*" name="value_image" class="form-control">
-                </div>
-
-                <div class="col-md-12">
-                    <label class="form-label">Description</label>
-                    <textarea name="value_description" class="form-control"></textarea>
-                </div>
-
-                <div class="col-12 mt-2">
-                    <button type="submit" class="btn btn-success"><i class="bx bx-send"></i> Save Value</button>
-                </div>
-            </form>
-            --}}
-
         </div>
     </div>
 @endsection

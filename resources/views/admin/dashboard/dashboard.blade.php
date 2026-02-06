@@ -3,7 +3,7 @@
 @php
     $profile = 'images/user-1.svg';
 @endphp
-<div class="row row-cols-1 row-cols-md-2 row-cols-xl-4">
+<div class="row row-cols-1 row-cols-md-2 row-cols-xl-3">
     <div class="col">
         <div class="card radius-10 border-start border-0 border-3 bg-gradient-cosmic">
         <div class="card-body">
@@ -34,7 +34,7 @@
         </div>
     </div>
     </div>
-    <div class="col">
+<!--     <div class="col">
     <div class="card radius-10 border-start border-0 border-3 bg-gradient-ohhappiness">
         <div class="card-body">
             <div class="d-flex align-items-center">
@@ -48,7 +48,7 @@
             </div>
         </div>
     </div>
-    </div>
+    </div> -->
     <div class="col">
     <div class="card radius-10 border-start border-0 border-3 bg-gradient-kyoto">
         <div class="card-body">
@@ -67,7 +67,7 @@
 </div><!--end row-->
 
 <div class="row">
-    <div class="col-12 col-lg-3">
+    <div class="col-12 col-lg-4">
         <div class="card radius-10">
             <div class="card-body">
             <div class="d-flex align-items-center">
@@ -105,7 +105,7 @@
         </div>
     </div>
     @if(auth()->user()->role_id == 1)
-    <div class="col-12 col-lg-3">
+    <div class="col-12 col-lg-4">
         <div class="card radius-10">
             <div class="card-body">
             <div class="d-flex align-items-center">
@@ -143,6 +143,7 @@
         </div>
     </div>
     @endif
+    {{--
     <div class="col-12 col-lg-3">
         <div class="card radius-10">
             <div class="card-body">
@@ -151,17 +152,6 @@
                     <h6 class="mb-0">CRM</h6>
                 </div>
                 <div class="dropdown ms-auto">
-   <!--                  <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="javascript:;">Action</a>
-                        </li>
-                        <li><a class="dropdown-item" href="javascript:;">Another action</a>
-                        </li>
-                        <li>
-                            <hr class="dropdown-divider">
-                        </li>
-                        <li><a class="dropdown-item" href="javascript:;">Something else here</a>
-                        </li>
-                    </ul> -->
                 </div>
             </div>
             <div class="chart-container-2 mt-4">
@@ -181,7 +171,8 @@
         </ul>
         </div>
     </div>
-    <div class="col-12 col-lg-3">
+     --}}
+    <div class="col-12 col-lg-4">
         <div class="card radius-10">
             <div class="card-body">
             <div class="d-flex align-items-center">

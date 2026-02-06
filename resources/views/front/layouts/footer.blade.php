@@ -25,9 +25,9 @@
                                             <i class="fas fa-phone-alt"></i>
                                         </div>
                                         <div class="content">
-                                            <p>
-                                                Phone Number</p>
+                                            <p>Phone Number</p>
                                             <h4><a href="javascript:void(0)">{{ config('app.contact_us') }} </a></h4>
+                                            <h4><a href="javascript:void(0)">{{ config('app.whatsapp') }} </a></h4>
                                         </div>
                                     </div>
                                  
@@ -118,7 +118,7 @@
             <div class="container">
                 <div class="footer-bottom-wrapper">
                     <p class="wow fadeInUp" data-wow-delay=".3s">Copyright 2026 © . All rights Reserved by New Select Graphix.</p>
-                    <span>   <a href="{{url('privacy-policy')}}"> Privacy Policy &</a><a href="{{url('terms-and-conditions')}}">  Terms of Use</a></span>
+                    <span>   <a href="{{route('privacy-policy')}}"> Privacy Policy &</a><a href="{{url('terms-and-conditions')}}">  Terms of Use</a></span>
                     {{-- <img src="{{asset('front/assets/img/card.png')}}" alt="img" class="wow fadeInUp" data-wow-delay=".5s"> --}}
                 </div>
             </div>
