@@ -21,7 +21,7 @@
 
                 <div class="col-md-3">
                     <label for="name" class="form-label">Name <code>*</code></label>
-                    <input type="text" name="name" class="form-control @error('type') is-invalid @enderror" id="name" placeholder="Enter Name" value="{{ old('name', $data->type) }}" required>
+                    <input type="text" name="name" class="form-control @error('name') is-invalid @enderror" id="name" placeholder="Enter Name" value="{{ old('name', $data->name) }}" required>
                     @error('name')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
@@ -42,7 +42,7 @@
 
                 <div class="col-md-12">
                     <label for="description" class="form-label">Description</label>
-                    <textarea name="description">{!! old('description', $data->description) !!}</textarea>
+                    <textarea name="description" class="form-control">{!! old('description', $data->description) !!}</textarea>
                     @error('description')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror

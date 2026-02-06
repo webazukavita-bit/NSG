@@ -129,7 +129,7 @@
 							
 					<form action="{{route('order-assign-employee')}}" method="POST" class="row g-3" enctype="multipart/form-data">
                           @csrf
-                          <input type="hidden" name="orderId" class="form-control" id="order_id" required>
+                          <input type="hidden" name="orderId" class="form-control" id="orderId" required>
     
     <div>
         <label for="status1" class="form-label">Employee</label>
@@ -170,7 +170,7 @@
     
     <div>
         <label for="status1" class="form-label">Status</label>
-        <select name="status" class="form-select @error('status') is-invalid @enderror" id="status">
+        <select name="status" class="form-select @error('status') is-invalid @enderror" id="status_id">
             @foreach ($orderstatus as $data )
                 <option value="{{ $data->id}}" {{ old('status') == $data->id ? 'selected' : '' }}>
                     {{ $data->name }}
@@ -286,7 +286,7 @@
         let id = $(this).data("id");
         let assigned_id = $(this).data("assigned_id");
         
-        $('#order_id').val(id);
+        $('#orderId').val(id);
         $('#assigned_id').val(assigned_id);
         $("#Orderassign").modal("show");
     });
@@ -320,7 +320,7 @@
 
           $('#payment_id').val(id);
 		  
-		 
+		     $("#paymentStatus").modal("show");
 
 	});
 

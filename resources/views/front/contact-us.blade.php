@@ -65,7 +65,7 @@
                                 <div class="bottom-part">                            
                                     <div class="info">
                                         <p>{{ config('app.contact_us') }}</p>
-                                        {{-- <p>{{ config('app.contact_us') }}</p> --}}
+                                        <p>{{ config('app.whatsapp') }}</p>
                                     </div>
                                     <div class="icon">
                                         <i class="fal fa-arrow-right"></i>

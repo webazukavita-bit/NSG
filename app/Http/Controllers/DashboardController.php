@@ -163,7 +163,7 @@ class DashboardController extends Controller
 
         if (Auth::user()->role_id == 4) {
             $user = Auth::user();
-            $order = Order::with(['user', 'status', 'paymentStatus'])->latest()->limit(4)->get();
+            $order = Order::with(['user', 'status', 'paymentStatus'])->where('order_by_id', $user->id)->latest()->limit(4)->get();
             $orderCount = Order::where('order_by_id', $user->id)->count();
             $todayorder = Order::where('order_by_id', $user->id)
                 ->whereDate('created_at', today())
