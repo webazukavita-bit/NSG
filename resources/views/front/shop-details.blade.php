@@ -7,239 +7,214 @@
         font-size: 1rem;
         line-height: 1.4;
     }
+
     .input-group-sm input {
         max-width: 90px;
     }
 </style>
-  <!--<< Breadcrumb Section Start >>-->
+<!--<< Breadcrumb Section Start >>-->
 
-  @if ($errors->any())
-    <div class="alert alert-danger">
-        <ul class="mb-0">
-            @foreach ($errors->all() as $error)
-                <li>{{ $error }}</li>
-            @endforeach
-        </ul>
-    </div>
+@if ($errors->any())
+<div class="alert alert-danger">
+    <ul class="mb-0">
+        @foreach ($errors->all() as $error)
+        <li>{{ $error }}</li>
+        @endforeach
+    </ul>
+</div>
 @endif
 
-     <div class="breadcrumb-wrapper section-padding bg-cover" style="background-image: url({{asset('front/assets/img/breadcrumb.png')}});">
-        <div class="container">
-            <div class="page-heading">
-                <div class="breadcrumb-sub-title text-center">
-                    <h1 class="wow fadeInUp" data-wow-delay=".3s">Shop Details</h1>
-                    <ul class="breadcrumb-items wow fadeInUp" data-wow-delay=".5s">
-                        <li>
-                            <a href="{{url('/')}}">
+<div class="breadcrumb-wrapper section-padding bg-cover" style="background-image: url({{asset('front/assets/img/breadcrumb.png')}});">
+    <div class="container">
+        <div class="page-heading">
+            <div class="breadcrumb-sub-title text-center">
+                <h1 class="wow fadeInUp" data-wow-delay=".3s">Shop Details</h1>
+                <ul class="breadcrumb-items wow fadeInUp" data-wow-delay=".5s">
+                    <li>
+                        <a href="{{url('/')}}">
                             Home
-                            </a>
-                        </li>
-                        <li>
-                            <i class="fal fa-minus"></i>
-                        </li>
-                        <li>
-                            Shop Details
-                        </li>
-                    </ul>
-                </div>
+                        </a>
+                    </li>
+                    <li>
+                        <i class="fal fa-minus"></i>
+                    </li>
+                    <li>
+                        Shop Details
+                    </li>
+                </ul>
             </div>
         </div>
     </div>
-       
-    <!-- Shop Details Section Start -->
-    <section class="shop-details-section section-padding pt-2">
-        <div class="container">
-        <div class="shop-details-wrapper">
-<form id="orderForm" action="{{route('ordere-store')}}" method="POST" enctype="multipart/form-data">
+</div>
 
-          @csrf   
-         <div class="row justify-content-start mb-4">
-           <div class="col-lg-6 col-md-8 col-sm-12">  
-                                    <label class="form-label text-base mt-5 w-100 fw-semibold">
-                                        SELECT PRODUCT <code>*</code>
-                                    </label>
+<!-- Shop Details Section Start -->
+<section class="shop-details-section section-padding pt-2">
+    <div class="container">
+        <div class="shop-details-wrapper" style="min-height: 1200px;">
+            <form id="orderForm" action="{{route('ordere-store')}}" method="POST" enctype="multipart/form-data">
 
-                                    <select name="product_id"
-                                            id="productSelect"
-                                            class="form-select text-center py-2 bg-light"
-                                            onchange="productDetails()"
-                                            required>
-                                        
-                                        <option value="" selected disabled>-- Choose Product --</option>
+                @csrf
+                <div class="row mb-4">
+                    <div class="col-lg-6 col-md-8 col-sm-12">
+                        <label class="form-label text-base fw-semibold">
+                            SELECT PRODUCT <code>*</code>
+                        </label>
 
-                                        @foreach ($product as $pro)
-                                            <option value="{{ $pro->id }}"
-                                                data-name="{{ $pro->name }}"
-                                                data-sku="{{ $pro->sku }}"
-                                                data-category="{{ $pro->category->name }}"
-                                                data-file_size="{{ $pro->category->file_size ?? '' }}"
-                                                data-variations='@json($pro->variations)'
-                                                data-charge_details='@json($pro->charge_details)'
-                                                data-disc_price="{{ $pro->disc_price }}"
-                                               data-specifications="{{ htmlentities($pro->specifications) }}"
-                                                data-max_quantity="{{ $pro->max_quantity }}"
-                                                data-min_quantity="{{ $pro->min_quantity }}">
-                                                {{ $pro->name }}
-                                                {{-- @foreach ($pro->variations as $variant)
-                                          {{$variant->variationType->name?' + '.$variant->variationType->name:''}} @endforeach --}}
-                                            </option>
-                                        @endforeach
-                                    </select>
+                        <select name="product_id"
+                            id="productSelect"
+                            class="form-control text-center py-2 bg-light"
+                            onchange="productDetails(this.value)"
+                            required>
 
-                                    
-                                    @error('category_id')
-                                        <div class="invalid-feedback text-center d-block">
-                                            {{ $message }}
-                                        </div>
-                                    @enderror
+                            <option value="" selected disabled>-- Choose Product --</option>
 
+                            @foreach ($product as $pro)
+                            <option value="{{ $pro->id }}" @selected(optional($selectedProduct)->id == $pro->id)>
+                                {{ $pro->name }}
+                            </option>
+                            @endforeach
+                        </select>
+
+                        @error('category_id')
+                        <div class="invalid-feedback text-center d-block">
+                            {{ $message }}
+                        </div>
+                        @enderror
+
+                    </div>
+                </div>
+
+
+                <div class="row" id="productFields" @if(!$selectedProduct) style="display: none" @endif>
+
+                    <div class="col-lg-7">
+                        <div class="product-details-content ms-0">
+                            <h2 class="pb-2" id="product_name"></h2>
+
+                            <div class="d-flex gap-4 align-items-center mb-3">
+                                <div>
+                                    <strong class="text-dark">SKU:</strong>
+                                    <span id="product_sku">{{$selectedProduct->sku??''}}</span>
+                                </div>
+                                <div>
+                                    <strong class="text-dark">Categories:</strong>
+                                    <span id="product_category">{{$selectedProduct->category->name??''}}</span>
                                 </div>
                             </div>
 
+                            {{-- Product Details --}}
+                            <div id="productStep">
+                                <div class="card border-rounded p-2">
+                                    <h6 class="text-base ps-2 border-bottom fs-6 py-1">SELECT DETAIL</h6>
 
-                       <div class="row"  id="productFields" style="display: none">
+                                    <div class="row px-2 pt-1" id="variationContainer">
+                                        @php
+                                        $grouped = [];
+                                        foreach ($selectedProduct->variations??[] as $v) {
+                                        if (!$v->variationType || !$v->variationValue) continue;
+                                            $type = $v->variationType->name;
+                                            $value = $v->variationValue->name;
+                                            $grouped[$type][] = $value;
+                                        }
+                                        @endphp
 
-                                <div class="col-lg-7">
-                                        <div class="product-details-content">
-                                            <h2 class="pb-2" id="product_name"></h2>
+                                        @foreach ($grouped as $type => $values)
+                                        <div class="row mb-2 border-bottom">
+                                            <div class="col-md-3">
+                                                <label class="form-label pt-2 text-dark" for="variation_{{ $type }}{{$selectedProduct->id}}">{{ $type }}<code>*</code></label>
+                                            </div>
+                                            <div class="col-md-8 ms-2">
+                                                <select name="variations['{{ str_replace(' ', '_', $type) }}']" id="variation_{{ $type }}{{$selectedProduct->id}}" class="form-control" required>
+                                                    <option value="">-- Select {{ $type }} --</option>
+                                                    @foreach (array_unique($values) as $val)
+                                                    <option value="{{ $val }}">{{ $val }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                        </div>
+                                        @endforeach
+                                    </div>
 
-                                            <div class="d-flex gap-4 align-items-center mb-3">
-                                                <div>
-                                                    <strong class="text-dark">SKU:</strong>
-                                                    <span id="product_sku"></span>
-                                                </div>
-                                                <div>
-                                                    <strong class="text-dark">Categories:</strong>
-                                                    <span id="product_category"></span>
+                                    <h6 class="text-base border-top ps-2 pt-1 fs-6">SELECT FILE OPTION</h6>
+                                    <div class="row px-2 mb-2">
+                                        <div class="col-md-6 d-flex flex-column">
+                                            <div>
+                                                <input type="radio" name="file_option" id="file_online" value="online">
+                                                <label class="fw-semibold small" for="file_online">Attach file Online</label>
+                                            </div>
+                                            <div id="online_info" class="d-none small mt-1">
+                                                <p class="mb-0" style="font-size: 10px">(Allowed File: PDF Only)</p>
+                                                <input type="file" name="file" class="form-control form-control-sm">
+                                                <div id="file_size_info" class="small text-danger mt-1">Maximum File Size Allowed: {{$selectedProduct->category->file_size??'10'}} MB</div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6 d-flex flex-column">
+                                            <div>
+                                                <input type="radio" name="file_option" id="file_email" value="email">
+                                                <label class="fw-semibold small" for="file_email">Send file via Email</label>
+                                            </div>
+                                            <div id="email_info" class="d-none small mt-1 text-danger">
+                                                <p class="mb-0"></p>
+                                                <button class="btn btn-danger btn-sm rounded-pill">more info</button>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {{-- Additional Charge  --}}
+                                    <div id="dynamicChargeSection"></div>
+
+                                    <!-- COST SECTION -->
+                                    <div class="px-2">
+                                        <h6 class="text-base py-1 border-top">Congratulations! Order's eligible for free delivery</h6>
+                                        <div class="row mb-2 align-items-center ps-2">
+                                            <div class="col-md-2">
+                                                <label class="form-label text-dark pt-1 small">Quantity</label>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <div class="input-group input-group-sm shadow-sm rounded">
+                                                    <button class="btn btn-outline-danger fw-bold" type="button" onclick="let el = document.getElementById('maxQty'); el.value = Math.max(1, Math.floor(el.value / 2))">
+                                                        −
+                                                    </button>
+
+                                                    <input type="number" name="quantity" id="maxQty" class="form-control text-center fw-semibold" value="{{$selectedProduct->min_quantity??''}}" min="{{$selectedProduct->min_quantity??''}}">
+
+                                                    <button class="btn btn-outline-primary fw-bold" type="button"
+                                                        onclick="let el = document.getElementById('maxQty'); el.value *= 2">
+                                                        +
+                                                    </button>
                                                 </div>
                                             </div>
 
-                                            {{-- Product Details --}}
-                                        <div id="productStep">
-                                            <div class="card border-rounded p-2">
-                                                <h6 class="text-base ps-2 border-bottom fs-6 py-1">SELECT DETAIL</h6>
+                                            <div class="col-md-3 pt-1 text-muted small">
+                                                (Min Qty : <span id="minQty">{{$selectedProduct->min_quantity??''}}</span>)
+                                            </div>
+                                        </div>
 
+                                        <div class="row py-1 border-top">
+                                            <div class="col-6 small">Cost</div>
+                                            <div class="col-6 text-end small" id="disc_price">{{($selectedProduct->price??0)*($selectedProduct->quantity??0)}}</div>
+                                        </div>
 
-                                                <div class="row px-2 pt-1" id="variationContainer">
-                                                    @php
-                                                      $grouped = [];
-                                                        foreach ($parentVariations as $v) {
-                                                            if (!$v->variationType || !$v->variationValue) continue;
+                                        <div class="row py-1 border-top">
+                                            <div class="col-6 small">GST (18.00%)</div>
+                                            <div class="col-6 text-end small" id="gst_amount">Rs. 0/-</div>
+                                        </div>
 
-                                                            $type  = $v->variationType->name;
-                                                            $value = $v->variationValue->name;
+                                        <div class="row mb-2 border-top">
+                                            <div class="col-6 fw-bold small">Amount Payable</div>
+                                            <div class="col-6 fw-bold text-end small" id="amount_payable">Rs. 0/-</div>
+                                        </div>
 
-                                                            $grouped[$type][] = $value;
-                                                        }
-                                                    @endphp
+                                        <div class="row py-1 border-top">
+                                            <div class="col-4">
+                                                <label class="form-label small">Special Remark (Optional)</label>
+                                            </div>
+                                            <div class="col-8">
+                                                <textarea class="form-control form-control-sm" placeholder="remarks for order processing team..."></textarea>
+                                            </div>
+                                        </div>
 
-                                                @foreach ($grouped as $type => $values)
-                                                    <div class="row mb-2 border-bottom">
-                                                        <div class="col-md-3">
-                                                            <label class="form-label pt-2 text-dark">{{ $type }}</label>
-                                                        </div>
-                                                        <div class="col-md-8 ms-2">
-                                                            <select name="variations[{{ $type }}]" class="form-select" required>
-                                                                <option value="">-- Select {{ $type }} --</option>
-                                                                @foreach (array_unique($values) as $val)
-                                                                    <option value="{{ $val }}">{{ $val }}</option>
-                                                                @endforeach
-                                                            </select>
-                                                        </div>
-                                                    </div>
-                                                @endforeach
-                                                </div>
-
-                                                <h6 class="text-base border-top ps-2 pt-1 fs-6">SELECT FILE OPTION</h6>
-                                                <div class="row px-2 mb-2">
-                                                    <div class="col-md-6 d-flex flex-column">
-                                                        <div>
-                                                            <input type="radio" name="file_option" id="file_online" value="online">
-                                                            <label class="fw-semibold small" for="file_online">Attach file Online</label>
-                                                        </div>
-                                                        <div id="online_info" class="d-none small mt-1">
-                                                            <p class="mb-0" style="font-size: 10px">(Allowed File: PDF Only)</p>
-                                                          <input type="file" name="file" class="form-control form-control-sm">
-                                                          <div id="file_size_info" class="small text-danger mt-1"></div>
-
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="col-md-6 d-flex flex-column">
-                                                        <div>
-                                                            <input type="radio" name="file_option" id="file_email" value="email">
-                                                            <label class="fw-semibold small" for="file_email">Send file via Email</label>
-                                                        </div>
-                                                        <div id="email_info" class="d-none small mt-1 text-danger">
-                                                            <p class="mb-0"></p>
-                                                            <button class="btn btn-danger btn-sm rounded-pill">more info</button>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                {{-- Additional Charge  --}}
-                                                   <div id="dynamicChargeSection"></div>
-                                                 
-                                                <!-- COST SECTION -->
-                                                <div class="px-2">
-                                                        <h6 class="text-base py-1 border-top">Congratulations! Order's eligible for free delivery</h6>
-                                                    <div class="row mb-2 align-items-center ps-2">
-                                                        <div class="col-md-2">
-                                                            <label class="form-label text-dark pt-1 small">Quantity</label>
-                                                        </div>
-                                                           <div class="col-md-3">
-    <div class="input-group input-group-sm shadow-sm rounded">
-        <button class="btn btn-outline-danger fw-bold" type="button"
-            onclick="let el = document.getElementById('maxQty'); el.value = Math.max(1, Math.floor(el.value / 2))">
-            −
-        </button>
-
-        <input 
-            type="number" 
-            name="quantity" 
-            id="maxQty" 
-            class="form-control text-center fw-semibold"
-            value="50" 
-            min="1"
-        >
-
-        <button class="btn btn-outline-primary fw-bold" type="button"
-            onclick="let el = document.getElementById('maxQty'); el.value *= 2">
-            +
-        </button>
-    </div>
-</div>
-                                                        
-                                                        <div class="col-md-3 pt-1 text-muted small">
-                                                            (Min Qty : <span id="minQty"></span>)
-                                                        </div>
-                                                    </div>  
-
-                                                    <div class="row py-1 border-top">
-                                                        <div class="col-6 small">Cost</div>
-                                                        <div class="col-6 text-end small" id="disc_price"></div>
-                                                    </div>
-
-                                                    <div class="row py-1 border-top">
-                                                        <div class="col-6 small">GST (18.00%)</div>
-                                                        <div class="col-6 text-end small" id="gst_amount">Rs. 0/-</div>
-                                                    </div>
-
-                                                    <div class="row mb-2 border-top">
-                                                        <div class="col-6 fw-bold small">Amount Payable</div>
-                                                        <div class="col-6 fw-bold text-end small" id="amount_payable">Rs. 0/-</div>
-                                                    </div>
-
-                                                    <div class="row py-1 border-top">
-                                                        <div class="col-4">
-                                                            <label class="form-label small">Special Remark (Optional)</label>
-                                                        </div>
-                                                        <div class="col-8">
-                                                            <textarea class="form-control form-control-sm" placeholder="remarks for order processing team..."></textarea>
-                                                        </div>
-                                                    </div>
-
-                                                    {{-- <div class="row border-top pt-1">
+                                        {{-- <div class="row border-top pt-1">
                                                         <div class="col-4 mb-0">Enter Pressline:
                                                             <p class="text-danger small m-0" style="font-size:12px">To be Printed on Free Gift(Card Holder)</p>
                                                             
@@ -249,165 +224,155 @@
                                                         </div>
                                                     </div> --}}
 
-                                                </div>
+                                    </div>
 
-                                                <button type="button" class="btn theme-btn btn-sm mt-2" onclick="validateProductStep()">
-                                                        Add User Details
-                                                    </button>
+                                    <!-- <button type="button" class="btn theme-btn btn-sm mt-2" onclick="validateProductStep()">
+                                        Add User Details
+                                    </button> -->
 
 
-                                            </div>
-                                        </div>   
-                                               {{-- .Product Details End --}}
+                                </div>
+                            </div>
+                            {{-- .Product Details End --}}
 
-                                                            {{-- User details --}}
-                                                            <div id="userStep" class="d-none border rounded p-2 shadow-sm">
+                            {{-- User details --}}
+                            <div id="userStep" class="border rounded p-2 shadow-sm mt-3">
 
-                                                                <h3 class="mb-2 text-base text-dark">User Details</h3>
+                                <h3 class="mb-2 text-base text-dark">User Details</h3>
 
-                                                                <div class="row g-3">
+                                <div class="row g-3">
 
-                                                                    <div class="col-md-6 border-top mb-2 pt-2">
-                                                                        <label class="form-label text-dark">Full Name <strong class="text-danger">*</strong></label>
-                                                                        <input type="text" name="name" class="form-control" required value="{{Auth::user()->name}}">
-                                                                    </div>
+                                    <div class="col-md-6 border-top mb-2 pt-2">
+                                        <label class="form-label text-dark">Full Name <strong class="text-danger">*</strong></label>
+                                        <input type="text" name="name" class="form-control" required value="{{Auth::user()->name}}">
+                                    </div>
 
-                                                                    <div class="col-md-6 border-top mb-2 pt-2">
-                                                                        <label class="form-label text-dark">Phone <strong class="text-danger">*</strong></label>
-                                                                        <input type="text" name="phone" class="form-control" required value="{{Auth::user()->phone_number}}">
-                                                                    </div>
+                                    <div class="col-md-6 border-top mb-2 pt-2">
+                                        <label class="form-label text-dark">Phone <strong class="text-danger">*</strong></label>
+                                        <input type="text" name="phone" class="form-control" required value="{{Auth::user()->phone_number}}">
+                                    </div>
 
-                                                                    <div class="col-md-6 border-top mb-2 pt-2">
-                                                                        <label class="form-label text-dark">Email <strong class="text-danger">*</strong></label>
-                                                                        <input type="email" name="email" class="form-control" readonly value="{{Auth::user()->email}}">
-                                                                    </div>
+                                    <div class="col-md-6 border-top mb-2 pt-2">
+                                        <label class="form-label text-dark">Email <strong class="text-danger">*</strong></label>
+                                        <input type="email" name="email" class="form-control" readonly value="{{Auth::user()->email}}">
+                                    </div>
 
-                                                                    <div class="col-lg-6 border-top mb-2 pt-2">
-                                                                        <label class="form-label text-dark">Address <strong class="text-danger">*</strong></label>
-                                                                        <textarea name="address" class="form-control" rows="1" required>{{Auth::user()->address->address ?? ' '}}</textarea>
-                                                                    </div>
+                                    <div class="col-lg-6 border-top mb-2 pt-2">
+                                        <label class="form-label text-dark">Address <strong class="text-danger">*</strong></label>
+                                        <textarea name="address" class="form-control" rows="1" required>{{Auth::user()->address->address ?? ' '}}</textarea>
+                                    </div>
 
-                                                        <div class="col-md-6 mb-3 border-top">
-                                                            <label for="country" class="form-label">country<code>*</code></label>
-                                                            <select name="country" class="single-select @error('country') is-invalid @enderror" id="country" onchange="getStates(this.value)" required>
-                                                                {{-- <option selected disabled value="">Choose...</option> --}}
-@foreach ($countrie as $country)
-                                                                <option value="{{ $country->id }}" @selected($country->id == (Auth::user()->address->country_id ?? '') )>{{ $country->name }}</option>
-                                                                @endforeach
-                                                            </select>
-                                                            <small class="text-danger error-country"></small>
-                                                            @error('country')
-                                                                <div class="invalid-feedback">{{ $message }}</div>
-                                                            @enderror
-                                                        </div>
-
-                                                        <div class="col-md-6 mb-3 border-top">
-                                                            <label for="state" class="form-label">State<code>*</code></label>
-                                                            <select name="state" class="single-select @error('state') is-invalid @enderror" id="state" onchange="getCities(this.value)" required>
-                                                                <option selected disabled value="">Choose...</option>                    
-@foreach ($states as $state)
-                                                                <option value="{{ $state->id }}" @selected($state->id == (Auth::user()->address->state_id ?? ''))>{{ $state->name }}</option>
-                                                                @endforeach
-                                                            </select>
-                                                         <small class="text-danger error-state"></small>
-                                                            @error('state')
-                                                                <div class="invalid-feedback">{{ $message }}</div>
-                                                            @enderror
-                                                        </div>
-
-                                                        <div class="col-md-6 mb-3 border-top">
-                                                            <label for="city" class="form-label">City<code>*</code></label>
-                                                            <select name="city"   class="single-select @error('city') is-invalid @enderror" id="city"required>
-                                                                <option selected disabled value="">Choose...</option>
-@foreach ($cities as $city)
-                                                                <option value="{{ $city->id }}" @selected($city->id == (Auth::user()->address->city_id ?? ''))>{{ $city->name }}</option>
-                                                                @endforeach
-                                                            </select>
-                                                           <small class="text-danger error-city"></small>
-                                                              
-                                                            @error('city')
-                                                                <div class="invalid-feedback">{{ $message }}
-                                                                </div>
-                                                            @enderror
-                                                        </div>
-
-                                                                    <div class="col-lg-6 border-top mb-2 pt-2">
-                                                                        <label class="form-label text-dark">Zip Code <strong class="text-danger">*</strong></label>
-                                                                        <input type="text" name="zipcode" class="form-control" required value = "{{Auth::user()->address->zip ?? ''}}">
-                                                                          <small class="text-danger error-zipcode"></small>
-                                                                    </div>
-                                                                         <div class="text-danger fw-bold mb-2 error-wallet"></div>
-                                                                    <div class="col-md-12 mt-2 d-flex gap-2">
-                                                                        <button type="button" class="btn btn-secondary" onclick="backToProduct()">
-                                                                            Back
-                                                                        </button>
-                                                                 
-
-                                                                        <button type="submit" class="btn theme-btn">
-                                                                            Place Order With Wallet
-                                                                        </button>
-                                                                    </div>
-
-                                                                </div>
-                                                            </div>
-                                                            {{-- User Details End --}}
-                                            </div>
-                                           </div>
-                                            </form>                       
-                                            <div class="col-lg-5 ">
-                                            <div class="shop-details-image"  style="margin-top: 105px;">
-                                                @foreach ($product as $pro)
-                                                    <div class="product-images d-none" id="product-images-{{ $pro->id }}">
-                                                        <div class="tab-content">
-                                                            <div class="tab-pane fade show active">
-                                                                <div class="shop-thumb mt-5">
-                                                                    <img src="{{ asset('images/variant/'.$pro->image[0]) }}" alt="img"
-                                                                     onerror="this.onerror=null;this.src='{{ asset('images/missing-image.png') }}';">
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                            <ul class="nav mb-5">
-                                                            @foreach ($pro->image as $img)
-                                                            <li class="nav-item">
-                                                                <a class="nav-link ps-0">
-                                                                    <img src="{{ asset('images/variant/'.$img) }}" alt="img"  onerror="this.onerror=null;this.src='{{ asset('images/missing-image.png') }}';">
-                                                                </a>
-                                                            </li>
-                                                            @endforeach
-                                                        </ul>
-                                                    </div>
+                                    <div class="col-md-6 mb-3 border-top">
+                                        <label for="country" class="form-label">country<code>*</code></label>
+                                        <select name="country" class="single-select @error('country') is-invalid @enderror" id="country" onchange="getStates(this.value)" required>
+                                            {{-- <option selected disabled value="">Choose...</option> --}}
+                                            @foreach ($countrie as $country)
+                                            <option value="{{ $country->id }}" @selected($country->id == (Auth::user()->address->country_id ?? '') )>{{ $country->name }}</option>
                                             @endforeach
-                                            </div>
-                                        </div>
-                        </div>
-            <div class="single-tab">
-                <ul class="nav mb-5">
-                    <li class="nav-item">
-                    {{-- <a href="#description" data-bs-toggle="tab" class="nav-link ps-0 active">
-                        <h6></h6>
-                    </a> --}}
-                    </li>
+                                        </select>
+                                        <small class="text-danger error-country"></small>
+                                        @error('country')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
 
-                </ul>
-                <div class="tab-content">
-                    <div id="description" class="tab-pane fade show active">
-                    <div class="description-items">
-                        <div class="description-content">
-                            <h3>Product descriptions</h3>
-                            <p class="mb-2" id="productSpecifications">
-                            </p>
-                            <div class="description-list-items d-flex justify-content-between" id="productVariationsDesc">
+                                    <div class="col-md-6 mb-3 border-top">
+                                        <label for="state" class="form-label">State<code>*</code></label>
+                                        <select name="state" class="single-select @error('state') is-invalid @enderror" id="state" onchange="getCities(this.value)" required>
+                                            <option selected disabled value="">Choose...</option>
+                                            @foreach ($states as $state)
+                                            <option value="{{ $state->id }}" @selected($state->id == (Auth::user()->address->state_id ?? ''))>{{ $state->name }}</option>
+                                            @endforeach
+                                        </select>
+                                        <small class="text-danger error-state"></small>
+                                        @error('state')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+
+                                    <div class="col-md-6 mb-3 border-top">
+                                        <label for="city" class="form-label">City<code>*</code></label>
+                                        <select name="city" class="single-select @error('city') is-invalid @enderror" id="city" required>
+                                            <option selected disabled value="">Choose...</option>
+                                            @foreach ($cities as $city)
+                                            <option value="{{ $city->id }}" @selected($city->id == (Auth::user()->address->city_id ?? ''))>{{ $city->name }}</option>
+                                            @endforeach
+                                        </select>
+                                        <small class="text-danger error-city"></small>
+
+                                        @error('city')
+                                        <div class="invalid-feedback">{{ $message }}
+                                        </div>
+                                        @enderror
+                                    </div>
+
+                                    <div class="col-lg-6 border-top mb-2 pt-2">
+                                        <label class="form-label text-dark">Zip Code <strong class="text-danger">*</strong></label>
+                                        <input type="text" name="zipcode" class="form-control" required value="{{Auth::user()->address->zip ?? ''}}">
+                                        <small class="text-danger error-zipcode"></small>
+                                    </div>
+                                    <div class="text-danger fw-bold mb-2 error-wallet"></div>
+                                    <div class="col-md-12 mt-2 d-flex gap-2">
+                                        <!-- <button type="button" class="btn btn-secondary" onclick="backToProduct()">
+                                            Back
+                                        </button> -->
+                                        <button type="submit" class="btn theme-btn">
+                                            Place Order With Wallet
+                                        </button>
+                                    </div>
+
+                                </div>
+                            </div>
+                            {{-- User Details End --}}
+                        </div>
+                    </div>
+            </form>
+            <div class="col-lg-5 ">
+    
+                @foreach ($product as $pro)
+                <div class="shop-details-image product-images d-none" id="product-images-{{ $pro->id }}">
+                    <div class="tab-content">
+                        @foreach ($pro->image as $key => $img)
+                        <div id="thumb{{ $pro->id }}{{ $key + 1 }}" class="tab-pane {{ $key == 0 ? 'active show' : '' }} fade" role="tabpanel">
+                            <div class="shop-thumb">
+                                <img src="{{ asset('images/product/'.$img) }}" alt="img">
+                            </div>
+                        </div>
+                        @endforeach
+                    </div>
+                    <ul class="nav mb-5" role="tablist">
+                        @foreach ($pro->image as $key => $img)
+                        <li class="nav-item" role="presentation">
+                            <a href="#thumb{{ $pro->id }}{{ $key + 1 }}" data-bs-toggle="tab" class="nav-link ps-0 {{ $key == 0 ? 'active' : '' }}" aria-selected="false" role="tab" tabindex="-1">
+                                <img src="{{ asset('images/product/'.$img) }}" alt="img">
+                            </a>
+                        </li>
+                        @endforeach
+                    </ul>
+                </div>
+                @endforeach
+
+                <div class="single-tab pt-2">
+                    <div class="tab-content">
+                        <div id="description" class="tab-pane fade show active">
+                            <div class="description-items">
+                                <div class="description-content">
+                                    <h3>Product descriptions</h3>
+                                    <p class="mb-2" id="productSpecifications">
+                                    </p>
+                                    <div class="description-list-items d-flex justify-content-between" id="productVariationsDesc">
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
-                    </div>
-                   
-                    
                 </div>
             </div>
         </div>
-      </div>
-    </section>
+
+    </div>
+    </div>
+</section>
 
 @endsection
 
@@ -415,9 +380,8 @@
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
 <script>
- 
-     let CURRENT_MIN_QTY = 1;
-     let CURRENT_PRICE = 0;
+    let CURRENT_MIN_QTY = 1;
+    let CURRENT_PRICE = 0;
 
     function validateProductStep() {
         let productSelect = document.getElementById('productSelect');
@@ -454,84 +418,83 @@
         goToUserDetails();
     }
 
-    function goToUserDetails()
-     {
-            document.getElementById('productStep').classList.add('d-none');
-            document.getElementById('userStep').classList.remove('d-none');
-            window.scrollTo(0, 0);
-     }
+    function goToUserDetails() {
+        document.getElementById('productStep').classList.add('d-none');
+        document.getElementById('userStep').classList.remove('d-none');
+        window.scrollTo(0, 0);
+    }
 
-    function backToProduct()
-     {
-
+    function backToProduct() {
         document.getElementById('userStep').classList.add('d-none');
         document.getElementById('productStep').classList.remove('d-none');
     }
 
 
+    function productDetails(product_id) {
+        url = "{{ url('shop-details/'. $product[0]->slug??'-') }}?pro=" + product_id;
+        window.location.href = url;
+    }
 
-    window.productDetails = function () {
+    // window.productDetails = function() {
 
-    let select = document.getElementById('productSelect');
-    let option = select.options[select.selectedIndex];
-    let productId = select.value;
+    //     let select = document.getElementById('productSelect');
+    //     let option = select.options[select.selectedIndex];
+    //     let productId = select.value;
 
-    if (!productId) return;
+    //     if (!productId) return;
 
-    document.getElementById('productFields').style.display = 'flex';
+    //     document.getElementById('productFields').style.display = 'flex';
 
-    document.getElementById('product_name').innerText = option.dataset.name;
-    document.getElementById('product_sku').innerText = option.dataset.sku;
-    document.getElementById('product_category').innerText = option.dataset.category;
-     let fileSize = option.dataset.file_size || '100';
+    //     document.getElementById('product_name').innerText = option.dataset.name;
+    //     document.getElementById('product_sku').innerText = option.dataset.sku;
+    //     document.getElementById('product_category').innerText = option.dataset.category;
+    //     let fileSize = option.dataset.file_size || '100';
 
-if (fileSize) {
-    document.getElementById('file_size_info').innerText =
-        `Maximum File Size Allowed: ${fileSize} MB`;
-} else {
-    document.getElementById('file_size_info').innerText = '';
-}
+    //     if (fileSize) {
+    //         document.getElementById('file_size_info').innerText =
+    //             `Maximum File Size Allowed: ${fileSize} MB`;
+    //     } else {
+    //         document.getElementById('file_size_info').innerText = '';
+    //     }
 
-    //  unified product data (parent or child)
-    let productData = getSelectedProductData();
+    //     //  unified product data (parent or child)
+    //     let productData = getSelectedProductData();
 
-    CURRENT_PRICE = productData.price;
-    CURRENT_MIN_QTY = productData.minQty;
+    //     CURRENT_PRICE = productData.price;
+    //     CURRENT_MIN_QTY = productData.minQty;
 
-    $('#maxQty').val(productData.maxQty);
-    $('#minQty').text(CURRENT_MIN_QTY);
+    //     $('#maxQty').val(productData.maxQty);
+    //     $('#minQty').text(CURRENT_MIN_QTY);
 
-    renderDynamicCharges(option);
-    resetPayable();
+    //     renderDynamicCharges(option);
+    //     resetPayable();
 
-    //  FIXED quantity validation
-    $('#maxQty').off('input').on('input', function () {
-        let qty = parseInt(this.value);
+    //     //  FIXED quantity validation
+    //     $('#maxQty').off('input').on('input', function() {
+    //         let qty = parseInt(this.value);
 
-        if (!qty || qty < CURRENT_MIN_QTY) {
-            alert(`Minimum quantity allowed is ${CURRENT_MIN_QTY}`);
-            this.value = CURRENT_MIN_QTY;
-            qty = CURRENT_MIN_QTY;
-        }
+    //         if (!qty || qty < CURRENT_MIN_QTY) {
+    //             alert(`Minimum quantity allowed is ${CURRENT_MIN_QTY}`);
+    //             this.value = CURRENT_MIN_QTY;
+    //             qty = CURRENT_MIN_QTY;
+    //         }
 
-        if (allRequiredSelected()) {
-            updatePayable(CURRENT_PRICE, qty);
-        } else {
-            resetPayable();
-        }
-    });
+    //         if (allRequiredSelected()) {
+    //             updatePayable(CURRENT_PRICE, qty);
+    //         } else {
+    //             resetPayable();
+    //         }
+    //     });
 
-    // Images
-    $('.product-images').addClass('d-none');
-    $('#product-images-' + productId).removeClass('d-none');
+    //     // Images
+    //     $('.product-images').addClass('d-none');
+    //     $('#product-images-' + productId).removeClass('d-none');
 
-    // Specs
-    let textarea = document.createElement('textarea');
-    textarea.innerHTML = option.dataset.specifications || '';
-    document.getElementById('productSpecifications').innerHTML = textarea.value;
-};
-
-
+    //     // Specs
+    //     let textarea = document.createElement('textarea');
+    //     textarea.innerHTML = option.dataset.specifications || '';
+    //     document.getElementById('productSpecifications').innerHTML = textarea.value;
+    // };
 
 
     let activeCharges = {}; // store selected charges
@@ -549,7 +512,7 @@ if (fileSize) {
         charges.forEach((item, index) => {
 
             let title = item.name.replace(/_/g, ' ').toUpperCase();
-            let charge = item.charge|| 0;
+            let charge = item.charge || 0;
             let key = item.name;
 
             container.innerHTML += `
@@ -574,7 +537,7 @@ if (fileSize) {
                 </div>
             `;
 
-            $(document).on('change', `input[name="${key}"]`, function () {
+            $(document).on('change', `input[name="${key}"]`, function() {
 
                 let select = document.getElementById('productSelect');
                 let opt = select.options[select.selectedIndex];
@@ -589,7 +552,7 @@ if (fileSize) {
                     $(`#${key}_charge`).addClass('d-none');
                     delete activeCharges[key];
                 }
-                
+
                 if (allRequiredSelected()) {
                     updatePayable(price, qty);
                 } else {
@@ -602,36 +565,30 @@ if (fileSize) {
 
 
 
-function updatePayable(price, quantity) {
+    function updatePayable(price, quantity) {
 
-    if (!allRequiredSelected()) {
-        resetPayable();
-        return;
+        if (!allRequiredSelected()) {
+            resetPayable();
+            return;
+        }
+
+        let cost = price * quantity;
+
+        let extraChargeTotal = Object.values(activeCharges)
+            .reduce((sum, val) => sum + (val * quantity), 0);
+
+        let subtotal = cost + extraChargeTotal;
+        let gst = subtotal * 0.18;
+        let payable = subtotal + gst;
+
+
+        $('#disc_price').text(`Rs. ${cost.toFixed(2)}/-`);
+        $('#gst_amount').text(`Rs. ${gst.toFixed(2)}/-`);
+        $('#amount_payable').text(`Rs. ${payable.toFixed(2)}/-`);
     }
 
-    let cost = price * quantity;
 
-    let extraChargeTotal = Object.values(activeCharges)
-        .reduce((sum, val) => sum + (val * quantity), 0);
-
-    let subtotal = cost + extraChargeTotal;
-    let gst = subtotal * 0.18;
-    let payable = subtotal + gst;
-
-
-    $('#disc_price').text(`Rs. ${cost.toFixed(2)}/-`);
-    $('#gst_amount').text(`Rs. ${gst.toFixed(2)}/-`);
-    $('#amount_payable').text(`Rs. ${payable.toFixed(2)}/-`);
-}
-
-
-
-
-     
-
-
-
-    $('input[name="file_option"]').on('change', function () {
+    $('input[name="file_option"]').on('change', function() {
 
         $('#online_info, #email_info').addClass('d-none');
 
@@ -652,82 +609,82 @@ function updatePayable(price, quantity) {
 
 
 
-        function getStates(countryId, selectedStateId = null, stateSelectId = '#state') {
-            const $stateSelect = $(stateSelectId);
+    function getStates(countryId, selectedStateId = null, stateSelectId = '#state') {
+        const $stateSelect = $(stateSelectId);
 
-            $stateSelect.empty();
-            $stateSelect.html('<option disabled selected>Loading...</option>');
-            $stateSelect.trigger('change');
-            const isSelectedValid = selectedStateId !== null && selectedStateId !== undefined && selectedStateId !== '';
+        $stateSelect.empty();
+        $stateSelect.html('<option disabled selected>Loading...</option>');
+        $stateSelect.trigger('change');
+        const isSelectedValid = selectedStateId !== null && selectedStateId !== undefined && selectedStateId !== '';
 
-            $.ajax({
-                url: "{{ route('get-states', ':id') }}".replace(':id', countryId),
-                method: 'GET',
-                success: function(data) {
+        $.ajax({
+            url: "{{ route('get-states', ':id') }}".replace(':id', countryId),
+            method: 'GET',
+            success: function(data) {
 
-                    $stateSelect.empty();
+                $stateSelect.empty();
 
-                    if (!isSelectedValid) {
-                        $stateSelect.append('<option disabled selected>Select State</option>');
-                    }
-
-                    data.forEach(function(state) {
-                        const isSelected = isSelectedValid && state.id == selectedStateId;
-                        const option = new Option(state.name, state.id, isSelected, isSelected);
-                        $stateSelect.append(option);
-                    });
-
-                   $stateSelect.trigger('change.select2');
-
-                },
-                error: function(xhr, status, error) {
-                    $stateSelect.empty();
-                    $stateSelect.trigger('change');
+                if (!isSelectedValid) {
+                    $stateSelect.append('<option disabled selected>Select State</option>');
                 }
-            });
-        }
+
+                data.forEach(function(state) {
+                    const isSelected = isSelectedValid && state.id == selectedStateId;
+                    const option = new Option(state.name, state.id, isSelected, isSelected);
+                    $stateSelect.append(option);
+                });
+
+                $stateSelect.trigger('change.select2');
+
+            },
+            error: function(xhr, status, error) {
+                $stateSelect.empty();
+                $stateSelect.trigger('change');
+            }
+        });
+    }
 
 
-        function getCities(stateId, selectedCityId = null, citySelectId = '#city') {
-            const $citySelect = $(citySelectId);
+    function getCities(stateId, selectedCityId = null, citySelectId = '#city') {
+        const $citySelect = $(citySelectId);
 
-            $citySelect.empty();
-            $citySelect.html('<option disabled selected>Loading...</option>');
-            $citySelect.trigger('change');
-            const isSelectedValid = selectedCityId !== null && selectedCityId !== undefined && selectedCityId !== '';
+        $citySelect.empty();
+        $citySelect.html('<option disabled selected>Loading...</option>');
+        $citySelect.trigger('change');
+        const isSelectedValid = selectedCityId !== null && selectedCityId !== undefined && selectedCityId !== '';
 
-            $.ajax({
-                url: "{{ route('get-cities', ':id') }}".replace(':id', stateId),
-                method: 'GET',
-                success: function(data) {
-                    $citySelect.empty();
+        $.ajax({
+            url: "{{ route('get-cities', ':id') }}".replace(':id', stateId),
+            method: 'GET',
+            success: function(data) {
+                $citySelect.empty();
 
-                    if (!isSelectedValid) {
-                        $citySelect.append('<option disabled selected>Select City</option>');
-                    }
-
-                    data.forEach(function(city) {
-                      const isSelected = isSelectedValid && city.id == selectedCityId;
-                        const option = new Option(city.name, city.id, isSelected, isSelected);
-                        $citySelect.append(option);
-                    });
-                   $citySelect.trigger('change.select2');
-
-                },
-                error: function(xhr, status, error) {
-                    $citySelect.empty();
-                    $citySelect.trigger('change');
+                if (!isSelectedValid) {
+                    $citySelect.append('<option disabled selected>Select City</option>');
                 }
-            });
-        }
 
-         $('#country').on('change', function () {
-            getStates(this.value);
-        });
+                data.forEach(function(city) {
+                    const isSelected = isSelectedValid && city.id == selectedCityId;
+                    const option = new Option(city.name, city.id, isSelected, isSelected);
+                    $citySelect.append(option);
+                });
+                $citySelect.trigger('change.select2');
 
-        $('#state').on('change', function () {
-            getCities(this.value);
+            },
+            error: function(xhr, status, error) {
+                $citySelect.empty();
+                $citySelect.trigger('change');
+            }
         });
+    }
+
+    $('#country').on('change', function() {
+        getStates(this.value);
+    });
+
+    $('#state').on('change', function() {
+        getCities(this.value);
+    });
 
 
     function allRequiredSelected() {
@@ -737,7 +694,7 @@ function updatePayable(price, quantity) {
 
         // Variations
         let valid = true;
-        $('#variationContainer select').each(function () {
+        $('#variationContainer select').each(function() {
             if (!$(this).val()) valid = false;
         });
         if (!valid) return false;
@@ -753,97 +710,88 @@ function updatePayable(price, quantity) {
     }
 
 
-   function getSelectedProductData() {
-    let select = document.getElementById('productSelect');
-    let option = select.options[select.selectedIndex];
+    function getSelectedProductData() {
+        let select = document.getElementById('productSelect');
+        let option = select.options[select.selectedIndex];
 
-    return {
-        price: parseFloat(option.getAttribute('data-disc_price')) || 0,
-        minQty: parseInt(option.getAttribute('data-min_quantity')) || 1,
-        maxQty: parseInt(option.getAttribute('data-max_quantity')) || 1,
-        charges: JSON.parse(option.getAttribute('data-charge_details') || '[]')
-    };
-}
-
-
-
-function resetPayable() {
-    $('#disc_price').text('Rs. 0/-');
-    $('#gst_amount').text('Rs. 0/-');
-    $('#amount_payable').text('Rs. 0/-');
-}
-
-
-
-
-
-
-$('.single-select').each(function () {
-    $(this).select2({
-        theme: 'bootstrap4',
-        width: '100%',
-        placeholder: $(this).data('placeholder') || 'Select option',
-        allowClear: true
-    });
-});
-
-
-
-</script>
-<script>
-$('#orderForm').on('submit', function(e){
-    e.preventDefault(); // stop normal submit
-
-    $('.text-danger').text(''); // clear old errors
-
-    let formData = new FormData(this);
-
-    $.ajax({
-        url: $(this).attr('action'),
-        method: "POST",
-        data: formData,
-        processData: false,
-        contentType: false,
-
-        success: function(res){
-            // order success  redirect or show message
-            window.location.href = res.redirect ?? '/user/thankyou';
-        },
-
-        error: function(xhr){
-            if(xhr.status === 422){
-                let errors = xhr.responseJSON.errors;
-
-                Object.keys(errors).forEach(function(key){
-                    $('.error-' + key).text(errors[key][0]);
-                });
-
-                alert("all feilds are required");
-            }else{
-                 let errors = xhr.responseJSON.errors;
-
-                Object.keys(errors).forEach(function(key){
-                    $('.error-' + key).text(errors[key][0]);
-                });
-
-                alert("Something went wrong");
-            }
-        }
-    });
-});
-</script>
-<script>
-function doubleValue() {
-    const input = document.getElementById('maxQty');
-    let current = parseFloat(input.value) || 0;
-    
-    // If value is very small or zero, start from 1 or 50
-    if (current <= 0) {
-        input.value = 50;
-    } else {
-        input.value = current * 2;
+        return {
+            price: parseFloat(option.getAttribute('data-disc_price')) || 0,
+            minQty: parseInt(option.getAttribute('data-min_quantity')) || 1,
+            maxQty: parseInt(option.getAttribute('data-max_quantity')) || 1,
+            charges: JSON.parse(option.getAttribute('data-charge_details') || '[]')
+        };
     }
-}
+
+    function resetPayable() {
+        $('#disc_price').text('Rs. 0/-');
+        $('#gst_amount').text('Rs. 0/-');
+        $('#amount_payable').text('Rs. 0/-');
+    }
+
+
+    $('.single-select').each(function() {
+        $(this).select2({
+            theme: 'bootstrap4',
+            width: '100%',
+            placeholder: $(this).data('placeholder') || 'Select option',
+            allowClear: true
+        });
+    });
+</script>
+<script>
+    $('#orderForm').on('submit', function(e) {
+        e.preventDefault(); // stop normal submit
+
+        $('.text-danger').text(''); // clear old errors
+
+        let formData = new FormData(this);
+
+        $.ajax({
+            url: $(this).attr('action'),
+            method: "POST",
+            data: formData,
+            processData: false,
+            contentType: false,
+
+            success: function(res) {
+                // order success  redirect or show message
+                window.location.href = res.redirect ?? '/user/thankyou';
+            },
+
+            error: function(xhr) {
+                if (xhr.status === 422) {
+                    let errors = xhr.responseJSON.errors;
+
+                    Object.keys(errors).forEach(function(key) {
+                        $('.error-' + key).text(errors[key][0]);
+                    });
+
+                    alert("all feilds are required");
+                } else {
+                    let errors = xhr.responseJSON.errors;
+
+                    Object.keys(errors).forEach(function(key) {
+                        $('.error-' + key).text(errors[key][0]);
+                    });
+
+                    alert("Something went wrong");
+                }
+            }
+        });
+    });
+</script>
+<script>
+    function doubleValue() {
+        const input = document.getElementById('maxQty');
+        let current = parseFloat(input.value) || 0;
+
+        // If value is very small or zero, start from 1 or 50
+        if (current <= 0) {
+            input.value = 50;
+        } else {
+            input.value = current * 2;
+        }
+    }
 </script>
 
 @endpush

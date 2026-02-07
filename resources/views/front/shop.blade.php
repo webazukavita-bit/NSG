@@ -30,18 +30,18 @@
             <div class="row g-5">
                 <div class="col-lg-3 order-2 order-md-1">
                     <div class="shop-main-sidebar">
-                        <div class="single-sidebar-widget">
+                        <div class="single-sidebar-widget mb-0">
                             <div class="wid-title">
                                 <h4>search here</h4>
                             </div>
                             <div class="search_widget">
                                 <form action="{{ url('/shop') }}" method="GET">
-    <input type="text" name="search" placeholder="Search products..."
-           value="{{ request('search') }}">
-    <button type="submit">
-        <i class="fal fa-search"></i>
-    </button>
-</form>
+                                    <input type="text" name="search" placeholder="Search products..."
+                                        value="{{ request('search') }}">
+                                    <button type="submit" style="border-bottom-right-radius: 10px;border-top-right-radius: 10px;">
+                                        <i class="fal fa-search"></i>
+                                    </button>
+                                </form>
 
                             </div>
                         </div>
@@ -67,49 +67,37 @@
                 </div>
                 <div class="col-lg-9 order-1 order-md-2">
                     <div class="row">
-    @forelse($products as $product)
-        <div class="col-xl-4 col-lg-4 col-md-6 wow fadeInUp" data-wow-delay=".2s">
-            <div class="feature-product-items">
-                <div class="product-thumb">
-                    <a href="{{ url('shop-details/'.$product->slug) }}">
-                        @if($product->parent_id == '0')
-                    <img src="{{ asset('images/product/'.$product->image[0]) }}" alt="{{ $product->name }}" style="height: 200px; widht:300px; border-radius:15px;" onerror="this.onerror=null;this.src='{{ asset('images/missing-image.png') }}';" >
-                       @else
-                        <img src="{{ asset('images/variant/'.$product->image[0]) }}" alt="{{ $product->name }}" style="height: 200px; widht:300px; border-radius:15px;" onerror="this.onerror=null;this.src='{{ asset('images/missing-image.png') }}';" >
-                   @endif
-                     </a>
-                  
-                </div>
+                        @forelse($products as $product)
+                        <div class="mb-4 col-xl-4 col-lg-4 col-md-6 wow fadeInUp" data-wow-delay=".2s">
+                            <div class="feature-product-items h-100">
+                                <div class="product-thumb">
+                                    <a href="{{ url('shop-details/'.$product->slug) }}">
+                                        <img src="{{ asset('images/product/'.$product->image[0]) }}" alt="{{ $product->name }}" onerror="this.onerror=null;this.src='{{ asset('images/missing-image.png') }}';" >
+                                    </a>
+                                </div>
 
-                <div class="product-content text-center mt-3">
+                                <div class="product-content text-center mt-3">
+                                    <p>
+                                        <a href="{{ url('shop-details/'.$product->slug) }}">{{ $product->category->name }}</a>|
+                                        <a href="{{ url('shop-details/'.$product->slug) }}">{{ $product->name }}</a>
+                                    </p>
 
-                    
-                          <p style="height: 80px;"><a href="{{ url('shop-details/'.$product->slug) }}">
-                        {{ $product->category->name }}
-                        </a>|<a href="{{ url('shop-details/'.$product->slug) }}" 
-                            style="text-transform: capitalize;">
-                        {{ $product->name }}
-                        </a></p>
-
-                    
-
-                    <ul class="price-list mt-2 justify-content-center">   
-                       
-                      <a href="{{ url('shop-details',['slug' => $product->slug]) }}" class="btn book-btn text-white">Order Now</a>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    @empty
-        <p class="text-center">No products found</p>
-    @endforelse
-</div>
+                                    <ul class="price-list justify-content-center">   
+                                    
+                                    <a href="{{ url('shop-details',['slug' => $product->slug]) }}" class="btn book-btn text-white">Order Now</a>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        @empty
+                        <p class="text-center">No products found</p>
+                        @endforelse
+                    </div>
 
                     <div class="page-nav-wrap mt-5 text-center wow fadeInUp" data-wow-delay=".3s">
                         <div class="mt-5 text-center">
-    {{ $products->links('pagination::bootstrap-5') }}
-</div>
-
+                            {{ $products->links('pagination::bootstrap-5') }}
+                        </div>
                     </div>
                 </div>
             </div>

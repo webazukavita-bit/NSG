@@ -79,42 +79,42 @@ class HomeController extends Controller
                 $productsQuery->where('category_id', $category->id);
             }
         }
-        $products = $productsQuery->paginate(6)->withQueryString();
+
+        $products = $productsQuery->paginate(12)->withQueryString();
 
         return view('front.shop', compact('categories', 'products'));
     }
 
 
-    // public function shopDetails()
-    // {
-    //     return view('front.shop-details');
-    // }
-    public function shopDetails($slug,)
+
+    public function shopDetails($slug, Request $request)
     {
 
         if (!Auth::check()) {
             return redirect('/login');
         }
-        $parent = Product::with([
-            'variations.variationType',
-            'variations.variationValue',
-        ])->where('slug', $slug)->firstOrFail();
+
+        $parent = Product::with(['variations.variationType','variations.variationValue'])->where('slug', $slug)->firstOrFail();
 
         $parentVariations = $parent->variations;
-
-        if ($parent->children->count() > 0) {
-            $product = $parent->children;
-        } else {
-            $product = collect([$parent]);
+     
+        $product = collect([$parent]);
+        if ($parent->children->isNotEmpty()) {
+            $children = Product::with(['variations.variationType','variations.variationValue'])->where('parent_id', $parent->id)->get();
+            $product = $product->merge($children);
         }
+       
+
+        $selectedProduct = Product::with(['variations.variationType','variations.variationValue'])->where('id', $request->pro)->first();
 
         $countrie = Countrie::orderBy('name', 'asc')->get();
         $country_id = 101;
 
         $states = State::where('country_id', $country_id)->orderBy('name', 'asc')->get();
-    $cities = Citie::whereIn('state_id', $states->pluck('id'))->orderBy('name', 'asc')->get();
+        $cities = Citie::whereIn('state_id', $states->pluck('id'))->orderBy('name', 'asc')->get();
 
         return view('front.shop-details', compact(
+            'selectedProduct',
             'product',
             'parentVariations',
             'countrie',
@@ -123,6 +123,7 @@ class HomeController extends Controller
             'cities'
         ));
     }
+
     public function static_content()
     {
         $routeName = Route::currentRouteName();
