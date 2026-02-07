@@ -678,7 +678,7 @@ input.main-search-input::placeholder {
 }
 
 .section-padding {
-  padding: 80px 0;
+  padding: 40px 0;
 }
 
 .section-paddings {
@@ -4514,13 +4514,18 @@ input.main-search-input::placeholder {
   transform: rotate(-45deg);
 }
 
+
 .feature-product-items {
-  padding: 35px 25px;
-  border-radius: 12px;
+  padding: 15px 15px;
+  border-radius: 15px;
   background-color: var(--white);
+  border: solid 0.5px #d6d3e9;
   box-shadow: 0px 26px 81px 0px rgba(0, 0, 0, 0.09);
-  margin-top: 30px;
+  /* margin-top: 10px; */
   position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
 }
 
 .feature-product-items .product-thumb {
@@ -4530,8 +4535,10 @@ input.main-search-input::placeholder {
 
 .feature-product-items .product-thumb img {
   width: 100%;
-  height: 100%;
+  /* height: 100%; */
+  height: 270px;
   transition: all 0.4s ease-in-out;
+  border-radius: 15px !important;
 }
 
 .feature-product-items .product-thumb .product-icon {
@@ -4575,9 +4582,9 @@ input.main-search-input::placeholder {
 }
 
 .feature-product-items .product-content .price-list {
-  margin-top: 5px;
+  margin-top: 5px !important;
   display: flex;
-  align-items: center;
+  flex-direction: column;
   gap: 7px;
 }
 
@@ -5369,7 +5376,14 @@ input.main-search-input::placeholder {
 }
 
 .shop-main-sidebar .single-sidebar-widget .shop-catagory-items ul li:not(:last-child) {
-  margin-bottom: 20px;
+  margin-bottom: 10px;
+}
+
+.shop-main-sidebar .single-sidebar-widget .shop-catagory-items ul li:not(:last-child)::after {
+  content: "";
+  display: block;
+  margin-top: 10px;
+  border-bottom: 1px solid #1f36a269;
 }
 
 .shop-main-sidebar .single-sidebar-widget .shop-catagory-items ul li a {
@@ -7583,7 +7597,7 @@ input.main-search-input::placeholder {
 
 .nice-select {
   color: var(--text);
-  background-color: transparent;
+  background-color: #E4E4E4;
   font-size: 16px;
   width: unset;
   outline: none;
@@ -7593,6 +7607,7 @@ input.main-search-input::placeholder {
   font-weight: 500;
   color: var(--text);
   transition: all 0.4s ease-in-out;
+  /* z-index: 9999999; */
 }
 
 @media (max-width: 575px) {
@@ -9922,11 +9937,13 @@ input.main-search-input::placeholder {
 .search_widget form input {
   background-color: var(--bg);
   font-size: 15px;
-  padding: 20px;
+  padding: 10px;
   width: 100%;
   border: none;
   text-transform: capitalize;
   color: var(--header);
+  border: solid 2px #7000fe;
+  border-radius: 10px;
 }
 
 .search_widget form button {

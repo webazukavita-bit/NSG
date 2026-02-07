@@ -136,7 +136,7 @@ function getUserByPhone(phone) {
     fetch(`${findUserRoute}?phone=${phone}`)
         .then(res => res.json())
         .then(data => {
-            console.log(data.user.phone_number);
+            console.log(data.user.phone_number,data.wallet.main_balance, data.status === 'success');
             if (data.status === 'success') {
                 $('#userInitial').text(data.user.name.charAt(0)); 
                 $('#show_name').text(data.user.name);
@@ -144,7 +144,7 @@ function getUserByPhone(phone) {
                 $('#show_phone').text(data.user.phone_number);
                 $('#show_code').text(data.user.code);
                 // $('#points').text(data.wallet.bonus_balance);
-                $('#main_balance').text((data.wallet.main_balance??0).toFixed(2));
+                $('#main_balance').text(parseFloat(data.wallet.main_balance ?? 0).toFixed(2));
                 infoCard.show();    // Show the info card
                 defaultInfo.hide(); // Hide the default info
             } else {
@@ -152,12 +152,12 @@ function getUserByPhone(phone) {
                 infoCard.hide();    // Hide the info card
                 defaultInfo.show(); // Show the default info
             }
-        })
-        .catch(err => {
-            $('#errors').text('Error fetching user');
-            infoCard.hide();    // Hide the info card
-            defaultInfo.show(); // Show the default info
         });
+        // .catch(err => {
+        //     $('#errors').text('Error fetching user');
+        //     infoCard.hide();    // Hide the info card
+        //     defaultInfo.show(); // Show the default info
+        // });
 }
 </script>
 <script>
