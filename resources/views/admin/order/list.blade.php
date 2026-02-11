@@ -4,7 +4,66 @@
 		$profile = 'images/user-1.svg';
 	@endphp
 
+	<div class="card border-top border-0 border-4 border-primary">
+    <div class="card-body p-0">
+        <div class="accordion" id="accordionExample">
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="headingOne">
+                    <button class="accordion-button text-primary" type="button"
+                        data-bs-toggle="collapse" data-bs-target="#collapseOne">
+                        <i class="bx bx-filter-alt font-18 text-primary me-1"></i> Filter
+                    </button>
+                </h2>
 
+                <div id="collapseOne" class="accordion-collapse collapse">
+                    <div class="accordion-body">
+                        <form action="{{ route('orderes') }}" method="GET" class="row g-3">
+                            @csrf
+
+                            <div class="col-md-4">
+                                <label for="user_id" class="form-label">User</label>
+                                <select name="user_id" id="user_id"
+                                    class="form-select @error('user_id') is-invalid @enderror">
+                                    <option selected disabled>Choose...</option>
+                                    @foreach ($order as $ord)
+                                        <option value="{{ $ord->user->id ?? '' }}">
+                                            {{ $ord->user->name ?? '' }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                @error('user_id')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+
+                            <div class="col-md-4">
+                                <label for="status_id" class="form-label">Order Status</label>
+                                <select name="status_id" id="status_id"
+                                    class="form-select @error('status_id') is-invalid @enderror">
+                                    <option selected disabled>Choose...</option>
+                                    @foreach ($orderstatus as $status)
+                                        <option value="{{ $status->id }}">{{ $status->name }}</option>
+                                    @endforeach
+                                </select>
+                                @error('status_id')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+
+                           
+                            <div class="col-12 text-center mt-3">
+                                <button type="submit" class="btn btn-primary px-4">
+                                    <i class="bx bx-search"></i> Filter
+                                </button>
+                            </div>
+
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 	<div class="card border-top border-0 border-4 border-primary">
 					<div class="card-body">
@@ -89,7 +148,7 @@
 											  <span class="order-actions-primary">
 													<a href="javascript:;" class="ms-2 openStatusModel" data-bs-toggle="tooltip" data-bs-placement="top" 
 													data-id="{{ $value->id }}"
-													data-status_id="{{ $value->status->id}}"
+													data-status_id="{{ $value->status->id ?? ''}}"
 													data-bs-original-title="OrderStatus"><i class="bx bx-message-square-edit"></i></a>
 												</span>
 											  <span class="order-actions-primary">
