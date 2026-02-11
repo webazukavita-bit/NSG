@@ -2,6 +2,42 @@
 
 @section('content')
 
+<div class="card border-top border-0 border-4 border-primary">
+		<div class="card-body p-0">
+			<div class="accordion" id="accordionExample">
+				<div class="accordion-item">
+					<h2 class="accordion-header" id="headingOne">
+						<button class="accordion-button text-primary" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+							<i class="bx bx-filter-alt font-18 text-primary me-1"></i> Filter
+						</button>
+					</h2>
+					<div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
+						<div class="accordion-body">	
+						<form action="{{ route('product-categories') }}" method="GET" class="row g-3">
+							<div class="col-md-6">
+								<label for="search" class="form-label">Search Category by Name</label>
+									<select name="search" id="search" class="form-select">
+										<option value="">Select Category</option>
+										@foreach ($allCategories as $category)
+											<option value="{{ $category->name }}" {{ request('search') == $category->name ? 'selected' : '' }}>
+												{{ $category->name }}
+											</option>
+										@endforeach
+									</select>
+							</div>
+							
+							<div class="col-12 text-center">
+								<button type="submit" class="btn btn-primary"><i class="bx bx-search"></i> filter</button>
+							
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
 				<div class="card border-top border-0 border-4 border-primary">
 					<div class="card-body">
                         

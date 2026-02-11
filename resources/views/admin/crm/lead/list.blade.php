@@ -13,21 +13,36 @@
 					</h2>
 					<div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
 						<div class="accordion-body">	
-							<form action="{{ route('blogs') }}" method="POST" class="row g-3" enctype="multipart/form-data">
-								@csrf
-
-								<div class="col-md-3">
-									<label for="category_id" class="form-label">Category</label>
-									<select name="category_id" class="single-select @error('category_id') is-invalid @enderror" id="category_id">
-										<option selected disabled value="">Choose...</option>
+							<form action="{{ route('leads') }}" method="GET" class="row g-3">
+								<div class="col-md-6">
+									<label for="client_name" class="form-label">Client Name</label>
+									<select name="client_name" class="single-select @error('client_name') is-invalid @enderror" id="client_name">
+										<option value="">Select Client</option>
+										@foreach ($uniqueClients as $client)
+											<option value="{{ $client }}" {{ request('client_name') == $client ? 'selected' : '' }}>{{ $client }}</option>
+										@endforeach
 									</select>
-									@error('category_id')
+									@error('client_name')
+										<div class="invalid-feedback">{{ $message }}</div>
+									@enderror
+								</div>
+
+								<div class="col-md-6">
+									<label for="company_name" class="form-label">Company Name</label>
+									<select name="company_name" class="single-select @error('company_name') is-invalid @enderror" id="company_name">
+										<option value="">Select Company</option>
+										@foreach ($uniqueCompanies as $company)
+											<option value="{{ $company }}" {{ request('company_name') == $company ? 'selected' : '' }}>{{ $company }}</option>
+										@endforeach
+									</select>
+									@error('company_name')
 										<div class="invalid-feedback">{{ $message }}</div>
 									@enderror
 								</div>
 								
 								<div class="col-12 text-center">
 									<button type="submit" class="btn btn-primary"><i class="bx bx-search"></i> Filter</button>
+									
 								</div>
 							</form>
 						</div>

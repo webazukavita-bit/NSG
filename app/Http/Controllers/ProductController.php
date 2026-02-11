@@ -24,10 +24,19 @@ class ProductController extends Controller
         $this->middleware('auth');
     }
 
-    public function categories()
+    public function categories(Request $request)
     {
-        $data = ProductCategory::withTrashed()->latest()->get();
-        return view('admin.product.category.list', compact('data'));
+        $query = ProductCategory::withTrashed()->latest();
+        
+        // Filter by name if search parameter exists
+        if ($request->has('search') && !empty($request->search)) {
+            $query = $query->where('name', 'like', '%' . $request->search . '%');
+        }
+        
+        $data = $query->get();
+        $allCategories = ProductCategory::withTrashed()->latest()->get();
+        
+        return view('admin.product.category.list', compact('data', 'allCategories'));
     }
 
     public function categoryAdd()
@@ -458,7 +467,7 @@ class ProductController extends Controller
             $variant = new Product();
             $variant->parent_id         = $request->parent_product_id;
             $variant->category_id       = $request->category_id;
-            // $variant->brand_id          = $request->brand_id;
+            //$variant->brand_id          = $request->brand_id;
             $variant->name              = $request->name;
             $variant->slug              = $request->slug;
 
@@ -467,8 +476,8 @@ class ProductController extends Controller
             $variant->disc_price        = $request->disc_price;
             $variant->max_quantity      =  $request->max_quantity;
             $variant->min_quantity      =  $request->min_quantity;
-            $variant->specifications    = $request->content;
-            $variant->charge_details    = $charges;
+            $variant->specifications = $request->content;
+            $variant->charge_details = $charges;
 
 
             $imageFiles = [];
@@ -703,10 +712,19 @@ class ProductController extends Controller
 
 
 
-    public function brands()
+    public function brands(Request $request)
     {
-        $data = Brand::withTrashed()->latest()->get();
-        return view('admin.product.brand.list', compact('data'));
+        $query = Brand::withTrashed()->latest();
+        
+        // Filter by brand name if search parameter exists
+        if ($request->has('search') && !empty($request->search)) {
+            $query = $query->where('name', $request->search);
+        }
+        
+        $data = $query->get();
+        $allBrands = Brand::withTrashed()->latest()->get();
+        
+        return view('admin.product.brand.list', compact('data', 'allBrands'));
     }
 
     public function brandAdd()
@@ -802,19 +820,40 @@ class ProductController extends Controller
 
 
 
-    public function orderes()
+    public function orderes(Request $request)
     {
+        $query = Order::with(['user', 'status', 'paymentStatus']);
+
+        // Role-based filtering
         if (Auth::user()->role_id == 1) {
-            $order = Order::with(['user', 'status', 'paymentStatus'])->get();
-            $orderstatus = OrderStatus::orderBy('id')->get();
-            $employee = User::where('role_id', 2)->get();
-            // dd($employee);
-            // $employee = User::where('role_id', 2)->orWhere('role_id', 3)->orWhere('role_id', 5)->get();
+            // Admin can see all orders
         } else {
-            $order = Order::with(['user', 'status', 'paymentStatus'])->where('assigned_to', Auth::user()->id)->orWhere('assigned_to', 0)->get();
-            $orderstatus = OrderStatus::orderBy('id')->get();
-            $employee = User::where('role_id', 2)->get();
+            // Other roles see assigned orders or unassigned orders
+            $query = $query->where(function($q) {
+                $q->where('assigned_to', Auth::user()->id)
+                  ->orWhere('assigned_to', 0);
+            });
         }
+
+        // Filter by user
+        if ($request->has('user_id') && !empty($request->user_id)) {
+            $query = $query->where('user_id', $request->user_id);
+        }
+
+        // Filter by order status
+        if ($request->has('status_id') && !empty($request->status_id)) {
+            $query = $query->where('order_status_id', $request->status_id);
+        }
+
+        // Filter by payment status
+        if ($request->has('payment_status') && !empty($request->payment_status)) {
+            $query = $query->where('payment_status', $request->payment_status);
+        }
+
+        $order = $query->get();
+        $orderstatus = OrderStatus::orderBy('id')->get();
+        $employee = User::where('role_id', 2)->get();
+
         if ($orderstatus->count() == 0) {
             $orderstatus = collect([
                 (object)['id' => 1, 'name' => 'Pending'],
@@ -823,7 +862,6 @@ class ProductController extends Controller
                 (object)['id' => 4, 'name' => 'Cancelled'],
             ]);
         }
-
 
         return view('admin.order.list', compact('order', 'orderstatus', 'employee'));
     }
