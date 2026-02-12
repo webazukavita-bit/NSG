@@ -124,7 +124,7 @@
                                                 <label class="form-label pt-2 text-dark" for="variation_{{ $type }}{{$selectedProduct->id}}">{{ $type }}<code>*</code></label>
                                             </div>
                                             <div class="col-md-8 ms-2">
-                                                <select name="variations['{{ str_replace(' ', '_', $type) }}']" id="variation_{{ $type }}{{$selectedProduct->id}}" class="form-control" required>
+                                                <select name="variations[{{ str_replace(' ', '_', $type) }}]" id="variation_{{ $type }}{{$selectedProduct->id}}" class="form-control" required>
                                                     <option value="">-- Select {{ $type }} --</option>
                                                     @foreach (array_unique($values) as $val)
                                                     <option value="{{ $val }}">{{ $val }}</option>
@@ -144,8 +144,8 @@
                                             </div>
                                             <div id="online_info" class="d-none small mt-1">
                                                 <p class="mb-0" style="font-size: 10px">(Allowed File: PDF Only)</p>
-                                                <input type="file" name="file" class="form-control form-control-sm">
-                                                <div id="file_size_info" class="small text-danger mt-1">Maximum File Size Allowed: {{$selectedProduct->category->file_size??'10'}} MB</div>
+                                                <input type="file" name="file" id="fileInput" class="form-control form-control-sm" accept=".pdf,.jpg,.jpeg,.png">
+                                                <div id="file_size_info" class="small text-danger mt-1">Maximum File Size Allowed: {{$selectedProduct->category->file_size??'100'}} MB</div>
                                             </div>
                                         </div>
                                         <div class="col-md-6 d-flex flex-column">
@@ -172,14 +172,14 @@
                                             </div>
                                             <div class="col-md-3">
                                                 <div class="input-group input-group-sm shadow-sm rounded">
-                                                    <button class="btn btn-outline-danger fw-bold" type="button" onclick="let el = document.getElementById('maxQty'); el.value = Math.max(1, Math.floor(el.value / 2))">
+                                                    <button class="btn btn-outline-danger fw-bold" type="button" onclick="let el = document.getElementById('maxQty'); el.value = Math.max(1, Math.floor(el.value / 2)); el.dispatchEvent(new Event('input'))">
                                                         −
                                                     </button>
 
-                                                    <input type="number" name="quantity" id="maxQty" class="form-control text-center fw-semibold" value="{{$selectedProduct->min_quantity??''}}" min="{{$selectedProduct->min_quantity??''}}">
+                                                    <input type="number" name="quantity" id="maxQty" class="form-control text-center fw-semibold" value="{{ ($selectedProduct->min_quantity ?? 0) > 0 ? $selectedProduct->min_quantity : 1 }}" min="{{ ($selectedProduct->min_quantity ?? 0) > 0 ? $selectedProduct->min_quantity : 1 }}">
 
                                                     <button class="btn btn-outline-primary fw-bold" type="button"
-                                                        onclick="let el = document.getElementById('maxQty'); el.value *= 2">
+                                                        onclick="let el = document.getElementById('maxQty'); el.value *= 2; el.dispatchEvent(new Event('input'))">
                                                         +
                                                     </button>
                                                 </div>
@@ -210,7 +210,7 @@
                                                 <label class="form-label small">Special Remark (Optional)</label>
                                             </div>
                                             <div class="col-8">
-                                                <textarea class="form-control form-control-sm" placeholder="remarks for order processing team..."></textarea>
+                                                <textarea class="form-control form-control-sm" name="remark" placeholder="remarks for order processing team..."></textarea>
                                             </div>
                                         </div>
 
@@ -225,11 +225,6 @@
                                                     </div> --}}
 
                                     </div>
-
-                                    <!-- <button type="button" class="btn theme-btn btn-sm mt-2" onclick="validateProductStep()">
-                                        Add User Details
-                                    </button> -->
-
 
                                 </div>
                             </div>
@@ -313,9 +308,6 @@
                                     </div>
                                     <div class="text-danger fw-bold mb-2 error-wallet"></div>
                                     <div class="col-md-12 mt-2 d-flex gap-2">
-                                        <!-- <button type="button" class="btn btn-secondary" onclick="backToProduct()">
-                                            Back
-                                        </button> -->
                                         <button type="submit" class="btn theme-btn">
                                             Place Order With Wallet
                                         </button>
@@ -737,12 +729,115 @@
             allowClear: true
         });
     });
+    
+    // Initialize price and qty from server-rendered selected product (if any)
+    (function initPayable() {
+        try {
+            CURRENT_PRICE = parseFloat({{ $selectedProduct->disc_price ?? $selectedProduct->price ?? 0 }});
+        } catch(e) {
+            CURRENT_PRICE = 0;
+        }
+
+        try {
+            CURRENT_MIN_QTY = parseInt({{ ($selectedProduct->min_quantity ?? 0) > 0 ? $selectedProduct->min_quantity : 1 }});
+        } catch(e) {
+            CURRENT_MIN_QTY = 1;
+        }
+
+        // ensure qty input has a sane value
+        let qtyEl = document.getElementById('maxQty');
+        if (qtyEl) {
+            let q = parseInt(qtyEl.value) || CURRENT_MIN_QTY;
+            if (q < CURRENT_MIN_QTY) q = CURRENT_MIN_QTY;
+            qtyEl.value = q;
+        }
+
+        // display initial payable values even if variations/file not selected
+        function calculateDisplay(price, quantity) {
+            price = parseFloat(price) || 0;
+            quantity = parseInt(quantity) || 0;
+
+            let cost = price * quantity;
+            let gst = cost * 0.18;
+            let payable = cost + gst;
+
+            $('#disc_price').text(`Rs. ${cost.toFixed(2)}/-`);
+            $('#gst_amount').text(`Rs. ${gst.toFixed(2)}/-`);
+            $('#amount_payable').text(`Rs. ${payable.toFixed(2)}/-`);
+        }
+
+        // initial render
+        let initialQty = parseInt($('#maxQty').val()) || CURRENT_MIN_QTY;
+        calculateDisplay(CURRENT_PRICE, initialQty);
+
+        // update on qty change
+        $('#maxQty').off('input change').on('input change', function() {
+            let qty = parseInt(this.value) || CURRENT_MIN_QTY;
+            if (qty < CURRENT_MIN_QTY) {
+                qty = CURRENT_MIN_QTY;
+                this.value = qty;
+            }
+
+            // recalc including any selected extra charges
+            let extraChargeTotal = Object.values(activeCharges).reduce((sum, val) => sum + (val * qty), 0);
+            let subtotal = (CURRENT_PRICE * qty) + extraChargeTotal;
+            let gst = subtotal * 0.18;
+            let payable = subtotal + gst;
+
+            $('#disc_price').text(`Rs. ${(CURRENT_PRICE * qty).toFixed(2)}/-`);
+            $('#gst_amount').text(`Rs. ${gst.toFixed(2)}/-`);
+            $('#amount_payable').text(`Rs. ${payable.toFixed(2)}/-`);
+        });
+
+        // show selected file name or preview in product description
+        // Use ID selector to be explicit and avoid conflicts with form submission
+        $('#fileInput').on('change', function(e) {
+            e.stopPropagation(); // prevent any bubbling
+            
+            const file = this.files && this.files[0];
+            if (!file) return;
+
+            const specsEl = document.getElementById('productSpecifications');
+            if (!specsEl) return;
+
+            const fileName = file.name;
+            const fileType = file.type;
+
+            if (fileType.startsWith('image/')) {
+                const url = URL.createObjectURL(file);
+                specsEl.innerHTML = `<img src="${url}" alt="file-preview" style="max-width:100%;height:auto;"/>`;
+            } else {
+                specsEl.innerText = `Selected File: ${fileName}`;
+            }
+        });
+
+    })();
 </script>
 <script>
     $('#orderForm').on('submit', function(e) {
         e.preventDefault(); // stop normal submit
 
         $('.text-danger').text(''); // clear old errors
+
+        // Validate file_option is selected
+        if (!$('input[name="file_option"]:checked').val()) {
+            alert('Please select a file option (Online or Email)');
+            return false;
+        }
+
+        // Check variations if they exist
+        let variationSelects = $('#variationContainer select');
+        if (variationSelects.length > 0) {
+            let allFilled = true;
+            variationSelects.each(function() {
+                if (!$(this).val()) {
+                    allFilled = false;
+                    alert('Please select all product variations');
+                    return false;
+                }
+            });
+            if (!allFilled) return false;
+        }
 
         let formData = new FormData(this);
 
@@ -763,18 +858,37 @@
                     let errors = xhr.responseJSON.errors;
 
                     Object.keys(errors).forEach(function(key) {
-                        $('.error-' + key).text(errors[key][0]);
+                        const errorMsg = errors[key][0];
+                        const errorElement = $('.error-' + key);
+                        if (errorElement.length) {
+                            errorElement.text(errorMsg);
+                        } else {
+                            alert(key + ': ' + errorMsg);
+                        }
                     });
 
-                    alert("all feilds are required");
+                    if (Object.keys(errors).length > 0) {
+                        alert("Please fix the errors and try again");
+                    }
+                } else if (xhr.status === 500) {
+                    let errorMsg = 'Server error';
+                    try {
+                        let response = xhr.responseJSON;
+                        if (response.errors) {
+                            Object.keys(response.errors).forEach(function(key) {
+                                const msg = response.errors[key][0] || response.errors[key];
+                                $('.error-' + key).text(msg);
+                                alert(msg);
+                            });
+                        } else if (response.message) {
+                            errorMsg = response.message;
+                            alert(errorMsg);
+                        }
+                    } catch(e) {
+                        alert('An error occurred while processing your order');
+                    }
                 } else {
-                    let errors = xhr.responseJSON.errors;
-
-                    Object.keys(errors).forEach(function(key) {
-                        $('.error-' + key).text(errors[key][0]);
-                    });
-
-                    alert("Something went wrong");
+                    alert("Something went wrong. Please try again.");
                 }
             }
         });
