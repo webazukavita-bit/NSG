@@ -866,7 +866,7 @@ class ProductController extends Controller
     public function orderlist()
     {
         if (Auth::user()->role_id == 4) {
-            $order = Order::with(['user', 'status', 'paymentStatus'])->get();
+            $order = Order::with(['user', 'status', 'paymentStatus'])->where('order_by_id', Auth::user()->id)->get();
             $orderstatus = OrderStatus::orderBy('id')->get();
 
 

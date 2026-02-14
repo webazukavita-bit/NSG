@@ -1092,6 +1092,7 @@ class AdminController extends Controller
 
         // ---------- Wallet Check ----------
         $walletBal = Wallet::where('user_id', $sendUser->id)->first();
+        
         if (!$walletBal) {
             return back()->withErrors(['phone_number' => 'Wallet information not found.'])->withInput();
         }

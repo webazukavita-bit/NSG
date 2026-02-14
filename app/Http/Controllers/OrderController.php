@@ -46,7 +46,6 @@ class OrderController extends Controller
         $request->validate([
             'product_id'     => 'required|exists:products,id',
             'quantity'       => 'required|integer|min:1',
-
             'name'      => 'required|string|max:255',
             'email'     => 'required|email|max:255',
             'phone'     => 'required|digits_between:8,15',
@@ -67,6 +66,7 @@ class OrderController extends Controller
         DB::beginTransaction();
 
         try {
+            
             $product = Product::findOrFail($request->product_id);
             $qty        = (int) $request->quantity;
             $basePrice = (float) $product->disc_price;
@@ -96,11 +96,9 @@ class OrderController extends Controller
             $subtotal = ($basePrice * $qty) + ($extraCharges * $qty);
             $gst = round($subtotal * 0.18, 2);
             $finalAmount = round($subtotal + $gst, 2);
-
+               
             // dd($totalamount, $subtotal, $finalAmount);
-            $wallet = Wallet::where('user_id', $user->id)
-                ->lockForUpdate()
-                ->first();
+            $wallet = Wallet::where('user_id', $user->id)->first();
 
             if (!$wallet || $wallet->main_balance < $finalAmount) {
                 DB::rollBack();
@@ -142,7 +140,9 @@ class OrderController extends Controller
             ], [
                 'file.max' => "File size must not exceed {$product->category->file_size} MB",
             ]);
+
             $path = null;
+
             if ($request->hasFile('file')) {
                 $fileName = 'variant_' . time() . '.' . $request->file->getClientOriginalExtension();
                 $request->file->move(public_path('images/order'), $fileName);
@@ -185,21 +185,30 @@ class OrderController extends Controller
                 'remark' => $request->remark,
                 'files'  => $path,
             ]);
+ 
 
-            $payment = $wallet->decrement('main_balance', $finalAmount);
-
-            if ($payment) {
-
-                $order->update([
-                    'payment_status' => 'paid',
-                    'payment_status_id' => 2
-                ]);
-            }
-            Wallet::updateOrCreate([
-                'user_id' => $user->id,
+            $ledgerResponse = Helper::debit_ledger([
+                "user_id"      => $user->id,
+                "refrence_id"  => auth()->id(),
+                "amount"       => $finalAmount,
+                "trans_id"     => Helper::getTransId(3),
+                "cgst"         => 0,
+                "sgst"         => 0,
+                "ledger_type"  => 24,
+                "wallet_type"  => 1,
+                "trans_from"   => 'Wallet',
+                "description"  => "Debited for Order ID: {$order->code}",
             ]);
-               
-  DB::commit();
+
+            if ($ledgerResponse["status"] != "success") {
+                DB::rollBack();
+                
+                return response()->json([
+                    'message' => '',
+                ], 500);
+            }
+
+            DB::commit();
 
             return response()->json([
                 'success' => true,
