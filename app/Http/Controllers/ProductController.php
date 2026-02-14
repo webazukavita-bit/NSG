@@ -39,12 +39,27 @@ class ProductController extends Controller
     {
         $request->merge(['slug' => Str::slug($request->name)]);
 
-        $request->validate([
-            'name'  => 'required|string|max:255',
-            'slug'  => 'required|string|unique:categories,slug',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
-            'file_size' => 'required|numeric|min:0'
-        ]);
+        // $request->validate([
+        //     'name'  => 'required|string|max:255',
+        //     'slug'  => 'required|string|unique:categories,slug',
+        //     'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
+        //     'file_size' => 'required|numeric|min:0'
+        // ]);
+        $request->validate(
+            [
+                'name'  => 'required|string|max:255',
+                'slug'  => 'required|string|unique:categories,slug',
+                'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
+                'file_size' => 'required|numeric|min:0'
+            ],
+            [
+                'slug.unique' => 'This category already exists.'
+            ]
+        );
+        if (ProductCategory::where('slug', $request->slug)->exists()) {
+            return redirect()->route('product-categories')->with('error', 'Category already exist.');
+        }
+
         $category = new ProductCategory();
         $category->name = $request->name;
         $category->slug = $request->slug;
