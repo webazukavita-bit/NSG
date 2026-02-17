@@ -87,11 +87,15 @@ class HomeController extends Controller
 
 
 
-    public function shopDetails($slug, Request $request)
+    public function shopDetails($slug = null, Request $request)
     {
 
         if (!Auth::check()) {
             return redirect('/login');
+        }
+
+        if (!$slug) {
+            return redirect('/shop');
         }
 
         $parent = Product::with(['variations.variationType','variations.variationValue'])->where('slug', $slug)->firstOrFail();

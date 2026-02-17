@@ -24,10 +24,19 @@ class ProductController extends Controller
         $this->middleware('auth');
     }
 
-    public function categories()
+    public function categories(Request $request)
     {
-        $data = ProductCategory::withTrashed()->latest()->get();
-        return view('admin.product.category.list', compact('data'));
+        $query = ProductCategory::withTrashed();
+
+        // Apply search filter
+        if ($request->filled('search')) {
+            $query->where('name', 'like', '%' . $request->search . '%');
+        }
+
+        $data = $query->latest()->get();
+        $allCategories = ProductCategory::select('id', 'name')->get(); // For filter dropdown
+
+        return view('admin.product.category.list', compact('data', 'allCategories'));
     }
 
     public function categoryAdd()
@@ -802,19 +811,36 @@ class ProductController extends Controller
 
 
 
-    public function orderes()
+    public function orderes(Request $request)
     {
+        $query = Order::with(['user', 'status', 'paymentStatus']);
+
         if (Auth::user()->role_id == 1) {
-            $order = Order::with(['user', 'status', 'paymentStatus'])->get();
-            $orderstatus = OrderStatus::orderBy('id')->get();
-            $employee = User::where('role_id', 2)->get();
-            // dd($employee);
-            // $employee = User::where('role_id', 2)->orWhere('role_id', 3)->orWhere('role_id', 5)->get();
+            // Admin can see all orders
         } else {
-            $order = Order::with(['user', 'status', 'paymentStatus'])->where('assigned_to', Auth::user()->id)->orWhere('assigned_to', 0)->get();
-            $orderstatus = OrderStatus::orderBy('id')->get();
-            $employee = User::where('role_id', 2)->get();
+            // Employees can see orders assigned to them or unassigned
+            $query->where(function($q) {
+                $q->where('assigned_to', Auth::user()->id)
+                  ->orWhere('assigned_to', 0);
+            });
         }
+
+        // Apply filters
+        if ($request->filled('user_id')) {
+            $query->where('user_id', $request->user_id);
+        }
+
+        if ($request->filled('status_id')) {
+            $query->where('order_status_id', $request->status_id);
+        }
+
+        $order = $query->get();
+        $orderstatus = OrderStatus::orderBy('id')->get();
+        $employee = User::where('role_id', 2)->get();
+
+        // Get all users for the filter dropdown
+        $users = User::select('id', 'name')->get();
+
         if ($orderstatus->count() == 0) {
             $orderstatus = collect([
                 (object)['id' => 1, 'name' => 'Pending'],
@@ -824,8 +850,7 @@ class ProductController extends Controller
             ]);
         }
 
-
-        return view('admin.order.list', compact('order', 'orderstatus', 'employee'));
+        return view('admin.order.list', compact('order', 'orderstatus', 'employee', 'users'));
     }
     public function orderaccept($id)
     {

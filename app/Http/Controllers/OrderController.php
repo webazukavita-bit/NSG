@@ -8,6 +8,8 @@ use App\Models\Order;
 use App\Models\ProductCategory;
 use App\Models\Product;
 use App\Models\User;
+use App\Models\OrderStatusTxn;
+use App\Notifications\NewOrderNotification;
 use App\Models\Wallet;
 use Illuminate\Foundation\Auth\RedirectsUsers;
 use Illuminate\Http\Request;
@@ -133,12 +135,17 @@ class OrderController extends Controller
                 ]
             );
             
-            $maxSizeKB = $product->category->file_size * 1024;
+            $maxFileSizeMB = 10; // Default to 10 MB
+            if ($product->category && $product->category->file_size) {
+                $maxFileSizeMB = $product->category->file_size;
+            }
+            
+            $maxSizeKB = $maxFileSizeMB * 1024;
 
             $request->validate([
                 'file' => "nullable|file|mimes:pdf|max:$maxSizeKB",
             ], [
-                'file.max' => "File size must not exceed {$product->category->file_size} MB",
+                'file.max' => "File size must not exceed $maxFileSizeMB MB",
             ]);
 
             $path = null;
@@ -194,7 +201,7 @@ class OrderController extends Controller
                 "trans_id"     => Helper::getTransId(3),
                 "cgst"         => 0,
                 "sgst"         => 0,
-                "ledger_type"  => 24,
+                "ledger_type"  => 'WALLET DEBIT',
                 "wallet_type"  => 1,
                 "trans_from"   => 'Wallet',
                 "description"  => "Debited for Order ID: {$order->code}",
@@ -205,6 +212,67 @@ class OrderController extends Controller
                 
                 return response()->json([
                     'message' => '',
+                ], 500);
+            }
+
+            // Update payment status to Success (ID 2) after successful wallet debit
+            $order->update([
+                'payment_status_id' => 2, // Success
+            ]);
+
+            try {
+                $txn = OrderStatusTxn::create([
+                    'order_id' => $order->id,
+                    'order_status_id' => $order->order_status_id ?? 1,
+                    'payment_status_id' => 2, // Success
+                        'm11_creatby_user_type' => 'user',
+                        'created_by_id' => $user->id,
+                        'description' => 'Payment received via wallet',
+                        'documents' => null,
+                    ]);
+                } catch (\Exception $e) {
+                    // Log but don't fail the whole flow
+                    // logger()->error('Failed to create OrderStatusTxn: ' . $e->getMessage());
+                }
+ // Mark order as paid and attach ledger id if available
+            try {
+                $orderUpdate = [
+                    'payment_status' => 'Paid',
+                    'payment_status_id' => 2, // 2 = paid (used across app)
+                ];
+
+                $order->update($orderUpdate);
+
+                // Create an OrderStatusTxn entry recording payment
+                try {
+                    $txn = OrderStatusTxn::create([
+                        'order_id' => $order->id,
+                        'order_status_id' => $order->order_status_id ?? 1,
+                        'payment_status_id' => $order->payment_status_id ?? 2,
+                        'm11_creatby_user_type' => 'user',
+                        'created_by_id' => $user->id,
+                        'description' => 'Payment received via wallet',
+                        'documents' => null,
+                    ]);
+                } catch (\Exception $e) {
+                    // Log but don't fail the whole flow
+                    // logger()->error('Failed to create OrderStatusTxn: ' . $e->getMessage());
+                }
+
+                // Notify user about successful payment
+                try {
+                    $link = url('/user/orders/' . $order->id);
+                    $title = 'Payment Received';
+                    $message = "Your payment of Rs. {$finalAmount} for order {$order->code} has been received.";
+                    $icon = 'bx bx-credit-card';
+                    $user->notify(new NewOrderNotification($title, $message, $link, $icon));
+                } catch (\Exception $e) {
+                    // logger()->error('Failed to send payment notification: ' . $e->getMessage());
+                }
+            } catch (\Exception $ex) {
+                DB::rollBack();
+                return response()->json([
+                    'message' => 'Failed to update order payment status: ' . $ex->getMessage()
                 ], 500);
             }
 
@@ -223,4 +291,5 @@ class OrderController extends Controller
             ], 500);
         }
     }
+
 }

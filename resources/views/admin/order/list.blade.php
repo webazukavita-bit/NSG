@@ -4,6 +4,71 @@
 		$profile = 'images/user-1.svg';
 	@endphp
 
+    
+	<div class="card border-top border-0 border-4 border-primary">
+    <div class="card-body p-0">
+        <div class="accordion" id="accordionExample">
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="headingOne">
+                    <button class="accordion-button text-primary" type="button"
+                        data-bs-toggle="collapse" data-bs-target="#collapseOne">
+                        <i class="bx bx-filter-alt font-18 text-primary me-1"></i> Filter
+                    </button>
+                </h2>
+
+                <div id="collapseOne" class="accordion-collapse collapse">
+                    <div class="accordion-body">
+                        <form action="{{ route('orderes') }}" method="GET" class="row g-3">
+                            @csrf
+
+                            <div class="col-md-4">
+                                <label for="user_id" class="form-label">User</label>
+                                <select name="user_id" id="user_id"
+                                    class="form-select @error('user_id') is-invalid @enderror">
+                                    <option selected disabled>Choose...</option>
+                                    @foreach ($users as $user)
+                                        <option value="{{ $user->id }}" {{ request('user_id') == $user->id ? 'selected' : '' }}>
+                                            {{ $user->name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                @error('user_id')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+
+                            <div class="col-md-4">
+                                <label for="status_id" class="form-label">Order Status</label>
+                                <select name="status_id" id="status_id"
+                                    class="form-select @error('status_id') is-invalid @enderror">
+                                    <option value="">Choose...</option>
+                                    @foreach ($orderstatus as $status)
+                                        <option value="{{ $status->id }}" {{ request('status_id') == $status->id ? 'selected' : '' }}>{{ $status->name }}</option>
+                                    @endforeach
+                                </select>
+                                @error('status_id')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+
+                           
+                            <div class="col-12 text-center mt-3">
+                                <button type="submit" class="btn btn-primary px-4">
+                                    <i class="bx bx-search"></i> Filter
+                                </button>
+                                @if(request('user_id') || request('status_id'))
+                                    <a href="{{ route('orderes') }}" class="btn btn-secondary ms-2">Clear Filter</a>
+                                @endif
+                            </div>
+
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 
 
 	<div class="card border-top border-0 border-4 border-primary">
@@ -42,11 +107,11 @@
                                         <td>{{ $key + 1 }}</td>
 										<td>{{ $value->code ?? '' }}</td>
 										<td><div class="d-flex align-items-center">
-                                    <img src="{{ asset('images/profile/' .($value->user->image ?? '') ) }}" onerror="this.onerror=null;this.src='{{ asset($profile) }}';" class="product-img-2" alt="product img" style="margin-right: 8px;"> 
-                                    <span>{{ $value->user->name ?? '' }}</span></div>
+                                    <img src="{{ asset('images/profile/' .($value->user ? $value->user->image : '') ) }}" onerror="this.onerror=null;this.src='{{ asset($profile) }}';" class="product-img-2" alt="product img" style="margin-right: 8px;"> 
+                                    <span>{{ $value->user ? $value->user->name : 'Unknown User' }}</span></div>
                                         </td>
 										<td>
-                                         <div class="badge rounded-pill  bg-light-info p-2 text-uppercase px-3"  style="color: {{ $value->status->color ?? '' }};"><i class="bx bxs-circle align-middle me-1"></i>{{$value->status->name ?? ''}}</div></td>
+                                         <div class="badge rounded-pill  bg-light-info p-2 text-uppercase px-3"  style="color: {{ $value->status->color ?? '' }};"><i class="bx bxs-circle align-middle me-1"></i>{{$value->status->name ?? 'No Status'}}</div></td>
 										<td>{{ $value->total_amount ?? '-'}}</td>
 										<td  style="color: {{ $value->paymentStatus->color ?? '' }};font-weight:500;"><i class="bx bxs-circle align-middle me-1"></i>{{ $value->paymentStatus->name ?? '-'}}</td>
 										<td>{{ $value->payment_method ?? 'Wallet'}}</td>
@@ -89,7 +154,7 @@
 											  <span class="order-actions-primary">
 													<a href="javascript:;" class="ms-2 openStatusModel" data-bs-toggle="tooltip" data-bs-placement="top" 
 													data-id="{{ $value->id }}"
-													data-status_id="{{ $value->status->id}}"
+													data-status_id="{{ $value->status->id ?? ''}}"
 													data-bs-original-title="OrderStatus"><i class="bx bx-message-square-edit"></i></a>
 												</span>
 											  <span class="order-actions-primary">
