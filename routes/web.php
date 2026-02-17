@@ -255,6 +255,7 @@ Route::middleware(['permission'])->group(function () {
         Route::get('/brands-edit/{id}', [ProductController::class, 'brandEdit'])->name('brand-edit');
         Route::post('/brands-edit/{id}', [ProductController::class, 'brandUpdate'])->name('brand-update');
         Route::get('/brands-delete/{id}', [ProductController::class, 'brandDelete'])->name('brand-delete');
+        
 
         Route::get('/orderes', [ProductController::class, 'orderes'])->name('orderes');
         Route::post('/order-accept/{id}', [ProductController::class, 'orderaccept'])->name('order-accept');
