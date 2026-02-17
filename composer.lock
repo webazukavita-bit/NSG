@@ -3024,6 +3024,7 @@
         },
         {
             "name": "nette/utils",
+<<<<<<< HEAD
             "version": "v4.1.2",
             "source": {
                 "type": "git",
@@ -3034,6 +3035,18 @@
                 "type": "zip",
                 "url": "https://api.github.com/repos/nette/utils/zipball/f76b5dc3d6c6d3043c8d937df2698515b99cbaf5",
                 "reference": "f76b5dc3d6c6d3043c8d937df2698515b99cbaf5",
+=======
+            "version": "v4.1.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/nette/utils.git",
+                "reference": "bb3ea637e3d131d72acc033cfc2746ee893349fe"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/nette/utils/zipball/bb3ea637e3d131d72acc033cfc2746ee893349fe",
+                "reference": "bb3ea637e3d131d72acc033cfc2746ee893349fe",
+>>>>>>> bf39ff6996d2699e5b13a6d133b148561afdf1bf
                 "shasum": ""
             },
             "require": {
@@ -3045,8 +3058,14 @@
             },
             "require-dev": {
                 "jetbrains/phpstorm-attributes": "^1.2",
+                "nette/phpstan-rules": "^1.0",
                 "nette/tester": "^2.5",
+<<<<<<< HEAD
                 "phpstan/phpstan": "^2.0@stable",
+=======
+                "phpstan/extension-installer": "^1.4@stable",
+                "phpstan/phpstan": "^2.1@stable",
+>>>>>>> bf39ff6996d2699e5b13a6d133b148561afdf1bf
                 "tracy/tracy": "^2.9"
             },
             "suggest": {
@@ -3107,9 +3126,15 @@
             ],
             "support": {
                 "issues": "https://github.com/nette/utils/issues",
+<<<<<<< HEAD
                 "source": "https://github.com/nette/utils/tree/v4.1.2"
             },
             "time": "2026-02-03T17:21:09+00:00"
+=======
+                "source": "https://github.com/nette/utils/tree/v4.1.3"
+            },
+            "time": "2026-02-13T03:05:33+00:00"
+>>>>>>> bf39ff6996d2699e5b13a6d133b148561afdf1bf
         },
         {
             "name": "nikic/php-parser",
@@ -3794,6 +3819,7 @@
         },
         {
             "name": "psy/psysh",
+<<<<<<< HEAD
             "version": "v0.12.19",
             "source": {
                 "type": "git",
@@ -3804,6 +3830,18 @@
                 "type": "zip",
                 "url": "https://api.github.com/repos/bobthecow/psysh/zipball/a4f766e5c5b6773d8399711019bb7d90875a50ee",
                 "reference": "a4f766e5c5b6773d8399711019bb7d90875a50ee",
+=======
+            "version": "v0.12.20",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/bobthecow/psysh.git",
+                "reference": "19678eb6b952a03b8a1d96ecee9edba518bb0373"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/bobthecow/psysh/zipball/19678eb6b952a03b8a1d96ecee9edba518bb0373",
+                "reference": "19678eb6b952a03b8a1d96ecee9edba518bb0373",
+>>>>>>> bf39ff6996d2699e5b13a6d133b148561afdf1bf
                 "shasum": ""
             },
             "require": {
@@ -3867,9 +3905,15 @@
             ],
             "support": {
                 "issues": "https://github.com/bobthecow/psysh/issues",
+<<<<<<< HEAD
                 "source": "https://github.com/bobthecow/psysh/tree/v0.12.19"
             },
             "time": "2026-01-30T17:33:13+00:00"
+=======
+                "source": "https://github.com/bobthecow/psysh/tree/v0.12.20"
+            },
+            "time": "2026-02-11T15:05:28+00:00"
+>>>>>>> bf39ff6996d2699e5b13a6d133b148561afdf1bf
         },
         {
             "name": "ralouphie/getallheaders",
@@ -9246,4 +9290,8 @@
     },
     "platform-dev": {},
     "plugin-api-version": "2.9.0"
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> bf39ff6996d2699e5b13a6d133b148561afdf1bf
