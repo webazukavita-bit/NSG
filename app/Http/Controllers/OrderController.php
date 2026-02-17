@@ -8,6 +8,8 @@ use App\Models\Order;
 use App\Models\ProductCategory;
 use App\Models\Product;
 use App\Models\User;
+use App\Models\OrderStatusTxn;
+use App\Notifications\NewOrderNotification;
 use App\Models\Wallet;
 use Illuminate\Foundation\Auth\RedirectsUsers;
 use Illuminate\Http\Request;
@@ -43,7 +45,8 @@ class OrderController extends Controller
     {
         $user = Auth::user();
 
-        $request->validate([
+        // Build dynamic validation based on whether product has variations
+        $validationRules = [
             'product_id'     => 'required|exists:products,id',
             'quantity'       => 'required|integer|min:1',
             'name'      => 'required|string|max:255',
@@ -54,13 +57,41 @@ class OrderController extends Controller
             'state'     => 'required|exists:states,id',
             'city'      => 'required|exists:cities,id',
             'zipcode'   => 'required|digits:6',
-
-            'variations'     => 'required|array',
-            'variations.*'   => 'required|string|max:255',
-
+            'file_option' => 'required|in:online,email',
             'remark' => 'nullable|string|max:500',
-            'file' => 'nullable|file|mimes:pdf,jpg,png|max:30720',
+            'file' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:102400',
+            'variations' => 'nullable|array',
+            'variations.*' => 'nullable|string|max:255',
+        ];
 
+        // Get product to check if variations should be required
+        $product = Product::findOrFail($request->product_id);
+        
+        // Check if this product should have variations by counting its variation associations
+        $hasVariations = $product->variations()->exists();
+        
+        if ($hasVariations) {
+            // Count how many variation types should be selected
+            $variationTypes = $product->variations()
+                ->with('variationType')
+                ->get()
+                ->pluck('variationType.name')
+                ->unique()
+                ->count();
+
+            if ($variationTypes > 0) {
+                // Require variations array to be present and have at least the required number of entries
+                $validationRules['variations'] = ['required', 'array', 'min:' . $variationTypes];
+                $validationRules['variations.*'] = ['required', 'string', 'max:255'];
+            }
+        }
+
+        $request->validate($validationRules, [
+            'variations.required' => 'Please select all product variations',
+            'variations.array' => 'Variations must be an array',
+            'variations.min' => 'Please select all required product variations',
+            'variations.*.required' => 'All variations must be selected',
+            'file_option.required' => 'Please select a file option (Online or Email)',
         ]);
         // dd($request->all());
         DB::beginTransaction();
@@ -100,12 +131,17 @@ class OrderController extends Controller
             // dd($totalamount, $subtotal, $finalAmount);
             $wallet = Wallet::where('user_id', $user->id)->first();
 
-            if (!$wallet || $wallet->main_balance < $finalAmount) {
+            // Check total available balance from all wallet types
+            $totalAvailableBalance = (float) $wallet->main_balance + 
+                                     (float) $wallet->bonus_balance + 
+                                     (float) $wallet->ref_direct_balance;
+
+            if (!$wallet || $totalAvailableBalance < $finalAmount) {
                 DB::rollBack();
 
                 return response()->json([
                     'errors' => [
-                        'wallet' => ['Insufficient wallet balance']
+                        'wallet' => ['Insufficient wallet balance. Available: Rs.' . $totalAvailableBalance . ', Required: Rs.' . $finalAmount]
                     ]
                 ], 500);
             }
@@ -133,12 +169,15 @@ class OrderController extends Controller
                 ]
             );
             
-            $maxSizeKB = $product->category->file_size * 1024;
+            // Set max file size (default 100 MB if not set in category)
+            $fileSizeMB = $product->category->file_size ?? 100;
+            $maxSizeKB = $fileSizeMB * 1024;
 
             $request->validate([
-                'file' => "nullable|file|mimes:pdf|max:$maxSizeKB",
+                'file' => "nullable|file|mimes:pdf,jpg,jpeg,png|max:$maxSizeKB",
             ], [
-                'file.max' => "File size must not exceed {$product->category->file_size} MB",
+                'file.max' => "File size must not exceed {$fileSizeMB} MB",
+                'file.mimes' => 'File must be PDF, JPG, or PNG format',
             ]);
 
             $path = null;
@@ -194,7 +233,7 @@ class OrderController extends Controller
                 "trans_id"     => Helper::getTransId(3),
                 "cgst"         => 0,
                 "sgst"         => 0,
-                "ledger_type"  => 24,
+                "ledger_type"  => "WITHDRAWAL",
                 "wallet_type"  => 1,
                 "trans_from"   => 'Wallet',
                 "description"  => "Debited for Order ID: {$order->code}",
@@ -204,7 +243,51 @@ class OrderController extends Controller
                 DB::rollBack();
                 
                 return response()->json([
-                    'message' => '',
+                    'errors' => [
+                        'wallet' => [$ledgerResponse["message"] ?? 'Failed to process wallet transaction']
+                    ]
+                ], 500);
+            }
+
+            // Mark order as paid and attach ledger id if available
+            try {
+                $orderUpdate = [
+                    'payment_status' => 'Paid',
+                    'payment_status_id' => 2, // 2 = paid (used across app)
+                ];
+
+                $order->update($orderUpdate);
+
+                // Create an OrderStatusTxn entry recording payment
+                try {
+                    $txn = OrderStatusTxn::create([
+                        'order_id' => $order->id,
+                        'order_status_id' => $order->order_status_id ?? 1,
+                        'payment_status_id' => $order->payment_status_id ?? 2,
+                        'm11_creatby_user_type' => 'user',
+                        'created_by_id' => $user->id,
+                        'description' => 'Payment received via wallet',
+                        'documents' => null,
+                    ]);
+                } catch (\Exception $e) {
+                    // Log but don't fail the whole flow
+                    // logger()->error('Failed to create OrderStatusTxn: ' . $e->getMessage());
+                }
+
+                // Notify user about successful payment
+                try {
+                    $link = url('/user/orders/' . $order->id);
+                    $title = 'Payment Received';
+                    $message = "Your payment of Rs. {$finalAmount} for order {$order->code} has been received.";
+                    $icon = 'bx bx-credit-card';
+                    $user->notify(new NewOrderNotification($title, $message, $link, $icon));
+                } catch (\Exception $e) {
+                    // logger()->error('Failed to send payment notification: ' . $e->getMessage());
+                }
+            } catch (\Exception $ex) {
+                DB::rollBack();
+                return response()->json([
+                    'message' => 'Failed to update order payment status: ' . $ex->getMessage()
                 ], 500);
             }
 

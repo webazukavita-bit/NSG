@@ -160,7 +160,6 @@ class DashboardController extends Controller
     //////  for user dashboard///
     public function Myprofile()
     {
-<<<<<<< HEAD
 
         // if (Auth::user()->role_id == 4) {
         $user = Auth::user();
@@ -173,12 +172,5 @@ class DashboardController extends Controller
         // } else {
         //     return redirect('/');
         // }
-=======
-        $user = Auth::user();
-        $order = Order::with(['user', 'status', 'paymentStatus'])->where('order_by_id', $user->id)->latest()->limit(10)->get();
-        $orderCount = Order::where('order_by_id', $user->id)->count();
-        $todayorder = Order::where('order_by_id', $user->id)->whereDate('created_at', today())->count();
-        return view('front.Myprofile', compact('orderCount', 'todayorder', 'order'));
->>>>>>> 360ddc26dbad4cd0f3cad7bb9cc5963e72781074
     }
 }

@@ -13,6 +13,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\TrainingController;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Auth;
 
 // Route::get('/', function () {
@@ -20,7 +21,27 @@ use Illuminate\Support\Facades\Auth;
 // });
 
 Auth::routes();
+Route::get('/run-migrate', function () {
 
+
+    try {
+        Artisan::call('migrate', [
+            '--force' => true // Needed to bypass confirmation in production
+        ]);
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Migration run successfully.',
+            'output' => Artisan::output()
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'status' => false,
+            'message' => 'Migration failed.',
+            'error' => $e->getMessage()
+        ]);
+    }
+});
 Route::get('/', [HomeController::class, 'index']);
 Route::get('/home', [HomeController::class, 'index'])->name('home');
 Route::get('/refund', [HomeController::class, 'static_content'])->name('refund-policy');

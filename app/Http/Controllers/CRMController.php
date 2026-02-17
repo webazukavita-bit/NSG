@@ -49,11 +49,40 @@ class CRMController extends Controller
                         });
         }
 
+        // Filter by client name
+        if ($request->has('client_name') && !empty($request->client_name)) {
+            $query = $query->where('user_name', $request->client_name);
+        }
+
+        // Filter by company name
+        if ($request->has('company_name') && !empty($request->company_name)) {
+            $query = $query->where('company_name', $request->company_name);
+        }
+
         $data = $query->get();
+        
+        // Get unique clients and companies for filter dropdowns
         if ($role_type == "Admin") {
-            return view('admin.crm.lead.list', compact('data','employees'));
+            $allLeads = Lead::withTrashed()->latest()->get();
+        } elseif ($user->role_id == 5) {
+            $allLeads = Lead::latest()
+                        ->where(function ($q) use ($user) {
+                            $q->where('assigned_to', $user->id)->orWhere('created_by', $user->id)->orWhereNull('assigned_to'); 
+                        })->get();
         } else {
-            return view('admin.crm.lead.for-emp-list', compact('data','employees'));
+            $allLeads = Lead::latest()
+                        ->where(function ($q) use ($user) {
+                            $q->where('assigned_to', $user->id)->orWhere('created_by', $user->id);
+                        })->get();
+        }
+        
+        $uniqueClients = $allLeads->pluck('user_name')->unique()->sort()->values();
+        $uniqueCompanies = $allLeads->pluck('company_name')->unique()->sort()->values();
+        
+        if ($role_type == "Admin") {
+            return view('admin.crm.lead.list', compact('data','employees', 'uniqueClients', 'uniqueCompanies'));
+        } else {
+            return view('admin.crm.lead.for-emp-list', compact('data','employees', 'uniqueClients', 'uniqueCompanies'));
         }
     }
 
@@ -65,9 +94,6 @@ class CRMController extends Controller
         $cities = [];
         if(!empty($country_id)) {
             $states = State::where(['country_id' => $country_id])->orderBy('name', 'asc')->get();
-        }
-        if(!empty($address->state_id)) {
-            $cities = Citie::where(['state_id' => $address->state_id])->orderBy('name', 'asc')->get();
         }
         return view('admin.crm.lead.add',compact('countrie','states','cities','country_id'));
     }
