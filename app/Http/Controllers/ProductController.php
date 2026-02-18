@@ -26,16 +26,16 @@ class ProductController extends Controller
 
     public function categories(Request $request)
     {
-        $query = ProductCategory::withTrashed()->latest();
-        
-        // Filter by name if search parameter exists
-        if ($request->has('search') && !empty($request->search)) {
-            $query = $query->where('name', 'like', '%' . $request->search . '%');
+        $query = ProductCategory::withTrashed();
+
+        // Apply search filter
+        if ($request->filled('search')) {
+            $query->where('name', 'like', '%' . $request->search . '%');
         }
-        
-        $data = $query->get();
-        $allCategories = ProductCategory::withTrashed()->latest()->get();
-        
+
+        $data = $query->latest()->get();
+        $allCategories = ProductCategory::select('id', 'name')->get(); // For filter dropdown
+
         return view('admin.product.category.list', compact('data', 'allCategories'));
     }
 
@@ -48,26 +48,12 @@ class ProductController extends Controller
     {
         $request->merge(['slug' => Str::slug($request->name)]);
 
-        // $request->validate([
-        //     'name'  => 'required|string|max:255',
-        //     'slug'  => 'required|string|unique:categories,slug',
-        //     'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
-        //     'file_size' => 'required|numeric|min:0'
-        // ]);
-        $request->validate(
-            [
-                'name'  => 'required|string|max:255',
-                'slug'  => 'required|string|unique:categories,slug',
-                'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
-                'file_size' => 'required|numeric|min:0'
-            ],
-            [
-                'slug.unique' => 'This category already exists.'
-            ]
-        );
-        if (ProductCategory::where('slug', $request->slug)->exists()) {
-            return redirect()->route('product-categories')->with('error', 'Category already exist.');
-        }
+        $request->validate([
+            'name'  => 'required|string|max:255',
+            'slug'  => 'required|string|unique:categories,slug',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
+            'file_size' => 'required|numeric|min:0'
+        ]);
 
         $category = new ProductCategory();
         $category->name = $request->name;
@@ -481,7 +467,7 @@ class ProductController extends Controller
             $variant = new Product();
             $variant->parent_id         = $request->parent_product_id;
             $variant->category_id       = $request->category_id;
-            //$variant->brand_id          = $request->brand_id;
+            // $variant->brand_id          = $request->brand_id;
             $variant->name              = $request->name;
             $variant->slug              = $request->slug;
 
@@ -490,8 +476,8 @@ class ProductController extends Controller
             $variant->disc_price        = $request->disc_price;
             $variant->max_quantity      =  $request->max_quantity;
             $variant->min_quantity      =  $request->min_quantity;
-            $variant->specifications = $request->content;
-            $variant->charge_details = $charges;
+            $variant->specifications    = $request->content;
+            $variant->charge_details    = $charges;
 
 
             $imageFiles = [];
@@ -726,19 +712,10 @@ class ProductController extends Controller
 
 
 
-    public function brands(Request $request)
+    public function brands()
     {
-        $query = Brand::withTrashed()->latest();
-        
-        // Filter by brand name if search parameter exists
-        if ($request->has('search') && !empty($request->search)) {
-            $query = $query->where('name', $request->search);
-        }
-        
-        $data = $query->get();
-        $allBrands = Brand::withTrashed()->latest()->get();
-        
-        return view('admin.product.brand.list', compact('data', 'allBrands'));
+        $data = Brand::withTrashed()->latest()->get();
+        return view('admin.product.brand.list', compact('data'));
     }
 
     public function brandAdd()
@@ -838,35 +815,31 @@ class ProductController extends Controller
     {
         $query = Order::with(['user', 'status', 'paymentStatus']);
 
-        // Role-based filtering
         if (Auth::user()->role_id == 1) {
             // Admin can see all orders
         } else {
-            // Other roles see assigned orders or unassigned orders
-            $query = $query->where(function($q) {
+            // Employees can see orders assigned to them or unassigned
+            $query->where(function ($q) {
                 $q->where('assigned_to', Auth::user()->id)
-                  ->orWhere('assigned_to', 0);
+                    ->orWhere('assigned_to', 0);
             });
         }
 
-        // Filter by user
-        if ($request->has('user_id') && !empty($request->user_id)) {
-            $query = $query->where('user_id', $request->user_id);
+        // Apply filters
+        if ($request->filled('user_id')) {
+            $query->where('user_id', $request->user_id);
         }
 
-        // Filter by order status
-        if ($request->has('status_id') && !empty($request->status_id)) {
-            $query = $query->where('order_status_id', $request->status_id);
-        }
-
-        // Filter by payment status
-        if ($request->has('payment_status') && !empty($request->payment_status)) {
-            $query = $query->where('payment_status', $request->payment_status);
+        if ($request->filled('status_id')) {
+            $query->where('order_status_id', $request->status_id);
         }
 
         $order = $query->get();
         $orderstatus = OrderStatus::orderBy('id')->get();
         $employee = User::where('role_id', 2)->get();
+
+        // Get all users for the filter dropdown
+        $users = User::select('id', 'name')->get();
 
         if ($orderstatus->count() == 0) {
             $orderstatus = collect([
@@ -877,7 +850,7 @@ class ProductController extends Controller
             ]);
         }
 
-        return view('admin.order.list', compact('order', 'orderstatus', 'employee'));
+        return view('admin.order.list', compact('order', 'orderstatus', 'employee', 'users'));
     }
     public function orderaccept($id)
     {
@@ -1296,88 +1269,5 @@ class ProductController extends Controller
         $values = Variation::where('parent_id', $id)->get();
 
         return response()->json($values);
-    }
-    public function index()
-    {
-        $orderStatus = OrderStatus::orderBy('order_by')->get();
-        return view('admin.orderstatus.index', compact('orderStatus'));
-    }
-
-    public function create()
-    {
-        return view('admin.orderstatus.add');
-    }
-
-    public function store(Request $request)
-    {
-        $request->validate([
-            'name'       => 'required|string|max:255',
-            'color'      => 'required',
-            'image_icon' => 'required|image|mimes:png,jpg,jpeg,svg,webp|max:2048',
-        ]);
-
-        // upload image
-        $imageName = null;
-        if ($request->hasFile('image_icon')) {
-            $imageName = time() . '_' . $request->image_icon->getClientOriginalName();
-            $request->image_icon->move(public_path('images/order-status'), $imageName);
-        }
-
-        OrderStatus::create([
-            'name'       => $request->name,
-            'for'        => 'ORDER',
-            'order_by'   => $request->order_by,
-            'color'      => $request->color,
-            'image_icon' => $imageName,
-        ]);
-
-        return redirect()->route('order-status.index')
-            ->with('success', 'Order Status Created Successfully');
-    }
-
-    public function edit($id)
-    {
-        $orderStatus = OrderStatus::findOrFail($id);
-        return view('admin.orderstatus.edit', compact('orderStatus'));
-    }
-
-    public function update(Request $request, $id)
-    {
-        // dd($request->all());
-        $request->validate([
-            'name'       => 'required|string|max:255',
-            'color'      => 'required',
-            'image_icon' => 'required',
-        ]);
-
-        $orderStatus = OrderStatus::findOrFail($id);
-
-        $imageName = $orderStatus->image_icon;
-
-
-        if ($request->hasFile('image_icon')) {
-            $imageName = time() . '_' . $request->image_icon->getClientOriginalName();
-            $request->image_icon->move(public_path('images/order-status'), $imageName);
-        }
-        // dd($imageName);
-        $orderStatus->update([
-            'name'       => $request->name,
-            'for'        => 'ORDER',
-            'order_by'   => $request->order_by,
-            'color'      => $request->color,
-            'image_icon' => $imageName,
-        ]);
-
-        return redirect()->route('order-status.index')
-            ->with('success', 'Order Status Updated Successfully');
-    }
-
-
-    public function destroy($id)
-    {
-        OrderStatus::findOrFail($id)->delete();
-
-        return redirect()->route('order-status.index')
-            ->with('success', 'Order Status Deleted Successfully');
     }
 }

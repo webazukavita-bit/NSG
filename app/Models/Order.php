@@ -53,7 +53,7 @@ class Order extends Model
 
     public function status()
     {
-        return $this->belongsTo(OrderStatus::class, 'order_status_id')->withTrashed();
+        return $this->belongsTo(OrderStatus::class, 'order_status_id');
     }
     public function paymentStatus()
     {

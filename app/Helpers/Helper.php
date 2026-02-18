@@ -150,21 +150,18 @@ class Helper
             return ['status' => 'error', 'message' => 'Wallet balance is low.'];
         }
 
-        $debitAmount = abs((float)$data['amount']);
-
-        if ($wallet_bal < $debitAmount) {
-            return ['status' => 'error', 'message' => 'Insufficient balance.'];
-        }
 
         $ledgerBalance = Ledger::where('user_id', $data['user_id'])
             ->where('bal_type', $ledgerType)
             ->sum(DB::raw('cramount - dramount'));
 
-        // Allow for small floating point differences (0.01 tolerance)
-        if (abs((float)$wallet_bal - (float)$ledgerBalance) > 0.01) {
-            return ['status' => 'error', 'message' => 'Wallet balance mismatch. Please contact support.'];
+
+        if ((float)$wallet_bal !== (float)$ledgerBalance) {
+            return ['status' => 'error', 'message' => 'Wallet balance is low.'];
         }
 
+
+        $debitAmount = abs((float)$data['amount']);
         $current_bal = $wallet_bal - $debitAmount;
 
         if ($current_bal < 0) {

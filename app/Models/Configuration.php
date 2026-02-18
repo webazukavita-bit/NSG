@@ -38,12 +38,12 @@ class Configuration extends Model
 
     public static function Create($data)
     {
-        return Configuration::query()->insert($data);
+        return $this->insert($data);
     }
 
     public static function UpdateData($id, $data)
     {
-        return Configuration::where('id',$id)->update($data);
+        return $this->where('id',$id)->update($data);
     }
 
     public static function GetById($id)
