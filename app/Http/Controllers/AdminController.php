@@ -23,6 +23,7 @@ use App\Models\State;
 use App\Models\Citie;
 use App\Models\User;
 use App\Models\Role;
+use App\Models\Department;
 use App\Models\Wallet;
 use App\Models\Kyc;
 use Illuminate\Support\Facades\Auth;
@@ -496,7 +497,8 @@ class AdminController extends Controller
         $roles = Role::where('type', 'Employee')->get();
         $countrie = Countrie::orderBy('name', 'asc')->get();
         $country_id = $countrie[0]->id ?? '';
-        return view('admin.user.employees.create', compact('roles', 'countrie', 'country_id'));
+        $department = Department::orderBy('name', 'asc')->get();
+        return view('admin.user.employees.create', compact('roles', 'countrie', 'country_id', 'department'));
     }
 
 

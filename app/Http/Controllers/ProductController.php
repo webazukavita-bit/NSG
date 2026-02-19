@@ -12,11 +12,8 @@ use App\Models\OrderStatus;
 use App\Models\ProductVariation;
 use App\Models\User;
 use App\Models\Variation;
-<<<<<<< HEAD
 use App\Models\Address;
 use App\Models\CompanyBank;
-=======
->>>>>>> fac25bf97f0964bff9ae18d343c7e2fc9fd85514
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -848,6 +845,7 @@ class ProductController extends Controller
         // Filter by order status
         if ($request->has('status_id') && !empty($request->status_id)) {
             $query = $query->where('order_status_id', $request->status_id);
+        }
 
         $order = $query->get();
         $orderstatus = OrderStatus::orderBy('id')->get();
@@ -865,9 +863,9 @@ class ProductController extends Controller
                 (object)['id' => 4, 'name' => 'Cancelled'],
             ]);
 
-<<<<<<< HEAD
 
         return view('admin.order.list', compact('order', 'orderstatus', 'employee', 'users'));
+    }
     }
     public function orderaccept($id)
     {
@@ -941,8 +939,7 @@ class ProductController extends Controller
 
         $product = json_decode($order->product_details, true) ?? [];
         $address = json_decode($order->address, true);
-<<<<<<< HEAD
-        $address = is_array($address) ? $address : [];
+
 
         if (empty($address)) {
             $addr = Address::with(['city', 'state'])->where('user_id', $order->user_id)->latest('id')->first();
@@ -957,9 +954,6 @@ class ProductController extends Controller
                 ];
             }
         }
-=======
->>>>>>> fac25bf97f0964bff9ae18d343c7e2fc9fd85514
-
         $subTotal = 0;
 
         if (is_array($product) && isset($product['price']) && isset($product['quantity'])) {
@@ -968,7 +962,6 @@ class ProductController extends Controller
             $subTotal = $price * $quantity;
         }
 
-<<<<<<< HEAD
         // Calculate tax amounts
         $cgst = round($subTotal * 0.09, 2);
         $sgst = round($subTotal * 0.09, 2);
@@ -976,23 +969,16 @@ class ProductController extends Controller
         $finalAmount = $subTotal + $cgst + $sgst + $cartage;
         $companyBank = CompanyBank::with('bank')->latest('id')->first();
 
-=======
->>>>>>> fac25bf97f0964bff9ae18d343c7e2fc9fd85514
         return view('admin.order.invoice', [
             'order'       => $order,
             'user'        => $user,
             'products'     => $product,
             'subTotal'    => $subTotal,
-<<<<<<< HEAD
             'cgst'        => $cgst,
             'sgst'        => $sgst,
-            'cartage'     => $cartage,
             'finalAmount' => $finalAmount,
             'address'     => $address,
             'companyBank' => $companyBank,
-=======
-            'address'     => $address,
->>>>>>> fac25bf97f0964bff9ae18d343c7e2fc9fd85514
         ]);
     }
 

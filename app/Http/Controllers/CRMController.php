@@ -50,10 +50,14 @@ class CRMController extends Controller
         }
 
         $data = $query->get();
+        // Prepare filters: unique client names and company names
+        $uniqueClients = Lead::select('user_name')->distinct()->pluck('user_name')->filter()->values();
+        $uniqueCompanies = Lead::select('company_name')->distinct()->pluck('company_name')->filter()->values();
+
         if ($role_type == "Admin") {
-            return view('admin.crm.lead.list', compact('data','employees'));
+            return view('admin.crm.lead.list', compact('data','employees','uniqueClients','uniqueCompanies'));
         } else {
-            return view('admin.crm.lead.for-emp-list', compact('data','employees'));
+            return view('admin.crm.lead.for-emp-list', compact('data','employees','uniqueClients','uniqueCompanies'));
         }
     }
 

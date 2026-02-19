@@ -19,7 +19,7 @@
 
         <hr>
 
-      <form action="{{ route('department.update', ['id' => $department->id]) }}"
+      <form action="{{ route('department.update', ['id' => $data->id]) }}"
               method="POST"
               class="row g-3">
             @csrf
@@ -33,7 +33,7 @@
                        id="name"
                        class="form-control @error('name') is-invalid @enderror"
                        placeholder="Enter Department Name"
-                       value="{{ old('name', $department->name) }}"
+                       value="{{ old('name', $data->name) }}"
                        required>
                 @error('name')
                     <div class="invalid-feedback">{{ $message }}</div>
@@ -49,7 +49,7 @@
                        id="slug"
                        class="form-control @error('slug') is-invalid @enderror"
                        placeholder="department-slug"
-                       value="{{ old('slug', $department->slug) }}"
+                       value="{{ old('slug', $data->slug) }}"
                        required>
                 @error('slug')
                     <div class="invalid-feedback">{{ $message }}</div>
