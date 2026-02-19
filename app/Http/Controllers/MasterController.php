@@ -49,9 +49,7 @@ class MasterController extends Controller
 
 
     public function updateConfig(Request $request)
-    {
         $request->request->remove('_token');
-        
         foreach ($request->all() as $key => $value) {
 
             $settingKey = str_replace('app_', 'app.', $key);
@@ -127,12 +125,12 @@ class MasterController extends Controller
     public function staticContentEdit($id, Request $request)
     {
         $data = StaticContent::withTrashed()->findOrFail($id);
+<<<<<<< HEAD
         return view('admin.setting.static-content-edit',compact('data'));
     }
     
-    public function staticContentUpdate($id, Request $request)
-    {
-        $data = StaticContent::withTrashed()->findOrFail($id);
+        return view('admin.setting.static-content-edit', compact('data'));
+    }
 
         $validated = $request->validate([
             'title' => 'required|string|max:255',
@@ -144,12 +142,21 @@ class MasterController extends Controller
         $check = $data->save();
 
         if ($check) {
+<<<<<<< HEAD
                 return redirect()->route('static-content')->with(['success' => 'Content Update Successfully,']);
         } else {
                 return redirect()->route('static-content')->with(['error' => 'Content Not Update.']);
         }
     }
     
+=======
+            return redirect()->route('static-content')->with(['success' => 'Content Update Successfully,']);
+        } else {
+            return redirect()->route('static-content')->with(['error' => 'Content Not Update.']);
+        }
+    }
+
+>>>>>>> fac25bf97f0964bff9ae18d343c7e2fc9fd85514
     public function staticContentStatus($id, Request $request)
     {
         $data = StaticContent::withTrashed()->findOrFail($id);
@@ -164,6 +171,7 @@ class MasterController extends Controller
 
         return redirect()->route('static-content')->with('success', $message);
     }
+<<<<<<< HEAD
     
 
 
@@ -180,6 +188,24 @@ class MasterController extends Controller
         return view('admin.master.role.add');
     }
     
+=======
+
+
+
+
+
+    public function roles(Request $request)
+    {
+        $data = Role::withTrashed()->get();
+        return view('admin.master.role.list', compact('data'));
+    }
+
+    public function roleAdd(Request $request)
+    {
+        return view('admin.master.role.add');
+    }
+
+>>>>>>> fac25bf97f0964bff9ae18d343c7e2fc9fd85514
     public function roleStore(Request $request)
     {
         $request->validate([
@@ -188,7 +214,11 @@ class MasterController extends Controller
             'order_by' => 'required|integer|min:1',
             'show' => 'required|string|in:Yes,No',
         ]);
+<<<<<<< HEAD
             
+=======
+
+>>>>>>> fac25bf97f0964bff9ae18d343c7e2fc9fd85514
         $check = Role::create([
             'type' => $request->type,
             'name' => $request->name,
@@ -197,6 +227,7 @@ class MasterController extends Controller
         ]);
 
         if ($check) {
+<<<<<<< HEAD
                 return redirect()->route('roles')->with(['success'=> 'Role Added Successfully,']);
         } else {
                 return redirect()->route('roles')->with(['error'=> 'Role Not Added.']);
@@ -209,13 +240,31 @@ class MasterController extends Controller
         return view('admin.master.role.edit',compact('data'));
     }
     
+=======
+            return redirect()->route('roles')->with(['success' => 'Role Added Successfully,']);
+        } else {
+            return redirect()->route('roles')->with(['error' => 'Role Not Added.']);
+        }
+    }
+
+    public function roleEdit($id, Request $request)
+    {
+        $data = Role::withTrashed()->findOrFail($id);
+        return view('admin.master.role.edit', compact('data'));
+    }
+
+>>>>>>> fac25bf97f0964bff9ae18d343c7e2fc9fd85514
     public function roleUpdate($id, Request $request)
     {
         $data = Role::withTrashed()->findOrFail($id);
 
         $validated = $request->validate([
             'type' => 'required|string|in:Employee,Manager,Admin',
+<<<<<<< HEAD
             'name' => 'required|string|max:100|unique:roles,name,'.$id,
+=======
+            'name' => 'required|string|max:100|unique:roles,name,' . $id,
+>>>>>>> fac25bf97f0964bff9ae18d343c7e2fc9fd85514
             'order_by' => 'required|integer|min:1',
             'show' => 'required|string|in:Yes,No',
         ]);
@@ -227,12 +276,21 @@ class MasterController extends Controller
         $check = $data->save();
 
         if ($check) {
+<<<<<<< HEAD
                 return redirect()->route('roles')->with(['success'=> 'Role Update Successfully,']);
         } else {
                 return redirect()->route('roles')->with(['error'=> 'Role Not Update.']);
         }
     }
     
+=======
+            return redirect()->route('roles')->with(['success' => 'Role Update Successfully,']);
+        } else {
+            return redirect()->route('roles')->with(['error' => 'Role Not Update.']);
+        }
+    }
+
+>>>>>>> fac25bf97f0964bff9ae18d343c7e2fc9fd85514
     public function roleDelete($id, Request $request)
     {
         $data = Role::withTrashed()->findOrFail($id);
@@ -247,19 +305,32 @@ class MasterController extends Controller
 
         return redirect()->route('roles')->with('success', $message);
     }
+<<<<<<< HEAD
    
      
     public function countries(Request $request)
     {
         $data = Countrie::withTrashed()->get();
         return view('admin.master.country.list',compact('data'));
+=======
+
+
+    public function countries(Request $request)
+    {
+        $data = Countrie::withTrashed()->get();
+        return view('admin.master.country.list', compact('data'));
+>>>>>>> fac25bf97f0964bff9ae18d343c7e2fc9fd85514
     }
 
     public function countryAdd(Request $request)
     {
         return view('admin.master.country.add');
     }
+<<<<<<< HEAD
     
+=======
+
+>>>>>>> fac25bf97f0964bff9ae18d343c7e2fc9fd85514
     public function countryStore(Request $request)
     {
         $request->validate([
@@ -273,7 +344,11 @@ class MasterController extends Controller
             'latitude' => 'required|numeric|between:-90,90',
             'longitude' => 'required|numeric|between:-180,180',
         ]);
+<<<<<<< HEAD
             
+=======
+
+>>>>>>> fac25bf97f0964bff9ae18d343c7e2fc9fd85514
         $check = Countrie::create([
             'name' => $request->name,
             'iso2' => $request->iso2,
@@ -287,6 +362,7 @@ class MasterController extends Controller
         ]);
 
         if ($check) {
+<<<<<<< HEAD
                 return redirect()->route('countries')->with(['success'=> 'Country Added Successfully,']);
         } else {
                 return redirect()->route('countries')->with(['error'=> 'Country Not Added.']);
@@ -299,22 +375,47 @@ class MasterController extends Controller
         return view('admin.master.country.edit',compact('data'));
     }
     
+=======
+            return redirect()->route('countries')->with(['success' => 'Country Added Successfully,']);
+        } else {
+            return redirect()->route('countries')->with(['error' => 'Country Not Added.']);
+        }
+    }
+
+    public function countryEdit($id, Request $request)
+    {
+        $data = Countrie::withTrashed()->findOrFail($id);
+        return view('admin.master.country.edit', compact('data'));
+    }
+
+>>>>>>> fac25bf97f0964bff9ae18d343c7e2fc9fd85514
     public function countryUpdate($id, Request $request)
     {
         $data = Countrie::withTrashed()->findOrFail($id);
 
         $request->validate([
+<<<<<<< HEAD
             'name' => 'required|string|max:255|unique:countries,name,'.$id,
             'iso2' => 'required|string|size:2|unique:countries,iso2,'.$id,
             'iso3' => 'required|string|size:3|unique:countries,iso3,'.$id,
             'phonecode' => 'required|numeric|unique:countries,phonecode,'.$id,
+=======
+            'name' => 'required|string|max:255|unique:countries,name,' . $id,
+            'iso2' => 'required|string|size:2|unique:countries,iso2,' . $id,
+            'iso3' => 'required|string|size:3|unique:countries,iso3,' . $id,
+            'phonecode' => 'required|numeric|unique:countries,phonecode,' . $id,
+>>>>>>> fac25bf97f0964bff9ae18d343c7e2fc9fd85514
             'capital' => 'required|string|max:255',
             'currency' => 'required|string|max:3',
             'currency_symbol' => 'required|string|max:5',
             'latitude' => 'required|numeric|between:-90,90',
             'longitude' => 'required|numeric|between:-180,180',
         ]);
+<<<<<<< HEAD
             
+=======
+
+>>>>>>> fac25bf97f0964bff9ae18d343c7e2fc9fd85514
         $data->name = $request->name;
         $data->iso2 = $request->iso2;
         $data->iso3 = $request->iso3;
@@ -327,12 +428,21 @@ class MasterController extends Controller
         $check = $data->save();
 
         if ($check) {
+<<<<<<< HEAD
                 return redirect()->route('countries')->with(['success'=> 'Country Update Successfully,']);
         } else {
                 return redirect()->route('countries')->with(['error'=> 'Country Not Update.']);
         }
     }
     
+=======
+            return redirect()->route('countries')->with(['success' => 'Country Update Successfully,']);
+        } else {
+            return redirect()->route('countries')->with(['error' => 'Country Not Update.']);
+        }
+    }
+
+>>>>>>> fac25bf97f0964bff9ae18d343c7e2fc9fd85514
     public function countryDelete($id, Request $request)
     {
         $data = Countrie::withTrashed()->findOrFail($id);
@@ -352,22 +462,37 @@ class MasterController extends Controller
     public function states(Request $request)
     {
         $countrie = Countrie::withTrashed()->orderBy('name', 'asc')->get();
+<<<<<<< HEAD
         
         if(empty($request->country_id)) {
+=======
+
+        if (empty($request->country_id)) {
+>>>>>>> fac25bf97f0964bff9ae18d343c7e2fc9fd85514
             // $request->merge(['country_id' => $countrie[0]->id??'0']);
             $request->merge(['country_id' => '101']);
         }
 
         $data = State::with('country')->where('country_id', $request->country_id)->withTrashed()->get();
+<<<<<<< HEAD
         return view('admin.master.state.list',compact('data','countrie'));
+=======
+        return view('admin.master.state.list', compact('data', 'countrie'));
+>>>>>>> fac25bf97f0964bff9ae18d343c7e2fc9fd85514
     }
 
     public function stateAdd(Request $request)
     {
         $countrie = Countrie::withTrashed()->get();
+<<<<<<< HEAD
         return view('admin.master.state.add',compact('countrie'));
     }
     
+=======
+        return view('admin.master.state.add', compact('countrie'));
+    }
+
+>>>>>>> fac25bf97f0964bff9ae18d343c7e2fc9fd85514
     public function stateStore(Request $request)
     {
         $request->validate([
@@ -391,7 +516,11 @@ class MasterController extends Controller
             'latitude' => 'required|numeric|between:-90,90',
             'longitude' => 'required|numeric|between:-180,180',
         ]);
+<<<<<<< HEAD
             
+=======
+
+>>>>>>> fac25bf97f0964bff9ae18d343c7e2fc9fd85514
         $check = State::create([
             'name' => $request->name,
             'iso2' => $request->iso2,
@@ -400,19 +529,34 @@ class MasterController extends Controller
         ]);
 
         if ($check) {
+<<<<<<< HEAD
                 return redirect()->route('states')->with(['success'=> 'State Added Successfully,']);
         } else {
                 return redirect()->route('states')->with(['error'=> 'State Not Added.']);
         }
     }
     
+=======
+            return redirect()->route('states')->with(['success' => 'State Added Successfully,']);
+        } else {
+            return redirect()->route('states')->with(['error' => 'State Not Added.']);
+        }
+    }
+
+>>>>>>> fac25bf97f0964bff9ae18d343c7e2fc9fd85514
     public function stateEdit($id, Request $request)
     {
         $data = State::withTrashed()->findOrFail($id);
         $countrie = Countrie::withTrashed()->get();
+<<<<<<< HEAD
         return view('admin.master.state.edit',compact('data','countrie'));
     }
     
+=======
+        return view('admin.master.state.edit', compact('data', 'countrie'));
+    }
+
+>>>>>>> fac25bf97f0964bff9ae18d343c7e2fc9fd85514
     public function stateUpdate($id, Request $request)
     {
         $data = State::withTrashed()->findOrFail($id);
@@ -439,7 +583,11 @@ class MasterController extends Controller
             'latitude' => 'required|numeric|between:-90,90',
             'longitude' => 'required|numeric|between:-180,180',
         ]);
+<<<<<<< HEAD
             
+=======
+
+>>>>>>> fac25bf97f0964bff9ae18d343c7e2fc9fd85514
         $data->name = $request->name;
         $data->iso2 = $request->iso2;
         $data->latitude = $request->latitude;
@@ -447,12 +595,21 @@ class MasterController extends Controller
         $check = $data->save();
 
         if ($check) {
+<<<<<<< HEAD
                 return redirect()->route('states')->with(['success'=> 'State Update Successfully,']);
         } else {
                 return redirect()->route('states')->with(['error'=> 'State Not Update.']);
         }
     }
     
+=======
+            return redirect()->route('states')->with(['success' => 'State Update Successfully,']);
+        } else {
+            return redirect()->route('states')->with(['error' => 'State Not Update.']);
+        }
+    }
+
+>>>>>>> fac25bf97f0964bff9ae18d343c7e2fc9fd85514
     public function stateDelete($id, Request $request)
     {
         $data = State::withTrashed()->findOrFail($id);
@@ -470,18 +627,28 @@ class MasterController extends Controller
 
 
 
+<<<<<<< HEAD
     
+=======
+
+>>>>>>> fac25bf97f0964bff9ae18d343c7e2fc9fd85514
 
     public function cities(Request $request)
     {
         $countrie = Countrie::withTrashed()->orderBy('name', 'asc')->get();
+<<<<<<< HEAD
         
         if(empty($request->country_id)) {
+=======
+
+        if (empty($request->country_id)) {
+>>>>>>> fac25bf97f0964bff9ae18d343c7e2fc9fd85514
             // $request->merge(['country_id' => $countrie[0]->id??'0']);
             $request->merge(['country_id' => '101']);
         }
 
         $states = State::where('country_id', $request->country_id)->withTrashed()->orderBy('name', 'asc')->get();
+<<<<<<< HEAD
      
         if(empty($request->state_id)) {
             $request->merge(['state_id' => $states[0]->id??'0']);
@@ -490,6 +657,16 @@ class MasterController extends Controller
         $data = Citie::with('country','state')->where(['country_id' => $request->country_id,'state_id' => $request->state_id])->withTrashed()->get();
 
         return view('admin.master.city.list', compact('data','countrie','states'));
+=======
+
+        if (empty($request->state_id)) {
+            $request->merge(['state_id' => $states[0]->id ?? '0']);
+        }
+
+        $data = Citie::with('country', 'state')->where(['country_id' => $request->country_id, 'state_id' => $request->state_id])->withTrashed()->get();
+
+        return view('admin.master.city.list', compact('data', 'countrie', 'states'));
+>>>>>>> fac25bf97f0964bff9ae18d343c7e2fc9fd85514
     }
 
     public function cityAdd(Request $request)
@@ -497,7 +674,11 @@ class MasterController extends Controller
         $countrie = Countrie::withTrashed()->orderBy('name', 'asc')->get();
         return view('admin.master.city.add', compact('countrie'));
     }
+<<<<<<< HEAD
     
+=======
+
+>>>>>>> fac25bf97f0964bff9ae18d343c7e2fc9fd85514
     public function cityStore(Request $request)
     {
         $request->validate([
@@ -507,8 +688,13 @@ class MasterController extends Controller
             'latitude' => 'required|numeric|between:-90,90',
             'longitude' => 'required|numeric|between:-180,180'
         ]);
+<<<<<<< HEAD
   
         
+=======
+
+
+>>>>>>> fac25bf97f0964bff9ae18d343c7e2fc9fd85514
         $check = Citie::create([
             'name' => $request->name,
             'country_id' => $request->country_id,
@@ -518,18 +704,31 @@ class MasterController extends Controller
         ]);
 
         if ($check) {
+<<<<<<< HEAD
                 return redirect()->route('cities')->with(['success'=> 'City Added Successfully,']);
         } else {
                 return redirect()->route('cities')->with(['error'=> 'City Not Added.']);
         }
     }
     
+=======
+            return redirect()->route('cities')->with(['success' => 'City Added Successfully,']);
+        } else {
+            return redirect()->route('cities')->with(['error' => 'City Not Added.']);
+        }
+    }
+
+>>>>>>> fac25bf97f0964bff9ae18d343c7e2fc9fd85514
     public function cityEdit($id, Request $request)
     {
         $data = Citie::withTrashed()->findOrFail($id);
         $countrie = Countrie::withTrashed()->orderBy('name', 'asc')->get();
         $states = State::where('country_id', $data->country_id)->withTrashed()->orderBy('name', 'asc')->get();
+<<<<<<< HEAD
         return view('admin.master.city.edit',compact('data','countrie','states'));
+=======
+        return view('admin.master.city.edit', compact('data', 'countrie', 'states'));
+>>>>>>> fac25bf97f0964bff9ae18d343c7e2fc9fd85514
     }
 
     public function cityUpdate($id, Request $request)
@@ -537,13 +736,21 @@ class MasterController extends Controller
         $data = Citie::withTrashed()->findOrFail($id);
 
         $request->validate([
+<<<<<<< HEAD
             'name' => 'required|string|max:255|unique:cities,name,'.$id,
+=======
+            'name' => 'required|string|max:255|unique:cities,name,' . $id,
+>>>>>>> fac25bf97f0964bff9ae18d343c7e2fc9fd85514
             'country_id' => 'required|integer|exists:countries,id',
             'state_id' => 'required|integer|exists:states,id',
             'latitude' => 'required|numeric|between:-90,90',
             'longitude' => 'required|numeric|between:-180,180'
         ]);
+<<<<<<< HEAD
             
+=======
+
+>>>>>>> fac25bf97f0964bff9ae18d343c7e2fc9fd85514
         $data->name = $request->name;
         $data->country_id = $request->country_id;
         $data->state_id = $request->state_id;
@@ -552,12 +759,21 @@ class MasterController extends Controller
         $check = $data->save();
 
         if ($check) {
+<<<<<<< HEAD
                 return redirect()->route('cities')->with(['success'=> 'City Update Successfully,']);
         } else {
                 return redirect()->route('cities')->with(['error'=> 'City Not Update.']);
         }
     }
     
+=======
+            return redirect()->route('cities')->with(['success' => 'City Update Successfully,']);
+        } else {
+            return redirect()->route('cities')->with(['error' => 'City Not Update.']);
+        }
+    }
+
+>>>>>>> fac25bf97f0964bff9ae18d343c7e2fc9fd85514
     public function cityDelete($id, Request $request)
     {
         $data = Citie::withTrashed()->findOrFail($id);
@@ -581,15 +797,26 @@ class MasterController extends Controller
 
         $roles = Role::where('show', 'Yes')->get();
 
+<<<<<<< HEAD
         if(empty($role_id)) {
+=======
+        if (empty($role_id)) {
+>>>>>>> fac25bf97f0964bff9ae18d343c7e2fc9fd85514
             $role_id = $roles[0]->id;
         }
 
         $role = Role::where('id', $role_id)->first();
+<<<<<<< HEAD
         
         $modules = Module::orderBy('parent_id')
             ->whereRaw('FIND_IN_SET(?, module_for)', [$role->type])
             ->orderBy('order', 'asc')     
+=======
+
+        $modules = Module::orderBy('parent_id')
+            ->whereRaw('FIND_IN_SET(?, module_for)', [$role->type])
+            ->orderBy('order', 'asc')
+>>>>>>> fac25bf97f0964bff9ae18d343c7e2fc9fd85514
             ->get()
             ->groupBy('parent_id');
 
@@ -597,7 +824,11 @@ class MasterController extends Controller
             $parent->sub_modules = $modules[$parent->id] ?? collect();
             return $parent;
         });
+<<<<<<< HEAD
         
+=======
+
+>>>>>>> fac25bf97f0964bff9ae18d343c7e2fc9fd85514
         return view('admin.master.acm.list', compact('data', 'roles', 'role', 'role_id'));
     }
 
@@ -631,19 +862,34 @@ class MasterController extends Controller
 
         // Convert back to comma-separated string
         $menu->$type = implode(',', $existingUsers);
+<<<<<<< HEAD
         if($request->permission_type == 'add') {
             $menu->role_id_store = implode(',', $existingUsers);   
         }
         if($request->permission_type == 'update') {
             $menu->role_id_edit = implode(',', $existingUsers);   
+=======
+        if ($request->permission_type == 'add') {
+            $menu->role_id_store = implode(',', $existingUsers);
+        }
+        if ($request->permission_type == 'update') {
+            $menu->role_id_edit = implode(',', $existingUsers);
+>>>>>>> fac25bf97f0964bff9ae18d343c7e2fc9fd85514
         }
 
         $menu->save();
 
+<<<<<<< HEAD
         return response()->json([$status=> $message]);
     }
 
  
+=======
+        return response()->json([$status => $message]);
+    }
+
+
+>>>>>>> fac25bf97f0964bff9ae18d343c7e2fc9fd85514
 
     public function whatsappTemplate()
     {
@@ -667,7 +913,11 @@ class MasterController extends Controller
             'mappings.*.api_key' => 'required',
             'mappings.*.data_key' => 'required',
         ]);
+<<<<<<< HEAD
         
+=======
+
+>>>>>>> fac25bf97f0964bff9ae18d343c7e2fc9fd85514
         // Transform the form array: 
         // From: [['api_key' => 'field_1', 'data_key' => 'name'], ...]
         // To:   ['field_1' => 'name', ...]
@@ -683,7 +933,11 @@ class MasterController extends Controller
             'variable_mapping' => $formattedMapping,
         ]);
 
+<<<<<<< HEAD
         if($check){
+=======
+        if ($check) {
+>>>>>>> fac25bf97f0964bff9ae18d343c7e2fc9fd85514
             return redirect()->route('whatsapp-templates')->with('success', 'Template created successfully.');
         } else {
             return redirect()->route('whatsapp-templates')->with('error', 'Template not created.');
@@ -701,7 +955,11 @@ class MasterController extends Controller
     {
         $whatsappTemplate = WhatsappTemplate::findOrFail($id);
         $slug = Str::slug($request->template_name);
+<<<<<<< HEAD
         
+=======
+
+>>>>>>> fac25bf97f0964bff9ae18d343c7e2fc9fd85514
         $request->validate([
             'template_name' => 'required|unique:whatsapp_templates,template_name,' . $whatsappTemplate->id,
             'language' => 'required|min:2|max:10',
@@ -711,9 +969,15 @@ class MasterController extends Controller
         ]);
 
         $formattedMapping = [];
+<<<<<<< HEAD
         if($request->has('mappings')) {
             foreach ($request->mappings as $map) {
                 if(!empty($map['api_key']) && !empty($map['data_key'])) {
+=======
+        if ($request->has('mappings')) {
+            foreach ($request->mappings as $map) {
+                if (!empty($map['api_key']) && !empty($map['data_key'])) {
+>>>>>>> fac25bf97f0964bff9ae18d343c7e2fc9fd85514
                     $formattedMapping[$map['api_key']] = $map['data_key'];
                 }
             }
@@ -726,8 +990,13 @@ class MasterController extends Controller
             'variable_mapping' => $formattedMapping,
         ]);
 
+<<<<<<< HEAD
         
         if($check){
+=======
+
+        if ($check) {
+>>>>>>> fac25bf97f0964bff9ae18d343c7e2fc9fd85514
             return redirect()->route('whatsapp-templates')->with('success', 'Template updated successfully.');
         } else {
             return redirect()->route('whatsapp-templates')->with('error', 'Template not updated.');
@@ -747,16 +1016,25 @@ class MasterController extends Controller
         }
 
         return redirect()->route('whatsapp-templates')->with('success', $message);
+<<<<<<< HEAD
 
     }
 
     
     public function bannerAdd(Request $request)
     {        
+=======
+    }
+
+
+    public function bannerAdd(Request $request)
+    {
+>>>>>>> fac25bf97f0964bff9ae18d343c7e2fc9fd85514
         return view('admin.master.banner.add');
     }
 
 
+<<<<<<< HEAD
     public function banners(){
         $data = Banner::withTrashed()->get();
         return view('admin.master.banner.list',compact('data'));
@@ -775,18 +1053,48 @@ class MasterController extends Controller
             'status'=>'required|in:Active,Inactive',
             'file_type'=>'required|in:image,url',
             'description'=>'nullable|string',
+=======
+    public function banners()
+    {
+        $data = Banner::withTrashed()->get();
+        return view('admin.master.banner.list', compact('data'));
+    }
+
+
+    public function bannerStore(Request $request)
+    {
+
+        $request->validate([
+            'for' => 'required|string|in:Android,Website,Both',
+            'type' => 'required|in:Home Abaut Consalt,Home Offer Banner,Home Offer Zone Banner,Home Our Testimonials,Home Slider,Footer Product Banner,Header Banner,Offer Brand Image,Other',
+            'name' => 'required|string|max:255',
+            'title' => 'nullable|string|max:255',
+            'url' => 'required_if:file_type,url|max:255',
+            'image' => 'required_if:file_type,image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'status' => 'required|in:Active,Inactive',
+            'file_type' => 'required|in:image,url',
+            'description' => 'nullable|string',
+>>>>>>> fac25bf97f0964bff9ae18d343c7e2fc9fd85514
         ]);
 
         $banner = new Banner();
         $banner->for = $request->for;
         $banner->type = $request->type;
+<<<<<<< HEAD
         $banner->name = $request->name;         
+=======
+        $banner->name = $request->name;
+>>>>>>> fac25bf97f0964bff9ae18d343c7e2fc9fd85514
         $banner->title = $request->title;
         $banner->status = $request->status;
         $banner->desc = $request->description;
         $banner->file_type = $request->file_type;
 
+<<<<<<< HEAD
         if($request->file_type=='image') {
+=======
+        if ($request->file_type == 'image') {
+>>>>>>> fac25bf97f0964bff9ae18d343c7e2fc9fd85514
             if ($request->hasFile('image')) {
                 $file = $request->file('image');
                 $fileName = 'banner_' . time() . '.' . $file->getClientOriginalExtension();
@@ -801,13 +1109,18 @@ class MasterController extends Controller
 
         $check = $banner->save();
 
+<<<<<<< HEAD
         if($check) {
+=======
+        if ($check) {
+>>>>>>> fac25bf97f0964bff9ae18d343c7e2fc9fd85514
             return redirect()->route('banners')->with('success', 'Banner created successfully.');
         } else {
             return redirect()->route('banners')->with('error', 'Banner Not created.');
         }
     }
 
+<<<<<<< HEAD
     public function bannerEdit($id){
         $data = Banner::withTrashed()->findOrFail($id);
         return view('admin.master.banner.edit',compact('data'));
@@ -825,24 +1138,60 @@ class MasterController extends Controller
              'status'=>'required|in:Active,Inactive',
              'file_type'=>'required|in:image,url',
             'description'=>'nullable|string',
+=======
+    public function bannerEdit($id)
+    {
+        $data = Banner::withTrashed()->findOrFail($id);
+        return view('admin.master.banner.edit', compact('data'));
+    }
+
+    public function bannerUpdate($id, Request $request)
+    {
+
+        $request->validate([
+            'for' => 'required|string|in:Android,Website,Both',
+            'type' => 'required|in:Home Abaut Consalt,Home Offer Banner,Home Offer Zone Banner,Home Our Testimonials,Home Slider,Footer Product Banner,Header Banner,Offer Brand Image,Other',
+            'name' => 'required|string|max:255',
+            'title' => 'nullable|string|max:255',
+            'url' => 'required_if:file_type,url|max:255',
+            'image' => 'required_if:file_type,image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'status' => 'required|in:Active,Inactive',
+            'file_type' => 'required|in:image,url',
+            'description' => 'nullable|string',
+>>>>>>> fac25bf97f0964bff9ae18d343c7e2fc9fd85514
         ]);
 
 
         $data = Banner::withTrashed()->findOrFail($id);
+<<<<<<< HEAD
         
         $data->for = $request->for;
         $data->type = $request->type;
         $data->name = $request->name;         
+=======
+
+        $data->for = $request->for;
+        $data->type = $request->type;
+        $data->name = $request->name;
+>>>>>>> fac25bf97f0964bff9ae18d343c7e2fc9fd85514
         $data->title = $request->title;
         $data->status = $request->status;
         $data->desc = $request->description;
         $data->file_type = $request->file_type;
 
+<<<<<<< HEAD
         if($request->file_type=='image') {
             if ($request->hasFile('image')) {
 
                 if ($data->image && file_exists(public_path('images/banner/'.$data->image))) {
                     unlink(public_path('images/banner/'.$data->image));
+=======
+        if ($request->file_type == 'image') {
+            if ($request->hasFile('image')) {
+
+                if ($data->image && file_exists(public_path('images/banner/' . $data->image))) {
+                    unlink(public_path('images/banner/' . $data->image));
+>>>>>>> fac25bf97f0964bff9ae18d343c7e2fc9fd85514
                 }
                 $file = $request->file('image');
                 $fileName = 'banner_' . time() . '.' . $file->getClientOriginalExtension();
@@ -851,8 +1200,13 @@ class MasterController extends Controller
                 $data->url = null;
             }
         } else {
+<<<<<<< HEAD
             if($data->image && file_exists(public_path('images/banner/'.$data->image))) {
                 unlink(public_path('images/banner/'.$data->image));
+=======
+            if ($data->image && file_exists(public_path('images/banner/' . $data->image))) {
+                unlink(public_path('images/banner/' . $data->image));
+>>>>>>> fac25bf97f0964bff9ae18d343c7e2fc9fd85514
             }
             $data->image = null;
             $data->url = $request->url;
@@ -860,7 +1214,11 @@ class MasterController extends Controller
 
         $check = $data->save();
 
+<<<<<<< HEAD
         if($check) {
+=======
+        if ($check) {
+>>>>>>> fac25bf97f0964bff9ae18d343c7e2fc9fd85514
             return redirect()->route('banners')->with('success', 'Banner updated successfully.');
         } else {
             return redirect()->route('banners')->with('error', 'Banner Not updated.');
@@ -868,7 +1226,12 @@ class MasterController extends Controller
     }
 
 
+<<<<<<< HEAD
     public function bannerDelete($id){
+=======
+    public function bannerDelete($id)
+    {
+>>>>>>> fac25bf97f0964bff9ae18d343c7e2fc9fd85514
         $data = Banner::withTrashed()->findOrFail($id);
 
         if ($data->trashed()) {
@@ -881,6 +1244,7 @@ class MasterController extends Controller
 
         return redirect()->route('banners')->with('success', $message);
     }
+<<<<<<< HEAD
     
     public function reviewAdd(){
         
@@ -907,12 +1271,44 @@ class MasterController extends Controller
         $check = $reveiew->save();
 
         if($check) {
+=======
+
+    public function reviewAdd()
+    {
+
+        return view('admin.order.client_review.add');
+    }
+
+    public function clientReviews()
+    {
+        $data = ClientReviews::withTrashed()->get();
+        return view('admin.order.client_review.list', compact('data'));
+    }
+
+    public function reviewStore(Request $request)
+    {
+
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'url' => 'required|url|max:255',
+            'content' => 'nullable|string',
+        ]);
+
+        $reveiew = new ClientReviews();
+        $reveiew->title = $request->title;
+        $reveiew->url = $request->url;
+        $reveiew->description = $request->content;
+        $check = $reveiew->save();
+
+        if ($check) {
+>>>>>>> fac25bf97f0964bff9ae18d343c7e2fc9fd85514
             return redirect()->route('client-reviews')->with('success', 'Review created successfully.');
         } else {
             return redirect()->route('client-reviews')->with('error', 'Review Not created.');
         }
     }
 
+<<<<<<< HEAD
     public function reviewEdit($id){
         $data=ClientReviews::withTrashed()->findOrFail($id);
         return view('admin.order.client_review.edit',compact('data'));
@@ -933,14 +1329,44 @@ class MasterController extends Controller
         $check = $data->save();
 
         if($check) {
+=======
+    public function reviewEdit($id)
+    {
+        $data = ClientReviews::withTrashed()->findOrFail($id);
+        return view('admin.order.client_review.edit', compact('data'));
+    }
+
+    public function reviewUpdate($id, Request $request)
+    {
+
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'url' => 'required|url|max:255',
+            'content' => 'nullable|string',
+        ]);
+
+        $data = ClientReviews::withTrashed()->findOrFail($id);
+        $data->title = $request->title;
+        $data->url = $request->url;
+        $data->description = $request->content;
+        $check = $data->save();
+
+        if ($check) {
+>>>>>>> fac25bf97f0964bff9ae18d343c7e2fc9fd85514
             return redirect()->route('client-reviews')->with('success', 'Review updated successfully.');
         } else {
             return redirect()->route('client-reviews')->with('error', 'Review Not updated.');
         }
     }
 
+<<<<<<< HEAD
     public function reviewDelete($id){
         $data = ClientReviews::withTrashed()->findOrFail($id);  
+=======
+    public function reviewDelete($id)
+    {
+        $data = ClientReviews::withTrashed()->findOrFail($id);
+>>>>>>> fac25bf97f0964bff9ae18d343c7e2fc9fd85514
         if ($data->trashed()) {
             $data->restore();
             $message = 'Review restored successfully!';
@@ -949,5 +1375,65 @@ class MasterController extends Controller
             $message = 'Review deleted successfully!';
         }
         return redirect()->route('client-reviews')->with('success', $message);
+    }
+<<<<<<< HEAD
+=======
+    public function department_index()
+    {
+        $department = Department::latest()->get();
+        return view('admin.master.department.list', compact('department'));
+    }
+
+    public function department_add()
+    {
+        return view('admin.master.department.add');
+    }
+
+    public function departmentstore(Request $request)
+    {
+        $request->merge(['slug' => Str::slug($request->name)]);
+        $request->validate([
+            'name' => 'required|string|max:255'
+        ]);
+
+        Department::create([
+            'name' => $request->name,
+            'slug' => $request->name,
+        ]);
+
+        return redirect()->route('department.index')
+            ->with('success', 'Department created successfully');
+    }
+
+    public function departmentedit($id)
+    {
+        $department = Department::findOrFail($id);
+        return view('admin.master.department.edit', compact('department'));
+    }
+
+    public function departmentupdate(Request $request, $id)
+
+    {
+        $request->merge(['slug' => Str::slug($request->name)]);
+        $request->validate([
+            'name' => 'required|string|max:255'
+        ]);
+        $item = Department::findOrFail($id);
+        $item->update([
+            'name' => $request->name,
+            'slug' => $request->name,
+        ]);
+
+        return redirect()->route('department.index')
+            ->with('success', 'Department updated successfully');
+    }
+
+    public function departmentdestroy($id)
+    {
+        $item = Department::findOrFail($id);
+        $item->delete();
+
+        return redirect()->route('department.index')
+            ->with('success', 'Department deleted successfully');
     }
 }

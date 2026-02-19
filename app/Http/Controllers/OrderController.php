@@ -41,7 +41,6 @@ class OrderController extends Controller
             ->first();
         return view('admin.order.booking.add_booking', compact('product'));
     }
-
     public function ordereStore(Request $request)
     {
         $user = Auth::user();
@@ -205,7 +204,6 @@ class OrderController extends Controller
                 'success' => true,
                 'redirect' => url('/user/thankyou')
             ]);
-
         } catch (\Exception $e) {
 
             DB::rollBack();

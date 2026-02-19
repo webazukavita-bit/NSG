@@ -4,7 +4,6 @@
 		$profile = 'images/user-1.svg';
 	@endphp
 
-    
 	<div class="card border-top border-0 border-4 border-primary">
     <div class="card-body p-0">
         <div class="accordion" id="accordionExample">
@@ -26,9 +25,15 @@
                                 <select name="user_id" id="user_id"
                                     class="form-select @error('user_id') is-invalid @enderror">
                                     <option selected disabled>Choose...</option>
+<<<<<<< HEAD
                                     @foreach ($users as $user)
                                         <option value="{{ $user->id }}" {{ request('user_id') == $user->id ? 'selected' : '' }}>
                                             {{ $user->name }}
+=======
+                                    @foreach ($order as $ord)
+                                        <option value="{{ $ord->user->id ?? '' }}">
+                                            {{ $ord->user->name ?? '' }}
+>>>>>>> fac25bf97f0964bff9ae18d343c7e2fc9fd85514
                                         </option>
                                     @endforeach
                                 </select>
@@ -41,9 +46,15 @@
                                 <label for="status_id" class="form-label">Order Status</label>
                                 <select name="status_id" id="status_id"
                                     class="form-select @error('status_id') is-invalid @enderror">
+<<<<<<< HEAD
                                     <option value="">Choose...</option>
                                     @foreach ($orderstatus as $status)
                                         <option value="{{ $status->id }}" {{ request('status_id') == $status->id ? 'selected' : '' }}>{{ $status->name }}</option>
+=======
+                                    <option selected disabled>Choose...</option>
+                                    @foreach ($orderstatus as $status)
+                                        <option value="{{ $status->id }}">{{ $status->name }}</option>
+>>>>>>> fac25bf97f0964bff9ae18d343c7e2fc9fd85514
                                     @endforeach
                                 </select>
                                 @error('status_id')
@@ -56,9 +67,12 @@
                                 <button type="submit" class="btn btn-primary px-4">
                                     <i class="bx bx-search"></i> Filter
                                 </button>
+<<<<<<< HEAD
                                 @if(request('user_id') || request('status_id'))
                                     <a href="{{ route('orderes') }}" class="btn btn-secondary ms-2">Clear Filter</a>
                                 @endif
+=======
+>>>>>>> fac25bf97f0964bff9ae18d343c7e2fc9fd85514
                             </div>
 
                         </form>
@@ -69,8 +83,11 @@
     </div>
 </div>
 
+<<<<<<< HEAD
 
 
+=======
+>>>>>>> fac25bf97f0964bff9ae18d343c7e2fc9fd85514
 	<div class="card border-top border-0 border-4 border-primary">
 					<div class="card-body">
                         
@@ -107,11 +124,19 @@
                                         <td>{{ $key + 1 }}</td>
 										<td>{{ $value->code ?? '' }}</td>
 										<td><div class="d-flex align-items-center">
+<<<<<<< HEAD
                                     <img src="{{ asset('images/profile/' .($value->user ? $value->user->image : '') ) }}" onerror="this.onerror=null;this.src='{{ asset($profile) }}';" class="product-img-2" alt="product img" style="margin-right: 8px;"> 
                                     <span>{{ $value->user ? $value->user->name : 'Unknown User' }}</span></div>
                                         </td>
 										<td>
                                          <div class="badge rounded-pill  bg-light-info p-2 text-uppercase px-3"  style="color: {{ $value->status->color ?? '' }};"><i class="bx bxs-circle align-middle me-1"></i>{{$value->status->name ?? 'No Status'}}</div></td>
+=======
+                                    <img src="{{ asset('images/profile/' .($value->user->image ?? '') ) }}" onerror="this.onerror=null;this.src='{{ asset($profile) }}';" class="product-img-2" alt="product img" style="margin-right: 8px;"> 
+                                    <span>{{ $value->user->name ?? '' }}</span></div>
+                                        </td>
+										<td>
+                                         <div class="badge rounded-pill  bg-light-info p-2 text-uppercase px-3"  style="color: {{ $value->status->color ?? '' }};"><i class="bx bxs-circle align-middle me-1"></i>{{$value->status->name ?? ''}}</div></td>
+>>>>>>> fac25bf97f0964bff9ae18d343c7e2fc9fd85514
 										<td>{{ $value->total_amount ?? '-'}}</td>
 										<td  style="color: {{ $value->paymentStatus->color ?? '' }};font-weight:500;"><i class="bx bxs-circle align-middle me-1"></i>{{ $value->paymentStatus->name ?? '-'}}</td>
 										<td>{{ $value->payment_method ?? 'Wallet'}}</td>
@@ -154,7 +179,11 @@
 											  <span class="order-actions-primary">
 													<a href="javascript:;" class="ms-2 openStatusModel" data-bs-toggle="tooltip" data-bs-placement="top" 
 													data-id="{{ $value->id }}"
+<<<<<<< HEAD
 													data-status_id="{{ $value->status->id ?? ''}}"
+=======
+													data-status_id="{{ $value->status->id ?? 0}}"
+>>>>>>> fac25bf97f0964bff9ae18d343c7e2fc9fd85514
 													data-bs-original-title="OrderStatus"><i class="bx bx-message-square-edit"></i></a>
 												</span>
 											  <span class="order-actions-primary">
@@ -237,7 +266,11 @@
         <label for="status1" class="form-label">Status</label>
         <select name="status" class="form-select @error('status') is-invalid @enderror" id="status_id">
             @foreach ($orderstatus as $data )
+<<<<<<< HEAD
                 <option value="{{ $data->id}}" {{ old('status') == $data->id ? 'selected' : '' }}>
+=======
+                <option value="{{ $data->id}}" {{ old('status_id') == $data->id ? 'selected' : '' }}>
+>>>>>>> fac25bf97f0964bff9ae18d343c7e2fc9fd85514
                     {{ $data->name }}
                 </option>
             @endforeach
@@ -359,7 +392,11 @@
     $(document).on("click", ".openStatusModel", function () {
 
         let id = $(this).data("id");
+<<<<<<< HEAD
         let status = $(this).data("status_id");
+=======
+        let status_id = $(this).data("status_id");
+>>>>>>> fac25bf97f0964bff9ae18d343c7e2fc9fd85514
 
         $('#divCommision').hide();
         $('#divDocuments').hide();
@@ -374,7 +411,11 @@
         }
          
         $('#order_id').val(id);
+<<<<<<< HEAD
 
+=======
+       $('#status_id').val(status_id);
+>>>>>>> fac25bf97f0964bff9ae18d343c7e2fc9fd85514
         $("#ChangeStatus").modal("show");
     });
 
@@ -389,6 +430,34 @@
 
 	});
 
+<<<<<<< HEAD
 
 </script>
+=======
+    $(document).ready(function() {
+		
+        var table = $('#example').DataTable( {
+            lengthChange: true,
+            buttons: [ 'copy', 'excel', 'csv', 'pdf', 'print'],
+        });
+
+		table.buttons().container().hide();
+
+		$('.buttons-copys').on('click', () => table.button('.buttons-copy').trigger());
+		$('.buttons-excels').on('click', () => table.button('.buttons-excel').trigger());
+		$('.buttons-pdfs').on('click', () => table.button('.buttons-pdf').trigger());
+		$('.buttons-csvs').on('click', () => table.button('.buttons-csv').trigger());
+		$('.buttons-prints').on('click', () => table.button('.buttons-print').trigger());
+    });
+		
+	
+	$('.single-select').select2({
+		theme: 'bootstrap4',
+		width: $(this).data('width') ? $(this).data('width') : $(this).hasClass('w-100') ? '100%' : 'style',
+		placeholder: $(this).data('placeholder'),
+		allowClear: Boolean($(this).data('allow-clear')),
+	});
+</script>
+
+>>>>>>> fac25bf97f0964bff9ae18d343c7e2fc9fd85514
 @endpush

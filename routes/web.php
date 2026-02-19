@@ -22,7 +22,6 @@ use Illuminate\Support\Facades\Log;
 // });
 
 Auth::routes();
-
 Route::get('/', [HomeController::class, 'index']);
 Route::get('/home', [HomeController::class, 'index'])->name('home');
 Route::get('/refund', [HomeController::class, 'static_content'])->name('refund-policy');
@@ -120,6 +119,13 @@ Route::middleware(['permission'])->group(function () {
     });
 
     Route::prefix('setting')->group(function () {
+        Route::get('department', [MasterController::class, 'department_index'])->name('department.index');
+        Route::get('department/create', [MasterController::class, 'department_add'])->name('department.create');
+        Route::post('department', [MasterController::class, 'departmentstore'])->name('department.store');
+        Route::get('department/{id}/edit', [MasterController::class, 'departmentedit'])->name('department.edit');
+        Route::post('department/{id}', [MasterController::class, 'departmentupdate'])->name('department.update');
+        Route::post('department/{id}', [MasterController::class, 'departmentdestroy'])->name('department.destroy');
+
         Route::get('/app-config', [MasterController::class, 'appConfig'])->name('app-config');
         Route::get('/app-config-image', [MasterController::class, 'appConfigImage'])->name('app-config-image');
         Route::post('/update-config', [MasterController::class, 'updateConfig'])->name('update-config');
@@ -258,6 +264,13 @@ Route::middleware(['permission'])->group(function () {
         Route::post('/brands-edit/{id}', [ProductController::class, 'brandUpdate'])->name('brand-update');
         Route::get('/brands-delete/{id}', [ProductController::class, 'brandDelete'])->name('brand-delete');
         
+
+        Route::get('order-status', [ProductController::class, 'index'])->name('order-status.index');
+        Route::get('order-status/create', [ProductController::class, 'create'])->name('order-status.create');
+        Route::post('order-status', [ProductController::class, 'store'])->name('order-status.store');
+        Route::get('order-status/{id}/edit', [ProductController::class, 'edit'])->name('order-status.edit');
+        Route::post('order-status/{id}', [ProductController::class, 'update'])->name('order-status.update');
+        Route::delete('order-status/{id}', [ProductController::class, 'destroy'])->name('order-status.delete');
 
         Route::get('/orderes', [ProductController::class, 'orderes'])->name('orderes');
         Route::post('/order-accept/{id}', [ProductController::class, 'orderaccept'])->name('order-accept');

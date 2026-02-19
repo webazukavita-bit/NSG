@@ -193,7 +193,7 @@
                     </ul> -->
                 </div>
             </div>
-            <div class="chart-container-2 mt-4" style="position: relative; height: 220px;">
+            <div class="chart-container-2 mt-4">
                 <canvas id="chart-orderes"></canvas>
                 </div>
             </div>
