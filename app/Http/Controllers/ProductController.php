@@ -12,6 +12,8 @@ use App\Models\OrderStatus;
 use App\Models\ProductVariation;
 use App\Models\User;
 use App\Models\Variation;
+use App\Models\Address;
+use App\Models\CompanyBank;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -467,7 +469,7 @@ class ProductController extends Controller
             $variant = new Product();
             $variant->parent_id         = $request->parent_product_id;
             $variant->category_id       = $request->category_id;
-            // $variant->brand_id          = $request->brand_id;
+            //$variant->brand_id          = $request->brand_id;
             $variant->name              = $request->name;
             $variant->slug              = $request->slug;
 
@@ -476,8 +478,8 @@ class ProductController extends Controller
             $variant->disc_price        = $request->disc_price;
             $variant->max_quantity      =  $request->max_quantity;
             $variant->min_quantity      =  $request->min_quantity;
-            $variant->specifications    = $request->content;
-            $variant->charge_details    = $charges;
+            $variant->specifications = $request->content;
+            $variant->charge_details = $charges;
 
 
             $imageFiles = [];
@@ -712,10 +714,19 @@ class ProductController extends Controller
 
 
 
-    public function brands()
+    public function brands(Request $request)
     {
-        $data = Brand::withTrashed()->latest()->get();
-        return view('admin.product.brand.list', compact('data'));
+        $query = Brand::withTrashed()->latest();
+
+        // Filter by brand name if search parameter exists
+        if ($request->has('search') && !empty($request->search)) {
+            $query = $query->where('name', $request->search);
+        }
+
+        $data = $query->get();
+        $allBrands = Brand::withTrashed()->latest()->get();
+
+        return view('admin.product.brand.list', compact('data', 'allBrands'));
     }
 
     public function brandAdd()
@@ -825,21 +836,24 @@ class ProductController extends Controller
             });
         }
 
-        // Apply filters
-        if ($request->filled('user_id')) {
-            $query->where('user_id', $request->user_id);
+
+        // Filter by user
+        if ($request->has('user_id') && !empty($request->user_id)) {
+            $query = $query->where('user_id', $request->user_id);
         }
 
-        if ($request->filled('status_id')) {
-            $query->where('order_status_id', $request->status_id);
+        // Filter by order status
+        if ($request->has('status_id') && !empty($request->status_id)) {
+            $query = $query->where('order_status_id', $request->status_id);
         }
 
         $order = $query->get();
         $orderstatus = OrderStatus::orderBy('id')->get();
         $employee = User::where('role_id', 2)->get();
 
-        // Get all users for the filter dropdown
+
         $users = User::select('id', 'name')->get();
+
 
         if ($orderstatus->count() == 0) {
             $orderstatus = collect([
@@ -848,9 +862,10 @@ class ProductController extends Controller
                 (object)['id' => 3, 'name' => 'Completed'],
                 (object)['id' => 4, 'name' => 'Cancelled'],
             ]);
-        }
 
-        return view('admin.order.list', compact('order', 'orderstatus', 'employee', 'users'));
+
+            return view('admin.order.list', compact('order', 'orderstatus', 'employee', 'users'));
+        }
     }
     public function orderaccept($id)
     {
@@ -925,6 +940,20 @@ class ProductController extends Controller
         $product = json_decode($order->product_details, true) ?? [];
         $address = json_decode($order->address, true);
 
+
+        if (empty($address)) {
+            $addr = Address::with(['city', 'state'])->where('user_id', $order->user_id)->latest('id')->first();
+            if ($addr) {
+                $address = [
+                    'contact_person_name' => $user->name ?? '',
+                    'address' => $addr->address ?? '',
+                    'street' => $addr->street ?? '',
+                    'city' => optional($addr->city)->name ?? '',
+                    'state' => optional($addr->state)->name ?? '',
+                    'zip' => $addr->zip ?? '',
+                ];
+            }
+        }
         $subTotal = 0;
 
         if (is_array($product) && isset($product['price']) && isset($product['quantity'])) {
@@ -945,7 +974,11 @@ class ProductController extends Controller
             'user'        => $user,
             'products'     => $product,
             'subTotal'    => $subTotal,
+            'cgst'        => $cgst,
+            'sgst'        => $sgst,
+            'finalAmount' => $finalAmount,
             'address'     => $address,
+            'companyBank' => $companyBank,
         ]);
     }
 

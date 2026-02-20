@@ -13,35 +13,15 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\TrainingController;
-use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
+
 
 // Route::get('/', function () {
 //     return view('welcome');
 // });
 
 Auth::routes();
-Route::get('/run-migrate', function () {
-
-
-    try {
-        Artisan::call('migrate', [
-            '--force' => true // Needed to bypass confirmation in production
-        ]);
-
-        return response()->json([
-            'status' => true,
-            'message' => 'Migration run successfully.',
-            'output' => Artisan::output()
-        ]);
-    } catch (\Exception $e) {
-        return response()->json([
-            'status' => false,
-            'message' => 'Migration failed.',
-            'error' => $e->getMessage()
-        ]);
-    }
-});
 Route::get('/', [HomeController::class, 'index']);
 Route::get('/home', [HomeController::class, 'index'])->name('home');
 Route::get('/refund', [HomeController::class, 'static_content'])->name('refund-policy');
@@ -261,7 +241,6 @@ Route::middleware(['permission'])->group(function () {
     });
 
     Route::prefix('product')->group(function () {
-
         Route::get('/categories', [ProductController::class, 'categories'])->name('product-categories');
         Route::get('/category-add', [ProductController::class, 'categoryAdd'])->name('product-category-add');
         Route::post('/category-add', [ProductController::class, 'categoryStore'])->name('product-category-store');
@@ -284,6 +263,7 @@ Route::middleware(['permission'])->group(function () {
         Route::get('/brands-edit/{id}', [ProductController::class, 'brandEdit'])->name('brand-edit');
         Route::post('/brands-edit/{id}', [ProductController::class, 'brandUpdate'])->name('brand-update');
         Route::get('/brands-delete/{id}', [ProductController::class, 'brandDelete'])->name('brand-delete');
+        
 
         Route::get('order-status', [ProductController::class, 'index'])->name('order-status.index');
         Route::get('order-status/create', [ProductController::class, 'create'])->name('order-status.create');

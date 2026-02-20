@@ -15,12 +15,7 @@
                 </div>
             </div>
             <hr>
-             @if ($errors->any())
-    <div class="alert alert-danger">
-        {{ $errors->first() }}
-    </div>
-@endif
-
+            
             <form action="{{ route('product-category-add') }}" method="POST" class="row g-3" enctype="multipart/form-data">
                 @csrf
 

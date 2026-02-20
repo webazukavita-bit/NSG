@@ -351,7 +351,9 @@
                                     <div class="description-items">
                                         <div class="description-content">
                                             <h3>Product descriptions</h3>
-                                            
+                                            @if($selectedProduct && sizeof($selectedProduct->image) > 0)
+                                            <img src="{{ asset('images/product/'.$selectedProduct->image[0]) }}" alt="Product" class="img-fluid mb-3" style="max-width: 300px;">
+                                            @endif
                                             <p class="mb-2">{{ $selectedProduct->description ?? 'No description available' }}</p>
                                         </div>
                                     </div>

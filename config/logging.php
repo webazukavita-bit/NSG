@@ -53,10 +53,20 @@ return [
     'channels' => [
 
         'stack' => [
-            'driver' => 'stack',
-            'channels' => explode(',', (string) env('LOG_STACK', 'single')),
-            'ignore_exceptions' => false,
-        ],
+    'driver' => 'stack',
+    'channels' => ['single', 'processing'],
+    'ignore_exceptions' => false,
+],
+
+
+        'processing' => [
+    'driver' => 'single',
+    'path' => storage_path('logs/processing.log'),
+    'level' => 'debug',
+],
+
+
+
 
         'single' => [
             'driver' => 'single',

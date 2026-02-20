@@ -53,7 +53,7 @@ class Order extends Model
 
     public function status()
     {
-        return $this->belongsTo(OrderStatus::class, 'order_status_id');
+        return $this->belongsTo(OrderStatus::class, 'order_status_id')->withTrashed();
     }
     public function paymentStatus()
     {
@@ -62,11 +62,11 @@ class Order extends Model
 
     public function getCreatedAtAttribute($value)
     {
-        return \Carbon\Carbon::parse($value)->format('d-m-Y H:i A');
+        return \Carbon\Carbon::parse($value)->format('d-m-Y h:i A');
     }
 
     public function getUpdatedAtAttribute($value)
     {
-        return \Carbon\Carbon::parse($value)->format('d-m-Y H:i A');
+        return \Carbon\Carbon::parse($value)->format('d-m-Y h:i A');
     }
 }
