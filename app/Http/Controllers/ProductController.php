@@ -932,7 +932,14 @@ class ProductController extends Controller
             $quantity = (int) ($product['quantity'] ?? 1);
             $subTotal = $price * $quantity;
         }
-
+        $productId = $product['product_id'] ?? null;
+        if ($productId) {
+            $dbProduct = Product::withTrashed()->find($productId);
+            if ($dbProduct) {
+                $product['name'] = $dbProduct->name;
+                $product['sku'] = $dbProduct->sku;
+            }
+        }
         return view('admin.order.invoice', [
             'order'       => $order,
             'user'        => $user,
