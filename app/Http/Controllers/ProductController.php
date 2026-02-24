@@ -950,7 +950,39 @@ class ProductController extends Controller
             'address'     => $address,
         ]);
     }
+    public function trackingList()
+    {
+        $user = Auth::user();
 
+        // Get all orders for the current user
+        if ($user->role_id == 1) {
+            // Admin can see all orders
+            $orders = Order::with(['user', 'status', 'paymentStatus', 'trackingLogs'])
+                ->orderBy('created_at', 'desc')
+                ->get();
+        } else if ($user->role_id == 2) {
+            // Employees can see assigned orders
+            $orders = Order::with(['user', 'status', 'paymentStatus', 'trackingLogs'])
+                ->where(function ($q) use ($user) {
+                    $q->where('assigned_to', $user->id)
+                        ->orWhere('assigned_to', 0);
+                })
+                ->orderBy('created_at', 'desc')
+                ->get();
+        } else if ($user->role_id == 4) {
+            // Customers can see their own orders
+            $orders = Order::with(['user', 'status', 'paymentStatus', 'trackingLogs'])
+                ->where('order_by_id', $user->id)
+                ->orderBy('created_at', 'desc')
+                ->get();
+        } else {
+            $orders = collect();
+        }
+
+        return view('admin.order.tracking-list', [
+            'orders' => $orders,
+        ]);
+    }
     public function orderDelete($id)
     {
         $data = Order::withTrashed()->findOrFail($id);
