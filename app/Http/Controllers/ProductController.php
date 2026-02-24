@@ -983,6 +983,16 @@ class ProductController extends Controller
             'orders' => $orders,
         ]);
     }
+    public function orderTrackingView($id)
+    {
+        $order = Order::withTrashed()->findOrFail($id);
+        $trackingLogs = $order->trackingLogs()->orderBy('created_at', 'desc')->get();
+
+        return view('admin.order.ordertrackingview', [
+            'order' => $order,
+            'trackingLogs' => $trackingLogs,
+        ]);
+    }
     public function orderDelete($id)
     {
         $data = Order::withTrashed()->findOrFail($id);
