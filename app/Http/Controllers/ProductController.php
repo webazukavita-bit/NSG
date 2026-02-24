@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\Helper;
 use App\Models\OrderStatusTxn;
 use App\Models\ProductCategory;
 use App\Models\Product;
@@ -12,8 +13,6 @@ use App\Models\OrderStatus;
 use App\Models\ProductVariation;
 use App\Models\User;
 use App\Models\Variation;
-use App\Models\Address;
-use App\Models\CompanyBank;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -469,7 +468,7 @@ class ProductController extends Controller
             $variant = new Product();
             $variant->parent_id         = $request->parent_product_id;
             $variant->category_id       = $request->category_id;
-            //$variant->brand_id          = $request->brand_id;
+            // $variant->brand_id          = $request->brand_id;
             $variant->name              = $request->name;
             $variant->slug              = $request->slug;
 
@@ -478,8 +477,8 @@ class ProductController extends Controller
             $variant->disc_price        = $request->disc_price;
             $variant->max_quantity      =  $request->max_quantity;
             $variant->min_quantity      =  $request->min_quantity;
-            $variant->specifications = $request->content;
-            $variant->charge_details = $charges;
+            $variant->specifications    = $request->content;
+            $variant->charge_details    = $charges;
 
 
             $imageFiles = [];
@@ -714,19 +713,10 @@ class ProductController extends Controller
 
 
 
-    public function brands(Request $request)
+    public function brands()
     {
-        $query = Brand::withTrashed()->latest();
-
-        // Filter by brand name if search parameter exists
-        if ($request->has('search') && !empty($request->search)) {
-            $query = $query->where('name', $request->search);
-        }
-
-        $data = $query->get();
-        $allBrands = Brand::withTrashed()->latest()->get();
-
-        return view('admin.product.brand.list', compact('data', 'allBrands'));
+        $data = Brand::withTrashed()->latest()->get();
+        return view('admin.product.brand.list', compact('data'));
     }
 
     public function brandAdd()
@@ -836,24 +826,21 @@ class ProductController extends Controller
             });
         }
 
-
-        // Filter by user
-        if ($request->has('user_id') && !empty($request->user_id)) {
-            $query = $query->where('user_id', $request->user_id);
+        // Apply filters
+        if ($request->filled('user_id')) {
+            $query->where('user_id', $request->user_id);
         }
 
-        // Filter by order status
-        if ($request->has('status_id') && !empty($request->status_id)) {
-            $query = $query->where('order_status_id', $request->status_id);
+        if ($request->filled('status_id')) {
+            $query->where('order_status_id', $request->status_id);
         }
 
         $order = $query->get();
         $orderstatus = OrderStatus::orderBy('id')->get();
         $employee = User::where('role_id', 2)->get();
 
-
+        // Get all users for the filter dropdown
         $users = User::select('id', 'name')->get();
-
 
         if ($orderstatus->count() == 0) {
             $orderstatus = collect([
@@ -862,16 +849,27 @@ class ProductController extends Controller
                 (object)['id' => 3, 'name' => 'Completed'],
                 (object)['id' => 4, 'name' => 'Cancelled'],
             ]);
-
-
-            return view('admin.order.list', compact('order', 'orderstatus', 'employee', 'users'));
         }
+
+        return view('admin.order.list', compact('order', 'orderstatus', 'employee', 'users'));
     }
     public function orderaccept($id)
     {
         $order = Order::findOrFail($id);
+        $previousAssignee = $order->assigned_to;
+
         $order->assigned_to = Auth::user()->id;
         $order->save();
+
+        // Track assignment (self-accept)
+        \App\Helpers\Helper::createOrderTrackingLog(
+            $order->id,
+            $order->status->name ?? 'Order Accepted',
+            'Order accepted by employee ID: ' . Auth::user()->id,
+            $order->assigned_to,
+            Auth::user()->id,
+            optional(Auth::user()->department)->name ?? null
+        );
 
         return redirect()->route('orderes')->with('success', 'Order accepted successfully.');
     }
@@ -886,6 +884,16 @@ class ProductController extends Controller
         $order = Order::findOrFail($request->orderId);
         $order->assigned_to = $request->employee_id;
         $order->save();
+        $employee = User::find($request->employee_id);
+        // Track assignment by admin/manager
+        \App\Helpers\Helper::createOrderTrackingLog(
+            $order->id,
+            'ORDER ASSIGNED',
+            'Order assigned to employee ID: ' . $request->employee_id,
+            $order->assigned_to,
+            Auth::user()->id,
+            $employee->department_id ? optional($employee->department)->name : null
+        );
 
         return redirect()->route('orderes')->with('success', 'Order assigned to employee successfully.');
     }
@@ -911,27 +919,6 @@ class ProductController extends Controller
     }
 
 
-    // public function showInvoice($id)
-    // {
-    //     $order = Order::withTrashed()->findOrFail($id);
-    //     $user  = User::where('id', $order->user_id)->first();
-    //     $products = json_decode($order->product_details, true) ?? [];
-    //     $address = json_decode($order->address, true);
-
-    //     $subTotal = 0;
-    //     foreach ($products as $product) {
-    //         $subTotal += $product->price * $product->quantity;
-    //     }
-
-
-    //     return view('admin.order.invoice', [
-    //         'order'       => $order,
-    //         'user'        => $user,
-    //         'products'    => $products,
-    //         'subTotal'    => $subTotal,
-    //         'address'     => $address,
-    //     ]);
-    // }
     public function showInvoice($id)
     {
         $order = Order::withTrashed()->findOrFail($id);
@@ -940,20 +927,6 @@ class ProductController extends Controller
         $product = json_decode($order->product_details, true) ?? [];
         $address = json_decode($order->address, true);
 
-
-        if (empty($address)) {
-            $addr = Address::with(['city', 'state'])->where('user_id', $order->user_id)->latest('id')->first();
-            if ($addr) {
-                $address = [
-                    'contact_person_name' => $user->name ?? '',
-                    'address' => $addr->address ?? '',
-                    'street' => $addr->street ?? '',
-                    'city' => optional($addr->city)->name ?? '',
-                    'state' => optional($addr->state)->name ?? '',
-                    'zip' => $addr->zip ?? '',
-                ];
-            }
-        }
         $subTotal = 0;
 
         if (is_array($product) && isset($product['price']) && isset($product['quantity'])) {
@@ -974,11 +947,7 @@ class ProductController extends Controller
             'user'        => $user,
             'products'     => $product,
             'subTotal'    => $subTotal,
-            'cgst'        => $cgst,
-            'sgst'        => $sgst,
-            'finalAmount' => $finalAmount,
             'address'     => $address,
-            'companyBank' => $companyBank,
         ]);
     }
 
@@ -997,55 +966,43 @@ class ProductController extends Controller
         return redirect()->route('orderes')->with('success', $message);
     }
 
-
     // public function orderStatusUpdate(Request $request)
     // {
+    //     // dd($request->order_id);
     //     $request->validate([
     //         'order_id' => 'required|integer|exists:orders,id',
-    //         'status' => 'required|string|exists:order_status,name',
+    //         'status' => 'required|integer|exists:order_status,id',
     //     ]);
+    //     $order = Order::findOrFail($request->order_id);
 
-    //     $order = Order::findOrFail($request->id);
-    //     $orderStatus = OrderStatus::where('name', $request->status1)->first();
+    //     $oldStatusId = $order->order_status_id;
+    //     $newStatusId = $request->status;
 
-    //     if ($orderStatus->name == 'pending') {
-    //         $orderStatus->name = $request->status1;
-    //         $order->commision = $request->advance;
-    //         $order->order_status_id = $orderStatus->id;
-    //         $check = $order->save();
-    //     } else if ($orderStatus->name == 'Confirm') {
-    //         $orderStatus->name = $request->status2;
-    //         $order->order_status_id = $orderStatus->id;
-    //         $check = $order->save();
-    //     } else {
+    //     $order->order_status_id = $newStatusId;
 
-    //         $orderStatus->name = $request->status3;
-    //         $order->order_status_id = $orderStatus->id;
-    //         $request->validate([
-    //             'documents' => 'nullable|array',
-    //             'documents.*' => 'file|mimes:pdf,jpg,jpeg,png|max:2048',
-    //         ]);
+    //     if ($order->save()) {
+    //         $oldStatus = OrderStatus::find($oldStatusId);
+    //         $newStatus = OrderStatus::find($newStatusId);
 
-    //         $doc = OrderStatusTxn::where('order_id', $request->id)->first();
-    //         if ($request->hasFile('documents')) {
-    //             $documentPaths = [];
-    //             foreach ($request->file('documents') as $file) {
-    //                 $fileName = 'order_document_' . time() . '.' . $file->getClientOriginalExtension();
-    //                 $file->move(public_path('images/orders/document'), $fileName);
-    //                 $documentPaths[] = $fileName;
-    //             }
+    //         $remark = 'Order status changed from '
+    //             . ($oldStatus->name ?? 'N/A')
+    //             . ' to '
+    //             . ($newStatus->name ?? 'N/A');
 
-    //             $doc->documents = json_encode($documentPaths);
-    //             $doc->save();
-    //         }
-    //         $check = $order->save();
-    //     }
-    //     if ($check) {
+    //         Helper::createOrderTrackingLog(
+    //             $order->id,
+    //             $order->status->name ?? 'Status Updated',
+    //             $remark,
+    //             $order->assigned_to,
+    //             Auth::user()->id,
+    //             optional(Auth::user()->department)->name
+    //         );
+
     //         return redirect()->route('orderes')->with('success', 'Order status updated successfully.');
-    //     } else {
-    //         return redirect()->route('orderes')->with('error', 'Order status not updated.');
     //     }
+    //     return redirect()->route('orderes')->with('error', 'Failed to update order status.');
     // }
+
     public function orderStatusUpdate(Request $request)
     {
         // dd($request->order_id);
@@ -1053,54 +1010,86 @@ class ProductController extends Controller
             'order_id' => 'required|integer|exists:orders,id',
             'status' => 'required|integer|exists:order_status,id',
         ]);
-
         $order = Order::findOrFail($request->order_id);
-        // dd($order);
-        $order->order_status_id = $request->status;
+
+        $oldStatusId = $order->order_status_id;
+        $newStatusId = $request->status;
+
+        $order->order_status_id = $newStatusId;
+
+        // determine if this new status corresponds to "Cancelled" so we can refund wallet
+        $cancelStatus = OrderStatus::where('name', 'Cancelled')->first();
+
+        $isCancellation = $cancelStatus && $newStatusId == $cancelStatus->id;
 
         if ($order->save()) {
-            return redirect()->route('orderes')->with('success', 'Order status updated successfully.');
-        }
+            $oldStatus = OrderStatus::find($oldStatusId);
+            $newStatus = OrderStatus::find($newStatusId);
 
+            $remark = 'Order status changed from '
+                . ($oldStatus->name ?? 'N/A')
+                . ' to '
+                . ($newStatus->name ?? 'N/A');
+
+            Helper::createOrderTrackingLog(
+                $order->id,
+                $order->status->name ?? 'Status Updated',
+                $remark,
+                $order->assigned_to,
+                Auth::user()->id,
+                optional(Auth::user()->department)->name
+            );
+
+            // if the order has just been cancelled and payment was already taken, refund the amount
+            if ($isCancellation && $order->payment_status_id == 2) {
+                // credit the wallet of the user who placed the order
+                $refundAmount = $order->final_amount_with_tax ?: 0;
+
+                $ledgerResp = Helper::creadit_ledger([
+                    "user_id"     => $order->order_by_id,
+                    "refrence_id" => Auth::id(),
+                    "amount"      => $refundAmount,
+                    "trans_id"    => Helper::getTransId(3),
+                    "cgst"        => 0,
+                    "sgst"        => 0,
+                    "ledger_type" => 'WALLET CREDIT',
+                    "wallet_type" => 1,
+                    "trans_from"  => 'Order Cancellation',
+                    "description" => "Refund for cancelled order {$order->code}",
+                ]);
+
+                // update payment status to refunded if ledger operation succeeded
+                if ($ledgerResp['status'] == 'success') {
+                    $refundedStatus = \App\Models\PaymentStatus::where('name', 'Refunded')->first();
+                    if ($refundedStatus) {
+                        $order->payment_status_id = $refundedStatus->id;
+                    }
+                    $order->save();
+
+                    try {
+                        OrderStatusTxn::create([
+                            'order_id' => $order->id,
+                            'order_status_id' => $order->order_status_id,
+                            'payment_status_id' => $order->payment_status_id,
+                            'm11_creatby_user_type' => 'user',
+                            'created_by_id' => Auth::user()->id,
+                            'description' => 'Amount credited to wallet after cancellation',
+                            'documents' => null,
+                        ]);
+                    } catch (\Exception $e) {
+                        // ignore logging failure
+                    }
+                }
+            }
+
+            $successMessage = 'Order status updated successfully.';
+            if ($isCancellation) {
+                $successMessage = 'Order cancelled successfully and amount credited back to wallet.';
+            }
+            return redirect()->route('orderes')->with('success', $successMessage);
+        }
         return redirect()->route('orderes')->with('error', 'Failed to update order status.');
     }
-
-    // public function paymentUpdate(Request $request){
-
-
-
-
-    //     $orderId = $order->id;
-
-    //         $imagePath = null;
-    //         if ($request->hasFile('utr_img')) {
-    //             $image = $request->file('utr_img');
-    //             $imageName = $code . '_' . $image->getClientOriginalName();
-    //             $image->move(public_path('payment'), $imageName); // save to public/payment
-    //             $imagePath = 'payment/' . $imageName; // store relative path in DB
-    //         }
-
-    //         $advancePayment = (float)$request->advance_payment;
-    //         $type = 'Part Payment';
-    //         if($advancePayment >= $finalAmount){
-    //             $type = 'Full Payment';
-    //         }
-
-    //         if($advancePayment > 0) {
-    //             OrderPayment::create([
-    //                 'user_id' => $user->id,
-    //                 'order_id' => $orderId,
-    //                 'trans_type' => 'Received',
-    //                 'type' => $type,
-    //                 'method' => $request->payment_mode,
-    //                 'utr_no' => $request->utr_no,
-    //                 'amount' => $advancePayment,
-    //                 'image' => $imagePath,
-    //             ]);
-    //         }
-    // }
-
-
 
     public function variationType()
     {

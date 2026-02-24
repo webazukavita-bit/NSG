@@ -13,6 +13,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\TrainingController;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 
@@ -20,7 +21,27 @@ use Illuminate\Support\Facades\Log;
 // Route::get('/', function () {
 //     return view('welcome');
 // });
+Route::get('/run-migrate', function () {
 
+
+    try {
+        Artisan::call('migrate', [
+            '--force' => true // Needed to bypass confirmation in production
+        ]);
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Migration run successfully.',
+            'output' => Artisan::output()
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'status' => false,
+            'message' => 'Migration failed.',
+            'error' => $e->getMessage()
+        ]);
+    }
+});
 Auth::routes();
 Route::get('/', [HomeController::class, 'index']);
 Route::get('/home', [HomeController::class, 'index'])->name('home');
@@ -263,7 +284,7 @@ Route::middleware(['permission'])->group(function () {
         Route::get('/brands-edit/{id}', [ProductController::class, 'brandEdit'])->name('brand-edit');
         Route::post('/brands-edit/{id}', [ProductController::class, 'brandUpdate'])->name('brand-update');
         Route::get('/brands-delete/{id}', [ProductController::class, 'brandDelete'])->name('brand-delete');
-        
+
 
         Route::get('order-status', [ProductController::class, 'index'])->name('order-status.index');
         Route::get('order-status/create', [ProductController::class, 'create'])->name('order-status.create');
@@ -278,6 +299,7 @@ Route::middleware(['permission'])->group(function () {
         Route::get('/order-add', [ProductController::class, 'orderAdd'])->name('ordere-add');
         Route::get('/order-delete/{id}', [ProductController::class, 'orderDelete'])->name('order-delete');
         Route::get('/show-invoice/{id}', [ProductController::class, 'showInvoice'])->name('show-invoice');
+        Route::get('/order-tracking/{id}', [ProductController::class, 'orderTrackingView'])->name('order-tracking');
         Route::post('/order-status-update', [ProductController::class, 'orderStatusUpdate'])->name('order-status-update');
         Route::post('/payment-update', [ProductController::class, 'paymentUpdate'])->name('payment-update');
 
@@ -321,6 +343,10 @@ Route::middleware(['permission'])->group(function () {
         Route::match(['get', 'post'], '/notifications', [AdminController::class, 'notifications'])->name('user-notifications');
         Route::match(['get', 'post'], '/activity-log', [AdminController::class, 'activityLog'])->name('user-activity-log');
         Route::match(['get', 'post'], '/login-activity', [AdminController::class, 'loginActivity'])->name('user-login-activity');
+    });
+
+    Route::prefix('order')->group(function () {
+        Route::get('/tracking-list', [ProductController::class, 'trackingList'])->name('tracking-list');
     });
 });
 

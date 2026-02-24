@@ -50,11 +50,11 @@ class Banner extends Model
 
     public function getCreatedAtAttribute($value)
     {
-        return \Carbon\Carbon::parse($value)->format('d-m-Y h:i A');
+        return \Carbon\Carbon::parse($value)->format('d-m-Y H:i A');
     }
 
     public function getUpdatedAtAttribute($value)
     {
-        return \Carbon\Carbon::parse($value)->format('d-m-Y h:i A');
+        return \Carbon\Carbon::parse($value)->format('d-m-Y H:i A');
     }
 }

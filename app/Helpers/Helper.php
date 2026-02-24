@@ -13,6 +13,7 @@ use Illuminate\Support\Str;
 use App\Models\ActivityLog;
 use App\Models\Wallet;
 use App\Models\Ledger;
+use App\Models\Order_trackinglog;
 use App\Models\ProductCategory;
 use App\Models\User;
 use App\Models\WhatsappTemplate;
@@ -399,6 +400,29 @@ class Helper
             }
         } catch (\Exception $e) {
             return $e->getMessage();
+        }
+    }
+
+    public static function createOrderTrackingLog($order_id, $status, $remark = '', $assigned_to = null, $assigned_by = null, $department = null)
+    {
+        // dd($order_id, $status, $remark, $assigned_to, $assigned_by, $department);
+        try {
+            $trackingLog = [
+                'order_id'    => $order_id ?? null,
+                'status'      => $status ?? 'STATUS NOT SPECIFIED',
+                'remark'      => $remark ?? '',
+                'time'        => now(),
+                'assigned_to' => $assigned_to ?? null,
+                'assigned_by' => $assigned_by ?? null,
+                'department'  => $department ?? null,
+            ];
+            // dd($trackingLog);
+            $order_tracking = Order_trackinglog::create($trackingLog);
+            if (!$order_tracking) {
+                Log::error('Failed to create order tracking log for Order ID: ' . $order_id);
+            }
+        } catch (\Exception $e) {
+            Log::error('Failed to create order tracking log: ' . $e->getMessage());
         }
     }
 }

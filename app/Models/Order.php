@@ -50,10 +50,14 @@ class Order extends Model
     {
         return $this->belongsTo(User::class, 'assigned_to');
     }
+    public function trackingLogs()
+    {
+        return $this->hasMany(Order_trackinglog::class, 'order_id');
+    }
 
     public function status()
     {
-        return $this->belongsTo(OrderStatus::class, 'order_status_id')->withTrashed();
+        return $this->belongsTo(OrderStatus::class, 'order_status_id');
     }
     public function paymentStatus()
     {
@@ -62,11 +66,11 @@ class Order extends Model
 
     public function getCreatedAtAttribute($value)
     {
-        return \Carbon\Carbon::parse($value)->format('d-m-Y h:i A');
+        return \Carbon\Carbon::parse($value)->format('d-m-Y H:i A');
     }
 
     public function getUpdatedAtAttribute($value)
     {
-        return \Carbon\Carbon::parse($value)->format('d-m-Y h:i A');
+        return \Carbon\Carbon::parse($value)->format('d-m-Y H:i A');
     }
 }
