@@ -1,155 +1,461 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html
+    PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ config('app.name') }} - Invoice</title>
-    <style>
-        @page {
-            size: A4 portrait;
-            margin: 6mm;
-        }
-        body {
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>{{ config('app.name') }} - Invoice #{{ $order->id ?? '' }}</title>
+    <meta name="author" content="{{ config('app.name') }}" />
+    <style type="text/css">
+        * {
             margin: 0;
-            padding: 14px;
-            background: #f2f2f2;
-            font-family: "Times New Roman", serif;
-            color: #000;
-            font-size: 13px;
-        }
-        .toolbar {
-            width: 100%;
-            max-width: 198mm;
-            margin: 0 auto 8px auto;
-            text-align: right;
-        }
-        .toolbar button {
-            border: 1px solid #000;
-            background: #fa3a3a;
-            padding: 8px 16px;
-            cursor: pointer;
-            margin-left: 8px;
-            font-family: Arial, sans-serif;
-            font-size: 14px;
-        }
-        .invoice-sheet {
-            width: 100%;
-            max-width: 198mm;
-            margin: 0 auto;
-            background: #fff;
-            border: 2px solid #000;
-            padding: 8px;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            table-layout: fixed;
-        }
-        td, th {
-            border: 1px solid #000;
-            padding: 8px 10px;
-            vertical-align: top;
-            word-wrap: break-word;
-        }
-        .no-border {
-            border: 0 !important;
-        }
-        .inner-table td, .inner-table th {
-            border: 1px solid #000;
-            padding: 8px 10px;
-        }
-        .header-left {
-            width: 20%;
-            text-align: center;
-        }
-        .header-center {
-            width: 55%;
-            text-align: center;
-        }
-        .header-right {
-            width: 35%;
             padding: 0;
+            text-indent: 0;
+            /* display: flex; */
+            /* justify-content: center; */
         }
-        .company-name {
+        .invoice-container{
+            display: flex;
+            justify-content: center;
+        }
+        p {
+            color: black;
             font-family: Arial, sans-serif;
-            font-weight: 700;
-            font-size: 26px;
-            letter-spacing: 0.5px;
-            line-height: 1.05;
+            font-style: normal;
+            font-weight: bold;
+            text-decoration: none;
+            font-size: 11pt;
+            margin: 0pt;
         }
-        .invoice-title {
+
+        .s1 {
+            color: black;
             font-family: Arial, sans-serif;
-            font-weight: 700;
-            font-size: 20px;
-            line-height: 1.05;
-            margin-bottom: 4px;
+            font-style: normal;
+            font-weight: bold;
+            text-decoration: none;
+            font-size: 16pt;
         }
-        .addr-line {
-            font-size: 13px;
-            line-height: 1.25;
+
+        .s2 {
+            color: black;
+            font-family: Arial, sans-serif;
+            font-style: normal;
+            font-weight: normal;
+            text-decoration: none;
+            font-size: 10pt;
         }
-        .bold {
-            font-weight: 700;
+
+        .s3 {
+            color: black;
+            font-family: Arial, sans-serif;
+            font-style: normal;
+            font-weight: normal;
+            text-decoration: none;
+            font-size: 10pt;
         }
-        .small {
-            font-size: 11px;
+
+        .s4 {
+            color: black;
+            font-family: Arial, sans-serif;
+            font-style: normal;
+            font-weight: bold;
+            text-decoration: none;
+            font-size: 10pt;
         }
-        .items th {
-            text-align: center;
-            font-weight: 700;
-            font-size: 13px;
-            padding: 10px 8px;
+
+        .s5 {
+            color: black;
+            font-family: Arial, sans-serif;
+            font-style: normal;
+            font-weight: bold;
+            text-decoration: none;
+            font-size: 9pt;
         }
-        .items td {
-            font-size: 12px;
-            padding: 10px 8px;
+
+        .s6 {
+            color: black;
+            font-family: "Times New Roman", serif;
+            font-style: normal;
+            font-weight: bold;
+            text-decoration: none;
+            font-size: 9pt;
         }
-        .text-right {
-            text-align: right;
+
+        .s7 {
+            color: black;
+            font-family: Arial, sans-serif;
+            font-style: normal;
+            font-weight: normal;
+            text-decoration: none;
+            font-size: 8pt;
         }
-        .text-center {
-            text-align: center;
+
+        .s8 {
+            color: black;
+            font-family: Arial, sans-serif;
+            font-style: normal;
+            font-weight: normal;
+            text-decoration: none;
+            font-size: 9pt;
+            vertical-align: 1pt;
         }
-        .empty-row td {
-            height: 25px;
+
+        .s9 {
+            color: black;
+            font-family: "Times New Roman", serif;
+            font-style: normal;
+            font-weight: bold;
+            text-decoration: none;
+            font-size: 10pt;
         }
-        .totals td {
-            padding-top: 2px;
-            padding-bottom: 2px;
+
+        .s10 {
+            color: black;
+            font-family: Arial, sans-serif;
+            font-style: normal;
+            font-weight: bold;
+            text-decoration: none;
+            font-size: 8pt;
         }
-        .terms {
-            font-size: 10.5px;
-            line-height: 1.25;
+
+        .s11 {
+            color: black;
+            font-family: Arial, sans-serif;
+            font-style: normal;
+            font-weight: normal;
+            text-decoration: none;
+            font-size: 9pt;
         }
-        .signature {
-            text-align: right;
-            padding-right: 16px;
-            padding-top: 55px;
-            font-size: 11px;
+
+        .s13 {
+            color: black;
+            font-family: "Times New Roman", serif;
+            font-style: normal;
+            font-weight: normal;
+            text-decoration: none;
+            font-size: 10pt;
         }
-        .logo-wrap img {
-            max-width: 100%;
-            max-height: 110px;
+
+        .s14 {
+            color: black;
+            font-family: "Times New Roman", serif;
+            font-style: normal;
+            font-weight: bold;
+            text-decoration: none;
+            font-size: 11pt;
         }
+
+        .s15 {
+            color: black;
+            font-family: "Times New Roman", serif;
+            font-style: normal;
+            font-weight: normal;
+            text-decoration: none;
+            font-size: 10pt;
+            vertical-align: -5pt;
+        }
+
+        .s16 {
+            color: black;
+            font-family: Arial, sans-serif;
+            font-style: normal;
+            font-weight: bold;
+            text-decoration: none;
+            font-size: 11pt;
+        }
+
+        .s17 {
+            color: black;
+            font-family: "Times New Roman", serif;
+            font-style: normal;
+            font-weight: normal;
+            text-decoration: none;
+            font-size: 10pt;
+            vertical-align: -7pt;
+        }
+
+        li {
+            display: block;
+        }
+
+        #l1 {
+            padding-left: 0pt;
+            counter-reset: c1 1;
+        }
+
+        #l1>li>*:first-child:before {
+            counter-increment: c1;
+            content: counter(c1, decimal) ". ";
+            color: black;
+            font-family: "Times New Roman", serif;
+            font-style: normal;
+            font-weight: normal;
+            text-decoration: none;
+            font-size: 10pt;
+        }
+
+        #l1>li:first-child>*:first-child:before {
+            counter-increment: c1 0;
+        }
+
+        table,
+        tbody {
+            vertical-align: top;
+            overflow: visible;
+        }
+
+        .toolbar {
+            padding: 10px 20px;
+            background: #f5f5f5;
+            border-bottom: 1px solid #ddd;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        .btn-modern {
+            padding: 8px 18px;
+            border: none;
+            border-radius: 5px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+        }
+
+        .btn-print {
+            background: #4a5568;
+            color: white;
+        }
+
+        .btn-print:hover {
+            background: #2d3748;
+        }
+
+        .btn-pdf {
+            background: #dc2626;
+            color: white;
+        }
+
+        .btn-pdf:hover {
+            background: #b91c1c;
+        }
+
         @media print {
-            body {
-                background: #fff;
-                padding: 0;
-            }
             .toolbar {
                 display: none !important;
-            }
-            .invoice-sheet {
-                width: 100%;
-                min-height: auto;
-                margin: 0;
             }
         }
     </style>
 </head>
+
 <body>
-@php
-    if (!function_exists('invoice_number_to_words')) {
+
+    {{-- Print / Export Toolbar --}}
+    <div class="toolbar">
+        <button type="button" class="btn-modern btn-print" onclick="window.print()">
+            🖨 Print
+        </button>
+        <button type="button" class="btn-modern btn-pdf" onclick="window.print()">
+            📄 Export as PDF
+        </button>
+    </div>
+
+    <p style="padding-top: 1pt; text-indent: 0pt; text-align: center">TAX INVOICE</p>
+    <p style="text-indent: 0pt; text-align: left"><br /></p>
+  <div class="invoice-container">
+    <table style="border-collapse: collapse; margin-left: 6.51pt" cellspacing="0">
+
+        {{-- ===== HEADER: Company Info + Invoice Meta ===== --}}
+        <tr style="height: 10pt">
+            <td style="width:431pt;border-top-style:solid;border-top-width:2pt;border-left-style:solid;border-left-width:2pt;border-bottom-style:solid;border-bottom-width:2pt;border-right-style:solid;border-right-width:2pt;" colspan="7" rowspan="4">
+                <p class="s1" style="padding-left:5pt;text-indent:0pt;text-align:left;">
+                    <img width="111" height="50" src="{{ asset('images/config/'.config('app.logo')) }}" alt="{{ config('app.name') }} Logo" style="margin-top:8px;" />
+                    <span style="padding-left:60pt; padding-top:0pt;">{{ strtoupper(config('app.name')) }}</span>
+                </p>
+                <p class="s2" style="padding-left:110pt;padding-right:14pt;text-indent:0pt;text-align:center;">
+                    {{ config('app.address') }} &nbsp; <br>Phone : {{ config('app.contact_us') }}
+                </p>
+                <p class="s2" style="padding-left:99pt;text-indent:0pt;text-align:center;">
+                    Email Id : <a href="mailto:{{ config('app.email_account') }}" class="s3">{{ config('app.email_account') }}</a>
+                </p>
+                <p class="s4" style="padding-top:5pt; padding-bottom:5pt;padding-left:161pt;text-indent:0pt;text-align:left;">
+                     GST : 09BWCPK8018F1ZJ 
+                    &nbsp; PAN :BWCPK8018F
+                </p>
+             
+            </td>
+
+            <td style="width:119pt;border-top-style:solid;border-top-width:2pt;border-left-style:solid;border-left-width:2pt;border-bottom-style:solid;border-bottom-width:2pt;border-right-style:solid;border-right-width:2pt;" colspan="2">
+                <p class="s5" style="padding-top:4pt;padding-left:3pt;text-indent:0pt;text-align:left;">
+                    Invoice No. {{ $order->id ?? '' }} /{{ now()->format('y-') . (now()->year + 1 - 2000) }}
+                </p>
+            </td>
+        </tr>
+
+        <tr style="height: 15pt">
+            <td style="width:119pt;border-top-style:solid;border-top-width:2pt;border-left-style:solid;border-left-width:2pt;border-bottom-style:solid;border-bottom-width:2pt;border-right-style:solid;border-right-width:2pt;" colspan="2">
+                <p class="s5" style="padding-top:2pt;padding-left:3pt;text-indent:0pt;text-align:left;">
+                    Dated {{ now()->format('d/M/Y') }}
+                </p>
+            </td>
+        </tr>
+
+        <tr style="height: 19pt">
+            <td style="width:119pt;border-top-style:solid;border-top-width:2pt;border-left-style:solid;border-left-width:2pt;border-bottom-style:solid;border-bottom-width:2pt;border-right-style:solid;border-right-width:2pt;" colspan="2">
+                <p class="s6" style="padding-left:3pt;text-indent:0pt;text-align:left;">
+                    Eway No. {{ $order->eway_no ?? '' }}
+                </p>
+            </td>
+        </tr>
+
+        <tr style="height: 21pt">
+            <td style="width:119pt;border-top-style:solid;border-top-width:2pt;border-left-style:solid;border-left-width:2pt;border-bottom-style:solid;border-bottom-width:2pt;border-right-style:solid;border-right-width:2pt;" colspan="2">
+                <p class="s6" style="padding-top:4pt;padding-left:3pt;text-indent:0pt;text-align:left;">
+                    Vehicle No. {{ $order->vehicle_no ?? '' }}
+                </p>
+            </td>
+        </tr>
+
+        {{-- ===== BILLING & SHIPPING ADDRESS ===== --}}
+        <tr style="height: 78pt">
+            <td style="width:272pt;border-top-style:solid;border-top-width:2pt;border-left-style:solid;border-left-width:2pt;border-bottom-style:solid;border-bottom-width:2pt;border-right-style:solid;border-right-width:2pt;" colspan="3">
+                <p class="s7" style="padding-left:6pt;text-indent:0pt;text-align:left;">Detail of Receiver ( Billed To)</p>
+                <p class="s4" style="padding-top:3pt;padding-left:6pt;text-indent:0pt;text-align:left;">
+                    M/s {{ strtoupper($order->user->name ?? '') }}
+                </p>
+                <p class="s7" style="padding-top:6pt;padding-left:6pt;text-indent:0pt;text-align:left;">
+                    {{ strtoupper($address['address'] ?? '') }}, {{ strtoupper($address['city'] ?? '') }}
+                </p>
+                <p style="text-indent:0pt;text-align:left;"><br /></p>
+                <p class="s8" style="padding-left:6pt;text-indent:0pt;text-align:left;">
+                    GSTIN No. <span class="s9">{{ $order->user->gst_number ?? '' }}</span>
+                </p>
+            </td>
+
+            <td style="width:278pt;border-top-style:solid;border-top-width:2pt;border-left-style:solid;border-left-width:2pt;border-bottom-style:solid;border-bottom-width:2pt;border-right-style:solid;border-right-width:2pt;" colspan="6">
+                <p class="s7" style="padding-left:2pt;text-indent:0pt;text-align:left;">Detail of Consignee ( Shipped To)</p>
+                <p class="s4" style="padding-top:3pt;padding-left:2pt;text-indent:0pt;text-align:left;">
+                    M/s {{ strtoupper($order->user->name ?? '') }}
+                </p>
+                <p class="s7" style="padding-top:6pt;padding-left:2pt;text-indent:0pt;text-align:left;">
+                    {{ strtoupper($address['address'] ?? '') }} {{ strtoupper($address['city'] ?? '') }} {{ strtoupper($address['state'] ?? '') }}
+                </p>
+            </td>
+        </tr>
+
+        {{-- ===== TABLE HEADER ===== --}}
+        <tr style="height: 15pt">
+            <td style="width:26pt;border-top-style:solid;border-top-width:2pt;border-left-style:solid;border-left-width:2pt;border-bottom-style:solid;border-bottom-width:2pt;border-right-style:solid;border-right-width:2pt;">
+                <p class="s10" style="padding-left:2pt;text-indent:0pt;line-height:9pt;text-align:left;">S. No.</p>
+            </td>
+            <td style="width:204pt;border-top-style:solid;border-top-width:2pt;border-left-style:solid;border-left-width:2pt;border-bottom-style:solid;border-bottom-width:2pt;border-right-style:solid;border-right-width:2pt;">
+                <p class="s10" style="text-indent:0pt;line-height:9pt;text-align:center;">Particulars</p>
+            </td>
+            <td style="width:42pt;border-top-style:solid;border-top-width:2pt;border-left-style:solid;border-left-width:2pt;border-bottom-style:solid;border-bottom-width:2pt;border-right-style:solid;border-right-width:2pt;">
+                <p class="s10" style="padding-left:4pt;text-indent:0pt;line-height:9pt;text-align:left;">Ch. No.</p>
+            </td>
+            <td style="width:69pt;border-top-style:solid;border-top-width:2pt;border-left-style:solid;border-left-width:2pt;border-bottom-style:solid;border-bottom-width:2pt;border-right-style:solid;border-right-width:2pt;">
+                <p class="s10" style="padding-left:4pt;padding-right:3pt;text-indent:0pt;line-height:9pt;text-align:center;">Ch. Date</p>
+            </td>
+            <td style="width:41pt;border-top-style:solid;border-top-width:2pt;border-left-style:solid;border-left-width:2pt;border-bottom-style:solid;border-bottom-width:2pt;border-right-style:solid;border-right-width:2pt;">
+                <p class="s10" style="padding-left:3pt;text-indent:0pt;line-height:9pt;text-align:center;">HSN/SAC</p>
+            </td>
+            <td style="width:24pt;border-top-style:solid;border-top-width:2pt;border-left-style:solid;border-left-width:2pt;border-bottom-style:solid;border-bottom-width:2pt;border-right-style:solid;border-right-width:2pt;">
+                <p class="s10" style="padding-left:2pt;text-indent:0pt;line-height:9pt;text-align:center;">Tax</p>
+            </td>
+            <td style="width:39pt;border-top-style:solid;border-top-width:2pt;border-left-style:solid;border-left-width:2pt;border-bottom-style:solid;border-bottom-width:2pt;border-right-style:solid;border-right-width:2pt;">
+                <p class="s10" style="padding-left:22pt;text-indent:0pt;line-height:9pt;text-align:left;">Qty</p>
+            </td>
+            <td style="width:50pt;border-top-style:solid;border-top-width:2pt;border-left-style:solid;border-left-width:2pt;border-bottom-style:solid;border-bottom-width:2pt;border-right-style:solid;border-right-width:2pt;">
+                <p class="s10" style="padding-right:4pt;text-indent:0pt;line-height:9pt;text-align:right;">Rate</p>
+            </td>
+            <td style="width:55pt;border-top-style:solid;border-top-width:2pt;border-left-style:solid;border-left-width:2pt;border-bottom-style:solid;border-bottom-width:2pt;border-right-style:solid;border-right-width:2pt;">
+                <p class="s10" style="padding-right:4pt;text-indent:0pt;line-height:9pt;text-align:right;">Amount</p>
+            </td>
+        </tr>
+
+        {{-- ===== PRODUCT ROWS ===== --}}
+        @php
+            $productList = [];
+            if (isset($products['product_id'])) {
+                $productList = [$products];
+            } elseif (is_array($products) && isset($products[0])) {
+                $productList = $products;
+            }
+        @endphp
+
+        @if(count($productList) > 0)
+            @foreach($productList as $index => $product)
+                @php
+                    $productModel = \App\Models\Product::find($product['product_id'] ?? null);
+                    $rowAmount = ($product['price'] ?? 0) * ($product['quantity'] ?? 1);
+                @endphp
+                <tr style="height: 22pt">
+                    <td style="width:26pt;border-top-style:solid;border-top-width:2pt;border-left-style:solid;border-left-width:2pt;border-bottom-style:solid;border-bottom-width:2pt;border-bottom-color:#c0c0c0;border-right-style:solid;border-right-width:2pt;">
+                        <p class="s11" style="padding-left:4pt;text-indent:0pt;text-align:left;">{{ $loop->iteration }}</p>
+                    </td>
+                    <td style="width:204pt;border-top-style:solid;border-top-width:2pt;border-left-style:solid;border-left-width:2pt;border-bottom-style:solid;border-bottom-width:2pt;border-bottom-color:#c0c0c0;border-right-style:solid;border-right-width:2pt;">
+                        <p class="s11" style="padding-left:3pt;text-indent:0pt;line-height:10pt;text-align:left;">
+                            {{ $productModel->name ?? ('Product #' . ($product['product_id'] ?? 'N/A')) }}
+                            @if(isset($product['variations']) && is_array($product['variations']))
+                                &nbsp;
+                                @foreach($product['variations'] as $key => $value)
+                                    {{ $key }}: {{ $value }}{{ !$loop->last ? ', ' : '' }}
+                                @endforeach
+                            @endif
+                        </p>
+                    </td>
+                    <td style="width:42pt;border-top-style:solid;border-top-width:2pt;border-left-style:solid;border-left-width:2pt;border-bottom-style:solid;border-bottom-width:2pt;border-bottom-color:#c0c0c0;border-right-style:solid;border-right-width:2pt;">
+                        <p class="s11" style="padding-left:7pt;text-indent:0pt;text-align:left;">{{ $product['ch_no'] ?? '' }}</p>
+                    </td>
+                    <td style="width:69pt;border-top-style:solid;border-top-width:2pt;border-left-style:solid;border-left-width:2pt;border-bottom-style:solid;border-bottom-width:2pt;border-bottom-color:#c0c0c0;border-right-style:solid;border-right-width:2pt;">
+                        <p class="s11" style="padding-left:4pt;text-indent:0pt;text-align:center;">
+                            {{ isset($product['ch_date']) ? \Carbon\Carbon::parse($product['ch_date'])->format('d/M/Y') : '' }}
+                        </p>
+                    </td>
+                    <td style="width:41pt;border-top-style:solid;border-top-width:2pt;border-left-style:solid;border-left-width:2pt;border-bottom-style:solid;border-bottom-width:2pt;border-bottom-color:#c0c0c0;border-right-style:solid;border-right-width:2pt;">
+                        <p class="s11" style="padding-left:4pt;text-indent:0pt;text-align:center;">{{ $productModel->hsn_code ?? ($product['hsn'] ?? '') }}</p>
+                    </td>
+                    <td style="width:24pt;border-top-style:solid;border-top-width:2pt;border-left-style:solid;border-left-width:2pt;border-bottom-style:solid;border-bottom-width:2pt;border-bottom-color:#c0c0c0;border-right-style:solid;border-right-width:2pt;">
+                        <p class="s11" style="padding-left:2pt;padding-right:1pt;text-indent:0pt;text-align:center;">
+                            18%
+                        </p>
+                    </td>
+                    <td style="width:39pt;border-top-style:solid;border-top-width:2pt;border-left-style:solid;border-left-width:2pt;border-bottom-style:solid;border-bottom-width:2pt;border-bottom-color:#c0c0c0;border-right-style:solid;border-right-width:2pt;">
+                        <p class="s11" style="padding-right:1pt;text-indent:0pt;text-align:right;">{{ $product['quantity'] ?? 1 }}</p>
+                    </td>
+                    <td style="width:50pt;border-top-style:solid;border-top-width:2pt;border-left-style:solid;border-left-width:2pt;border-bottom-style:solid;border-bottom-width:2pt;border-bottom-color:#c0c0c0;border-right-style:solid;border-right-width:2pt;">
+                        <p class="s11" style="padding-right:4pt;text-indent:0pt;text-align:right;">{{ number_format($product['price'] ?? 0, 2) }}</p>
+                    </td>
+                    <td style="width:55pt;border-top-style:solid;border-top-width:2pt;border-left-style:solid;border-left-width:2pt;border-bottom-style:solid;border-bottom-width:2pt;border-bottom-color:#c0c0c0;border-right-style:solid;border-right-width:2pt;">
+                        <p class="s11" style="padding-right:4pt;text-indent:0pt;text-align:right;">{{ number_format($rowAmount, 2) }}</p>
+                    </td>
+                </tr>
+            @endforeach
+        @else
+            <tr style="height: 22pt">
+                <td colspan="9" style="border-top-style:solid;border-top-width:2pt;border-left-style:solid;border-left-width:2pt;border-bottom-style:solid;border-bottom-width:2pt;border-right-style:solid;border-right-width:2pt;">
+                    <p class="s11" style="text-align:center;">No product details available</p>
+                </td>
+            </tr>
+        @endif
+
+        {{-- ===== EMPTY FILLER ROW ===== --}}
+        <tr style="height: 310pt">
+            @for($i = 0; $i < 9; $i++)
+            <td style="border-top-style:solid;border-top-width:2pt;border-top-color:#c0c0c0;border-left-style:solid;border-left-width:2pt;border-bottom-style:solid;border-bottom-width:2pt;border-right-style:solid;border-right-width:2pt;">
+                <p style="text-indent:0pt;text-align:left;"><br /></p>
+            </td>
+            @endfor
+        </tr>
+
+        {{-- ===== TOTALS ROW 1: Amount in words + SubTotal ===== --}}
+        @php
+         if (!function_exists('invoice_number_to_words')) {
         function invoice_number_to_words($num) {
             $ones = [
                 0 => 'Zero', 1 => 'One', 2 => 'Two', 3 => 'Three', 4 => 'Four',
@@ -193,87 +499,7 @@
             return trim($words);
         }
     }
-
-    $companyName = strtoupper($configuration->company_name ?? config('app.name', 'NEW SELECT GRAPHIX'));
-    $companyAddress = $configuration->address ?? config('app.address', '');
-    $companyPhone = $configuration->phone ?? config('app.contact_us', '');
-    $companyEmail = $configuration->email ?? config('mail.from.address', '');
-    $gstin = $configuration->gstin ?? '';
-    $pan = $configuration->pan ?? '';
-    $invoiceNo = data_get($order, 'invoice_no') ?? data_get($order, 'invoice_number') ?? ($order->id ?? '');
-    // Robust parsing for created_at — handle malformed values like "19-02-2026 15:48 PM"
-    $invoiceDate = now()->format('d/M/Y');
-    if (!empty($order)) {
-        $orig = $order->getOriginal('created_at') ?? data_get($order, 'created_at') ?? null;
-        if ($orig instanceof \Carbon\Carbon) {
-            $invoiceDate = $orig->format('d/M/Y');
-        } elseif (!empty($orig)) {
-            // If there's a stray AM/PM with 24-hour hour (e.g. "15:48 PM"), remove AM/PM when hour > 12
-            if (is_string($orig)) {
-                if (preg_match('/(AM|PM|am|pm)\b/', $orig) && preg_match('/\b(\d{1,2}):\d{2}\b/', $orig, $m)) {
-                    $hour = (int) $m[1];
-                    if ($hour > 12) {
-                        $orig = preg_replace('/\s?(AM|PM|am|pm)\b/', '', $orig);
-                    }
-                }
-            }
-
-            $parsed = null;
-            try {
-                $parsed = \Carbon\Carbon::parse($orig);
-            } catch (\Exception $e) {
-                $formats = [
-                    'd-m-Y H:i A', 'd-m-Y H:i', 'd-m-Y H:i:s', 'Y-m-d H:i:s', 'd/m/Y H:i A', 'd/m/Y H:i', 'Y-m-d\TH:i:sP'
-                ];
-                foreach ($formats as $f) {
-                    try {
-                        $parsed = \Carbon\Carbon::createFromFormat($f, $orig);
-                        if ($parsed) break;
-                    } catch (\Exception $ex) {
-                        // try next
-                    }
-                }
-            }
-
-            if ($parsed instanceof \Carbon\Carbon) {
-                $invoiceDate = $parsed->format('d/M/Y');
-            }
-        }
-    }
-    $ewayNo = data_get($order, 'eway_no') ?? data_get($order, 'e_way_no') ?? '';
-    $vehicleNo = data_get($order, 'vehicle_no') ?? data_get($order, 'vehicle_number') ?? '';
-
-    $addressData = is_array($address ?? null) ? $address : [];
-    $fallbackAddress = \App\Models\Address::with(['city', 'state'])
-        ->where('user_id', data_get($order, 'user_id'))
-        ->latest('id')
-        ->first();
-
-    $billingAddress = data_get($addressData, 'billing_address')
-        ?? data_get($addressData, 'billing')
-        ?? (isset($addressData['address']) ? $addressData : []);
-    $shippingAddress = data_get($addressData, 'shipping_address')
-        ?? data_get($addressData, 'shipping')
-        ?? [];
-
-    $productList = [];
-    if (isset($products) && $products instanceof \Illuminate\Support\Collection) {
-        $productList = $products->toArray();
-    } elseif (isset($products['product_id'])) {
-        $productList = [$products];
-    } elseif (is_array($products ?? null) && isset($products[0])) {
-        $productList = $products;
-    }
-
-    $cgstPercent = $cgstPercent ?? 9;
-    $sgstPercent = $sgstPercent ?? 9;
-    $subTotal = 0;
-    foreach ($productList as $p) {
-        $subTotal += ($p['price'] ?? 0) * ($p['quantity'] ?? 1);
-    }
-    // Extra charge from backend (try multiple possible keys)
-    // Extra charge from backend (order-level + product_details fallback)
-    $orderExtraRaw = data_get($order, 'extra_charge')
+      $orderExtraRaw = data_get($order, 'extra_charge')
         ?? data_get($order, 'extra_charges')
         ?? data_get($order, 'extra_charge_amount')
         ?? data_get($order, 'extra_charge_value')
@@ -304,41 +530,14 @@
 
     $hasOrderExtra = $orderExtraRaw !== null && $orderExtraRaw !== '';
     $extraCharge = $hasOrderExtra ? (float) $orderExtraRaw : $extraChargeFromProducts;
-    $cgst = $cgst ?? ($subTotal * $cgstPercent / 100);
-    $sgst = $sgst ?? ($subTotal * $sgstPercent / 100);
-    $finalAmount = $finalAmount ?? ($subTotal + $cgst + $sgst + $extraCharge);
-    $amountInWords = invoice_number_to_words((int) round($finalAmount));
-
-    $billName = strtoupper(trim((string) (
-        data_get($billingAddress, 'contact_person_name')
-        ?? data_get($billingAddress, 'name')
-        ?? data_get($order, 'user.name')
-        ?? data_get($order, 'customer.name')
-        ?? ''
-    )));
-    $billAddress = strtoupper(trim((string) (
-        (data_get($billingAddress, 'address') ?? data_get($fallbackAddress, 'address') ?? '') . ' ' .
-        (data_get($billingAddress, 'street') ?? data_get($fallbackAddress, 'street') ?? '') . ' ' .
-        (data_get($billingAddress, 'city') ?? data_get($fallbackAddress, 'city.name') ?? '') . ' ' .
-        (data_get($billingAddress, 'state') ?? data_get($fallbackAddress, 'state.name') ?? '') . ' ' .
-        (data_get($billingAddress, 'zip') ?? data_get($billingAddress, 'zipcode') ?? data_get($billingAddress, 'postal_code') ?? data_get($fallbackAddress, 'zip') ?? '')
-    )));
-    $billGstin = strtoupper(trim((string) (data_get($billingAddress, 'gstin') ?? data_get($order, 'billing_gstin') ?? $gstin)));
-
-    $shipName = strtoupper(trim((string) (
-        data_get($shippingAddress, 'contact_person_name')
-        ?? data_get($shippingAddress, 'name')
-        ?? $billName
-    )));
-    $shipAddress = strtoupper(trim((string) (
-        (data_get($shippingAddress, 'address') ?? data_get($billingAddress, 'address') ?? data_get($fallbackAddress, 'address') ?? '') . ' ' .
-        (data_get($shippingAddress, 'street') ?? data_get($billingAddress, 'street') ?? data_get($fallbackAddress, 'street') ?? '') . ' ' .
-        (data_get($shippingAddress, 'city') ?? data_get($billingAddress, 'city') ?? data_get($fallbackAddress, 'city.name') ?? '') . ' ' .
-        (data_get($shippingAddress, 'state') ?? data_get($billingAddress, 'state') ?? data_get($fallbackAddress, 'state.name') ?? '') . ' ' .
-        (data_get($shippingAddress, 'zip') ?? data_get($shippingAddress, 'zipcode') ?? data_get($shippingAddress, 'postal_code') ?? data_get($billingAddress, 'zip') ?? data_get($fallbackAddress, 'zip') ?? '')
-    )));
-
-    $companyBankRecord = $companyBank ?? \App\Models\CompanyBank::with('bank')->latest('id')->first();
+            $cgstAmount  = ($subTotal + $extraCharge ?? 0) * (($cgstPercent ?? 9) / 100);
+            $sgstAmount  = ($subTotal + $extraCharge ?? 0) * (($sgstPercent ?? 9) / 100);
+            $igstAmount  = ($subTotal + $extraCharge ?? 0) * (($igstPercent ?? 0) / 100);
+            $cartage     = $extraCharge;
+            $roundOff    = $order->round_off ?? 0;
+            $grandTotal  = ($subTotal ?? 0) + $cgstAmount + $sgstAmount + $igstAmount + $cartage + $roundOff;
+                $amountInWords = invoice_number_to_words((int) round($grandTotal));
+             $companyBankRecord = $companyBank ?? \App\Models\CompanyBank::with('bank')->latest('id')->first();
     $fallbackBankDetail = null;
     if (!$companyBankRecord) {
         $fallbackBankDetail = \App\Models\BankDetail::with('bank')
@@ -367,187 +566,135 @@
         ?? data_get($fallbackBankDetail, 'branch')
         ?? ''
     );
-@endphp
+        @endphp
 
-<div class="toolbar">
-    <button type="button" onclick="window.print()">Print</button>
-    <button type="button" onclick="generatePDF()">Export PDF</button>
-</div>
-
-<div class="invoice-sheet">
-    <table>
-        <tr>
-            <td class="header-left">
-                <div class="logo-wrap">
-                    <img src="{{ asset('images/config/'.config('app.logo')) }}" alt="{{ $companyName }}">
-                </div>
+        <tr style="height: 18pt">
+            <td style="width:341pt;border-top-style:solid;border-top-width:2pt;border-left-style:solid;border-left-width:2pt;border-bottom-style:solid;border-bottom-width:2pt;border-right-style:solid;border-right-width:2pt;" colspan="4" rowspan="2">
+                <p class="s13" style="padding-top:4pt;padding-left:6pt;text-indent:0pt;text-align:left;">
+                       Rs. {{ $amountInWords }} Only
+                </p>
             </td>
-            <td class="header-center">
-                <div class="invoice-title">{{ $companyName }}</div>
-                <div class="addr-line">{{ $companyAddress }}</div>
-                <div class="addr-line">Phone : {{ $companyPhone }}</div>
-                <div class="addr-line">Email Id : {{ $companyEmail }}</div>
-               
+            <td style="width:104pt;border-top-style:solid;border-top-width:2pt;border-left-style:solid;border-left-width:2pt;border-bottom-style:solid;border-bottom-width:2pt;border-right-style:solid;border-right-width:2pt;" colspan="3">
+                <p class="s11" style="padding-top:3pt;padding-left:3pt;text-indent:0pt;text-align:left;">Sub Total</p>
             </td>
-            <td class="header-right">
-                <table class="inner-table">
-                    <tr>
-                        <td class="bold">Invoice No.</td>
-                        <td class="bold text-center">{{ $invoiceNo }}</td>
-                    </tr>
-                    <tr>
-                        <td class="bold">Dated</td>
-                        <td class="bold text-center">{{ $invoiceDate }}</td>
-                    </tr>
-                  
-                </table>
+            <td style="width:105pt;border-top-style:solid;border-top-width:2pt;border-left-style:solid;border-left-width:2pt;border-bottom-style:solid;border-bottom-width:2pt;border-right-style:solid;border-right-width:2pt;" colspan="2">
+                <p class="s11" style="padding-top:4pt;padding-left:63pt;text-indent:0pt;text-align:left;">{{ number_format($subTotal ?? 0, 2) }}</p>
             </td>
         </tr>
-    </table>
 
-    <table>
-        <tr>
-            <td style="width:50%;">
-                <div class="small">Detail of Receiver (Billed To)</div>
-                <div class="bold" style="font-size: 13px;">M/s {{ $billName ?: '-' }}</div>
-                <div style="font-size: 11px; min-height: 28px;">{{ $billAddress ?: '-' }}</div>
-                <div class="bold" style="font-size: 11px; margin-top: 4px;">GSTIN No. {{ $billGstin ?: '-' }}</div>
+        <tr style="height: 15pt">
+            <td style="width:104pt;border-top-style:solid;border-top-width:2pt;border-left-style:solid;border-left-width:2pt;border-bottom-style:solid;border-bottom-width:2pt;border-right-style:solid;border-right-width:2pt;" colspan="3">
+                <p class="s11" style="padding-top:2pt;padding-left:3pt;text-indent:0pt;text-align:left;">Extracharges</p>
             </td>
-            <td style="width:50%;">
-                <div class="small">Detail of Consignee (Shipped To)</div>
-                <div class="bold" style="font-size: 13px;">M/s {{ $shipName ?: '-' }}</div>
-                <div style="font-size: 11px; min-height: 30px;">{{ $shipAddress ?: $billAddress ?: '-' }}</div>
+            <td style="width:105pt;border-top-style:solid;border-top-width:2pt;border-left-style:solid;border-left-width:2pt;border-bottom-style:solid;border-bottom-width:2pt;border-right-style:solid;border-right-width:2pt;" colspan="2">
+                <p class="s11" style="padding-top:2pt;padding-right:5pt;text-indent:0pt;text-align:right;">{{ number_format($cartage, 2) }}</p>
             </td>
         </tr>
-    </table>
 
-    <table class="items">
-        <thead>
-        <tr>
-            <th style="width:4%;">S No</th>
-            <th style="width:40%;">Particulars</th>
-            <th style="width:7%;">Ch. No</th>
-            <th style="width:11%;">Ch. Date</th>
-            
-            <th style="width:4%;">Tax</th>
-            <th style="width:6%;">Qty</th>
-            <th style="width:8%;">Rate</th>
-            <th style="width:14%;">Amount</th>
-        </tr>
-        </thead>
-        <tbody>
-        @forelse($productList as $index => $product)
-            @php
-                $productName = data_get($product, 'name')
-                    ?? data_get($product, 'product_name')
-                    ?? data_get($product, 'title')
-                    ?? data_get($product, 'product.name')
-                    ?? ('Product #' . ($product['sku'] ?? ($index + 1)));
-                $productSku = data_get($product, 'sku') ?? data_get($product, 'product.sku') ?? '-';
-                $qty = (float) ($product['quantity'] ?? 1);
-                $rate = (float) ($product['price'] ?? 0);
-                $amount = $qty * $rate;
-              
-            @endphp
-            <tr>
-                <td class="text-center">{{ $index + 1 }}</td>
-                <td>{{ $productName }}<small style="font-size: 20px; color: #111111;"></small> {{ $productSku }}</small></td>
-                <td class="text-center">{{ $order->id ?? '' }}</td>
-                <td class="text-center">{{ $invoiceDate }}</td>
-                <td class="text-center">{{ ($cgstPercent + $sgstPercent) }}%</td>
-                <td class="text-center">{{ rtrim(rtrim(number_format($qty, 2), '0'), '.') }}</td>
-                <td class="text-right">{{ number_format($rate, 2) }}</td>
-                <td class="text-right">{{ number_format($amount, 2) }}</td>
-            </tr>
-        @empty
-            <tr>
-                <td class="text-center">1</td>
-                <td>CTP PLATE 560*670</td>
-                <td class="text-center">{{ $order->id ?? '' }}</td>
-                <td class="text-center">{{ $invoiceDate }}</td>
-                <td class="text-center">8442</td>
-                <td class="text-center">{{ ($cgstPercent + $sgstPercent) }}%</td>
-                <td class="text-center">1</td>
-                <td class="text-right">{{ number_format($subTotal, 2) }}</td>
-                <td class="text-right">{{ number_format($subTotal, 2) }}</td>
-            </tr>
-        @endforelse
-
-        @for($i = max(0, 10 - count($productList)); $i > 0; $i--)
-            <tr class="empty-row">
-                @for($c = 0; $c < 10; $c++)
-                    <td>&nbsp;</td>
-                @endfor
-            </tr>
-        @endfor
-        </tbody>
-    </table>
-
-    <table>
-        <tr>
-            <td style="width:55%; font-size: 15px;">
-                Rs. {{ $amountInWords }} Only
+        {{-- ===== CGST ROW ===== --}}
+        <tr style="height: 18pt">
+            <td style="width:341pt;border-top-style:solid;border-top-width:2pt;border-left-style:solid;border-left-width:2pt;border-bottom-style:solid;border-bottom-width:2pt;border-right-style:solid;border-right-width:2pt;" colspan="4" rowspan="2">
+                <p style="text-indent:0pt;text-align:left;"><br /></p>
             </td>
-            <td style="width:55%; padding:0;">
-                <table class="inner-table totals">
-                    <tr><td style="width:55%;">Sub Total</td><td class="text-right">{{ number_format($subTotal, 2) }}</td></tr>
-                    
-                    <tr><td>Extra Charge</td><td class="text-right">{{ number_format($extraCharge, 2) }}</td></tr>
-                    <tr><td>CGST {{ number_format($cgstPercent, 2) }} %</td><td class="text-right">{{ number_format($cgst, 2) }}</td></tr>
-                    <tr><td>SGST {{ number_format($sgstPercent, 2) }} %</td><td class="text-right">{{ number_format($sgst, 2) }}</td></tr>
-                    <tr><td class="bold">Total</td><td class="text-right bold">{{ number_format($finalAmount, 2) }}</td></tr>
-                    <tr><td>Round off</td><td class="text-right">0.00</td></tr>
-                    <tr><td class="bold">Grand Total</td><td class="text-right bold">Rs {{ number_format($finalAmount, 2) }}</td></tr>
-                </table>
+            <td style="width:104pt;border-top-style:solid;border-top-width:2pt;border-left-style:solid;border-left-width:2pt;border-bottom-style:solid;border-bottom-width:2pt;border-right-style:solid;border-right-width:2pt;" colspan="3">
+                <p class="s11" style="padding-top:3pt;padding-left:3pt;text-indent:0pt;text-align:left;">
+                    CGST {{ $cgstPercent ?? 9 }}.00 %
+                </p>
+            </td>
+            <td style="width:105pt;border-top-style:solid;border-top-width:2pt;border-left-style:solid;border-left-width:2pt;border-bottom-style:solid;border-bottom-width:2pt;border-right-style:solid;border-right-width:2pt;" colspan="2">
+                <p class="s11" style="padding-top:4pt;padding-right:4pt;text-indent:0pt;text-align:right;">{{ number_format($cgstAmount, 2) }}</p>
             </td>
         </tr>
-    </table>
 
-    <table>
-        <tr>
-            <td style="width:60%; font-size: 11px;">
-                <div>Our Bank Detail:-</div>
+        {{-- ===== SGST ROW ===== --}}
+        <tr style="height: 15pt">
+            <td style="width:104pt;border-top-style:solid;border-top-width:2pt;border-left-style:solid;border-left-width:2pt;border-bottom-style:solid;border-bottom-width:2pt;border-right-style:solid;border-right-width:2pt;" colspan="3">
+                <p class="s11" style="padding-top:2pt;padding-left:3pt;text-indent:0pt;text-align:left;">
+                    SGST {{ $sgstPercent ?? 9 }}.00 %
+                </p>
+            </td>
+            <td style="width:105pt;border-top-style:solid;border-top-width:2pt;border-left-style:solid;border-left-width:2pt;border-bottom-style:solid;border-bottom-width:2pt;border-right-style:solid;border-right-width:2pt;" colspan="2">
+                <p class="s11" style="padding-top:2pt;padding-right:4pt;text-indent:0pt;text-align:right;">{{ number_format($sgstAmount, 2) }}</p>
+            </td>
+        </tr>
+
+        {{-- ===== BANK DETAILS + TOTAL / ROUND OFF / GRAND TOTAL ===== --}}
+        <tr style="height: 17pt">
+            <td style="width:341pt;border-top-style:solid;border-top-width:2pt;border-left-style:solid;border-left-width:2pt;border-bottom-style:solid;border-bottom-width:2pt;border-right-style:solid;border-right-width:2pt;" colspan="4" rowspan="3">
+                <p class="s13" style="padding-top:4pt;padding-left:6pt;text-indent:0pt;text-align:left;">Our Bank Detail:-</p>
                 @if($companyBankRecord || $fallbackBankDetail)
-                    <div class="bold">{{ $companyBankName }} Account No. {{ $companyAccountNo }}</div>
-                    <div class="bold">IFSC CODE : {{ $companyIfsc }}&nbsp;&nbsp; BRANCH : {{ $companyBranch }}</div>
-                @else
+                <p class="s14" style="padding-top:4pt;padding-left:6pt;text-indent:0pt;text-align:left;">
+                    {{ $companyBankName }} Account No.50459477773
+                </p>
+                <p class="s9" style="padding-top:4pt;padding-left:6pt;text-indent:0pt;text-align:left;">
+                    IFSC CODE : {{ $companyIfsc }} &nbsp; BRANCH : {{ $companyBranch }}
+                </p>
+                    @else
                     <div class="bold">Account details not available</div>
                 @endif
             </td>
-            <td style="width:41%; font-size: 11px; text-align:center; vertical-align: middle;" class="bold">
-                For {{ $companyName }}
+            <td style="width:104pt;border-top-style:solid;border-top-width:2pt;border-left-style:solid;border-left-width:2pt;border-bottom-style:solid;border-bottom-width:2pt;border-right-style:solid;border-right-width:2pt;" colspan="3">
+                <p class="s11" style="padding-top:3pt;padding-left:3pt;text-indent:0pt;text-align:left;">Total</p>
+            </td>
+            <td style="width:105pt;border-top-style:solid;border-top-width:2pt;border-left-style:solid;border-left-width:2pt;border-bottom-style:solid;border-bottom-width:2pt;border-right-style:solid;border-right-width:2pt;" colspan="2">
+                <p class="s11" style="padding-top:4pt;padding-left:63pt;text-indent:0pt;text-align:left;">{{ number_format($grandTotal, 2) }}</p>
             </td>
         </tr>
-    </table>
 
-    <table>
-        <tr>
-            <td style="width:60%;" class="terms">
-                <div class="bold">E &amp; O.E</div>
-                <div>1. Subject to U.P. Jurisdiction.</div>
-                <div>2. Interest @ 24% will be charged if payment is not made on presentation.</div>
-                <div>3. Certified that the goods are in order &amp; rates agreed. Any discrepancy should be brought to our notice within 7 days, otherwise this amount would be treated as correct and accepted.</div>
+        <tr style="height: 18pt">
+            <td style="width:104pt;border-top-style:solid;border-top-width:2pt;border-left-style:solid;border-left-width:2pt;border-bottom-style:solid;border-bottom-width:2pt;border-right-style:solid;border-right-width:2pt;" colspan="3">
+                <p class="s11" style="padding-top:1pt;padding-left:3pt;text-indent:0pt;text-align:left;">Round off</p>
             </td>
-            <td style="width:40%;" class="signature">
-                Authorised Signatory
+            <td style="width:105pt;border-top-style:solid;border-top-width:2pt;border-left-style:solid;border-left-width:2pt;border-bottom-style:solid;border-bottom-width:2pt;border-right-style:solid;border-right-width:2pt;" colspan="2">
+                <p class="s11" style="padding-top:2pt;padding-right:4pt;text-indent:0pt;text-align:right;">{{ number_format($roundOff, 2) }}</p>
             </td>
         </tr>
-    </table>
-</div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-<script>
-    function generatePDF() {
-        const element = document.querySelector('.invoice-sheet');
-        const opt = {
-            margin: 4,
-            filename: 'invoice-{{ $order->id ?? "001" }}.pdf',
-            image: {type: 'jpeg', quality: 0.98},
-            html2canvas: {scale: 2},
-            jsPDF: {unit: 'mm', format: 'a4', orientation: 'portrait'}
-        };
-        html2pdf().set(opt).from(element).save();
-    }
-</script>
+        <tr style="height: 20pt">
+            <td style="width:104pt;border-top-style:solid;border-top-width:2pt;border-left-style:solid;border-left-width:2pt;border-bottom-style:solid;border-bottom-width:2pt;border-right-style:solid;border-right-width:2pt;" colspan="3">
+                <p class="s5" style="padding-top:1pt;padding-left:3pt;text-indent:0pt;text-align:left;">Grand Total</p>
+            </td>
+            <td style="width:105pt;border-top-style:solid;border-top-width:2pt;border-left-style:solid;border-left-width:2pt;border-bottom-style:solid;border-bottom-width:2pt;border-right-style:solid;border-right-width:2pt;" colspan="2">
+                <p class="s13" style="padding-left:4pt;text-indent:0pt;text-align:left;">
+                    <span class="s2">{{ number_format($grandTotal + $roundOff, 2) }}</span>
+                </p>
+            </td>
+        </tr>
+
+        {{-- ===== FOOTER: T&C + Authorised Signatory ===== --}}
+        <tr style="height: 70pt">
+            <td style="width:550pt;border-top-style:solid;border-top-width:2pt;border-left-style:solid;border-left-width:2pt;border-bottom-style:solid;border-bottom-width:2pt;border-right-style:solid;border-right-width:2pt;" colspan="9">
+                <p class="s15" style="padding-left:9pt;text-indent:0pt;text-align:left;">
+                    E &amp; O.E <span class="s16" style="padding-left:300pt">For {{ strtoupper(config('app.name')) }}</span>
+                </p>
+                <ol id="l1">
+                    <li data-list-text="1.">
+                        <p class="s13" style="padding-top:6pt;padding-left:17pt;text-indent:-10pt;text-align:left;">
+                            Subject to U.P. Jurisdiction.
+                        </p>
+                    </li>
+                    <li data-list-text="2.">
+                        <p class="s13" style="padding-left:17pt;text-indent:-10pt;text-align:left;">
+                            Interest @ 24% will be charged if payment is not made on presentation.
+                        </p>
+                    </li>
+                    <li data-list-text="3.">
+                        <p class="s13" style="padding-left:17pt;text-indent:-10pt;text-align:left;">
+                            Certified that the goods are in order &amp; rates agreed.
+                            <br> should be brought to our notice within 7 days. <br>
+                    otherwise this amount would be treated as correct and accepted.
+                        </p>
+                    </li>
+                </ol>
+                
+               <p class="" style="padding-left:15pt;padding-bottom:15pt;text-indent:2pt;line-height:70%;text-align:left;">
+                    
+                    <span class="" style="padding-left: 400pt;">Authorised Signatory </span>
+                </p>
+                </td>
+        </tr>
+
+    </table>
+    </div>
 </body>
 </html>

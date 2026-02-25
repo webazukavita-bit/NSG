@@ -305,4 +305,78 @@ class OrderController extends Controller
             ], 500);
         }
     }
+    public function cancelBooking($id)
+    {
+        $user = Auth::user();
+
+        $order = Order::where('id', $id)
+            ->where('order_by_id', $user->id)
+            ->firstOrFail();
+
+        $allowedStatuses = [1, 2, 3, 4];
+
+        if (!in_array($order->order_status_id, $allowedStatuses)) {
+            return back()->with([
+                'status'  => false,
+                'message' => 'Only pending or in-progress orders can be cancelled.'
+            ]);
+        }
+
+        DB::beginTransaction();
+
+        try {
+
+            $cancelledStatus = \App\Models\OrderStatus::where('name', 'Cancelled')->first();
+            $order->order_status_id = $cancelledStatus ? $cancelledStatus->id : 5;
+
+            $refundAmount = (float) ($order->final_amount_with_tax ?? 0);
+
+            if ($refundAmount > 0) {
+
+                $ledgerResp = Helper::creadit_ledger([
+                    "user_id"     => $order->order_by_id,
+                    "refrence_id" => $user->id,
+                    "amount"      => $refundAmount,
+                    "trans_id"    => Helper::getTransId(3),
+                    "cgst"        => 0,
+                    "sgst"        => 0,
+                    "ledger_type" => 'WALLET CREDIT',
+                    "wallet_type" => 1,
+                    "trans_from"  => 'Order Cancellation',
+                    "description" => "Refund for cancelled order {$order->code}",
+                ]);
+
+                if (($ledgerResp['status'] ?? '') !== 'success') {
+                    DB::rollBack();
+                    return back()->with([
+                        'status' => false,
+                        'message' => 'Refund failed: ' . ($ledgerResp['message'] ?? 'Unknown error')
+                    ]);
+                }
+                $refundedStatus = \App\Models\PaymentStatus::where('name', 'Refunded')->first();
+
+                if ($refundedStatus) {
+                    $order->payment_status_id = $refundedStatus->id;
+                }
+            }
+
+            $order->save();
+
+            DB::commit();
+
+            return back()->with([
+                'status'  => true,
+                'message' => 'Order cancelled successfully. Refund credited to wallet.'
+            ]);
+        } catch (\Exception $e) {
+
+            DB::rollBack();
+
+            return back()->with([
+                'status'  => false,
+                'message' => 'Failed to cancel order.',
+                'error'   => $e->getMessage()
+            ]);
+        }
+    }
 }

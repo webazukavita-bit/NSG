@@ -337,6 +337,7 @@ Route::middleware(['permission'])->group(function () {
         Route::get('/categories', [OrderController::class, 'categories'])->name('booking-categories');
         Route::get('/sub-categories/{slug?}/{id}', [OrderController::class, 'subCategories'])->name('booking-sub-category');
         Route::get('/products/{slug}', [OrderController::class, 'bookingDetails'])->name('booking-details');
+        Route::post('/cancel-booking/{id}', [OrderController::class, 'cancelBooking'])->name('cancel-booking');
     });
 
     Route::prefix('logs')->group(function () {

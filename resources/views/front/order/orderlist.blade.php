@@ -32,6 +32,7 @@
 										<th>Payment Method</th>
 										<th>Date</th>
                                         <th>View Details</th>
+                                        <th>Action</th>
 									</tr>
 								</thead>
 								<tbody>
@@ -49,7 +50,23 @@
 										<td  style="color: {{ $value->paymentStatus->color ?? '' }};font-weight:500;"><i class="bx bxs-circle align-middle me-1"></i>{{ $value->paymentStatus->name ?? '-'}}</td>
 										<td>{{ $value->payment_method ?? 'Wallet'}}</td>
 										<td>{{ $value->updated_at }}</td>
-										<td><a href="{{route('show-invoice',['id'=>$value->id])}}" type="button" class="btn btn-primary btn-sm radius-30 px-4">View Details</a></td>
+                                        @if($value->order_status_id != 6)
+										<td><a href="{{route('show-invoice',['id'=>$value->id])}}" type="button" class="btn btn-primary btn-sm radius-30 px-4">Invoice</a></td>
+                                        @else
+                                        <td><a href="javascript:void(0)" type="button" class="btn btn-primary btn-sm radius-30 px-4">Invoice</a></td>
+                                        @endif
+                                        @if($value->order_status_id != 6)
+                                        <td>
+    <form action="{{ route('cancel-booking', ['id' => $value->id]) }}" method="POST">
+        @csrf
+        <button type="submit" class="btn btn-danger btn-sm radius-30 px-4">
+            Cancel
+        </button>
+    </form>
+</td>
+@else
+<td><button type="button" class="btn btn-danger btn-sm radius-30 px-4">Canceled</button></td>
+@endif
 									</tr>
 									@endforeach
 								</tbody>
@@ -182,6 +199,7 @@
 
 @endsection
 @push('scripts')
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
 
 
@@ -217,6 +235,18 @@
 		 
 
 	});
+    
 
 </script>
+@if(session('message'))
+<script>
+    Swal.fire({
+        icon: '{{ session('status') ? "success" : "error" }}',
+        title: '{{ session('status') ? "Success" : "Error" }}',
+        text: '{{ session('message') }}',
+        confirmButtonColor: '#3085d6',
+        confirmButtonText: 'OK'
+    });
+</script>
+@endif
 @endpush

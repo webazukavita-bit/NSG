@@ -87,7 +87,7 @@
 										<th>Payment Status</th>
 										<th>Payment Method</th>
 										<th>Date</th>
-                                        <th>View Details</th>
+                                        {{-- <th>View Details</th> --}}
 									</tr>
 								</thead>
                                 	@php
@@ -109,7 +109,7 @@
 										<td  style="color: {{ $value->paymentStatus->color ?? '' }};font-weight:500;"><i class="bx bxs-circle align-middle me-1"></i>{{ $value->paymentStatus->name ?? '-'}}</td>
 										<td>{{ $value->payment_method ?? 'Wallet'}}</td>
 										<td>{{ $value->updated_at }}</td>
-										<td><a href="{{route('show-invoice',['id'=>$value->id])}}" type="button" class="btn btn-primary btn-sm radius-30 px-4">View Details</a></td>
+										{{-- <td><a href="{{route('show-invoice',['id'=>$value->id])}}" type="button" class="btn btn-primary btn-sm radius-30 px-4">View Details</a></td> --}}
 									</tr>
 									@endforeach
 								</tbody>
