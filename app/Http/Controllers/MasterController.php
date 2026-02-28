@@ -963,8 +963,8 @@ class MasterController extends Controller
     }
     public function department_index()
     {
-        $data = Department::latest()->get();
-        return view('admin.master.department.list', compact('data'));
+        $department = Department::latest()->get();
+        return view('admin.master.department.list', compact('department'));
     }
 
     public function department_add()

@@ -272,9 +272,9 @@
         {{-- ===== HEADER: Company Info + Invoice Meta ===== --}}
         <tr style="height: 10pt">
             <td style="width:431pt;border-top-style:solid;border-top-width:2pt;border-left-style:solid;border-left-width:2pt;border-bottom-style:solid;border-bottom-width:2pt;border-right-style:solid;border-right-width:2pt;" colspan="7" rowspan="4">
-                <p class="s1" style="padding-left:5pt;text-indent:0pt;text-align:left;">
-                    <img width="111" height="50" src="{{ asset('images/config/'.config('app.logo')) }}" alt="{{ config('app.name') }} Logo" style="margin-top:8px;" />
-                    <span style="padding-left:60pt; padding-top:0pt;">{{ strtoupper(config('app.name')) }}</span>
+                <p class="s1" style="padding-left:14pt;text-indent:0pt;text-align:left;">
+                    <img width="131" height="60" src="{{ asset('images/config/'.config('app.logo')) }}" alt="{{ config('app.name') }} Logo" style="margin-top: 22px;position: absolute;" />
+                    <span style="padding-left:140pt; margin-top:20px">{{ strtoupper(config('app.name')) }}</span>
                 </p>
                 <p class="s2" style="padding-left:110pt;padding-right:14pt;text-indent:0pt;text-align:center;">
                     {{ config('app.address') }} &nbsp; <br>Phone : {{ config('app.contact_us') }}
@@ -578,7 +578,7 @@
                 <p class="s11" style="padding-top:3pt;padding-left:3pt;text-indent:0pt;text-align:left;">Sub Total</p>
             </td>
             <td style="width:105pt;border-top-style:solid;border-top-width:2pt;border-left-style:solid;border-left-width:2pt;border-bottom-style:solid;border-bottom-width:2pt;border-right-style:solid;border-right-width:2pt;" colspan="2">
-                <p class="s11" style="padding-top:4pt;padding-left:63pt;text-indent:0pt;text-align:left;">{{ number_format($subTotal ?? 0, 2) }}</p>
+                <p class="s11" style="padding-top:4pt;padding-right:4pt;text-indent:0pt;text-align:right;">{{ number_format($subTotal ?? 0, 2) }}</p>
             </td>
         </tr>
 
@@ -637,7 +637,7 @@
                 <p class="s11" style="padding-top:3pt;padding-left:3pt;text-indent:0pt;text-align:left;">Total</p>
             </td>
             <td style="width:105pt;border-top-style:solid;border-top-width:2pt;border-left-style:solid;border-left-width:2pt;border-bottom-style:solid;border-bottom-width:2pt;border-right-style:solid;border-right-width:2pt;" colspan="2">
-                <p class="s11" style="padding-top:4pt;padding-left:63pt;text-indent:0pt;text-align:left;">{{ number_format($grandTotal, 2) }}</p>
+                <p class="s11" style="padding-top:4pt;padding-right:4pt;text-indent:0pt;text-align:right;">{{ number_format($grandTotal, 2) }}</p>
             </td>
         </tr>
 
@@ -655,7 +655,7 @@
                 <p class="s5" style="padding-top:1pt;padding-left:3pt;text-indent:0pt;text-align:left;">Grand Total</p>
             </td>
             <td style="width:105pt;border-top-style:solid;border-top-width:2pt;border-left-style:solid;border-left-width:2pt;border-bottom-style:solid;border-bottom-width:2pt;border-right-style:solid;border-right-width:2pt;" colspan="2">
-                <p class="s13" style="padding-left:4pt;text-indent:0pt;text-align:left;">
+                <p class="s13" style="padding-top:4pt;padding-right:4pt;text-indent:0pt;text-align:right;">
                     <span class="s2">{{ number_format($grandTotal + $roundOff, 2) }}</span>
                 </p>
             </td>

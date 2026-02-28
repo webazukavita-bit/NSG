@@ -65,7 +65,7 @@
     </form>
 </td>
 @else
-<td><button type="button" class="btn btn-danger btn-sm radius-30 px-4">Canceled</button></td>
+<td><button type="button" class="btn btn-danger btn-sm radius-30 px-4">Cancelled</button></td>
 @endif
 									</tr>
 									@endforeach

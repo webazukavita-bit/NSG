@@ -313,12 +313,12 @@ class OrderController extends Controller
             ->where('order_by_id', $user->id)
             ->firstOrFail();
 
-        $allowedStatuses = [1, 2, 3, 4];
+        $allowedStatuses = 1;
 
-        if (!in_array($order->order_status_id, $allowedStatuses)) {
+        if ($order->order_status_id != $allowedStatuses) {
             return back()->with([
                 'status'  => false,
-                'message' => 'Only pending or in-progress orders can be cancelled.'
+                'message' => 'Only pending orders can be cancelled.'
             ]);
         }
 
