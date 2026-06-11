@@ -248,8 +248,7 @@
                                 </td>
                                 <td>
                                     @php
-                                        $statusColor = $order->status->color ?? '#ffb300';
-                                        $hex = ltrim($statusColor, '#');
+                                        $hex = ltrim($order->status->color, '#');
 
                                         [$r, $g, $b] = [
                                             hexdec(substr($hex, 0, 2)),
@@ -259,15 +258,15 @@
                                     @endphp
 
                                     <div class="badge rounded-pill p-2 text-uppercase px-3"
-                                        style="color: {{ $statusColor }};
+                                        style="color: {{ $order->status->color }};
                                                 background-color: rgba({{ $r }}, {{ $g }}, {{ $b }}, 0.18);">
                                         <i class="bx bxs-circle align-middle me-1"></i>
-                                        {{ $order->status->name ?? 'Pending' }}
+                                        {{ $order->status->name ?? '' }}
                                     </div>
                                 </td>
                                 <td>
                                     @php
-                                        $hex = ltrim($order->paymentStatus->color ?? '#ffb300', '#');
+                                        $hex = ltrim($order->payment->color ?? '', '#');
 
                                         [$r, $g, $b] = [
                                             hexdec(substr($hex, 0, 2)),
@@ -277,10 +276,10 @@
                                     @endphp
 
                                     <div class="badge rounded-pill p-2 text-uppercase px-3"
-                                        style="color: {{ $order->paymentStatus->color ?? '#ffb300' }};
+                                        style="color: {{ $order->payment->color ?? '' }};
                                                 background-color: rgba({{ $r }}, {{ $g }}, {{ $b }}, 0.18);">
                                         <i class="bx bxs-circle align-middle me-1"></i>
-                                        {{ $order->paymentStatus->name ?? 'Pending' }}
+                                        {{ $order->payment->name ?? '' }}
                                     </div>
                                 </td>
                                 <td>{{ config('app.currency_symbol')}} {{ number_format($order->final_amount_with_tax) }}</td>
@@ -346,18 +345,7 @@
 <script>
     
 function createDoughnutChart(canvasId, labels, data) {
-    var canvasElement = document.getElementById(canvasId);
-    if (!canvasElement) {
-        console.warn('Canvas element not found: ' + canvasId);
-        return;
-    }
-
-    var ctx = canvasElement.getContext("2d");
-
-    // Ensure data is numeric
-    var numericData = data.map(function(val) {
-        return parseInt(val) || 0;
-    });
+    var ctx = document.getElementById(canvasId).getContext("2d");
 
     // Gradients
     var gradient1 = ctx.createLinearGradient(0, 0, 0, 300);
@@ -386,7 +374,7 @@ function createDoughnutChart(canvasId, labels, data) {
                 backgroundColor: gradients,
                 hoverBackgroundColor: gradients,
                 borderWidth: 1,
-                data: numericData
+                data: data
             }]
         },
         options: {

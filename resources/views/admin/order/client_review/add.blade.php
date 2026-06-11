@@ -11,7 +11,7 @@
                     <h5 class="mb-0 text-primary">Add Client Review</h5>
                 </div>
                 <div>
-                    <a href="{{ route('client-reviews') }}" class="btn btn-primary"><i class="bx bx-list-ol"></i> Client Review List</a> 
+                    <a href="{{ route('clientReview') }}" class="btn btn-primary"><i class="bx bx-list-ol"></i> Client Review List</a> 
                 </div>
             </div>
             <hr>

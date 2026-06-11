@@ -28,11 +28,9 @@
 							
 							<div class="col-12 text-center">
 								<button type="submit" class="btn btn-primary"><i class="bx bx-search"></i> filter</button>
-								@if(request('search'))
-									<a href="{{ route('product-categories') }}" class="btn btn-secondary ms-2">Clear Filter</a>
-								@endif
-							</div>
-						</form>
+							
+								</div>
+							</form>
 						</div>
 					</div>
 				</div>

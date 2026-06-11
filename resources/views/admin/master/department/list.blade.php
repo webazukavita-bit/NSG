@@ -27,7 +27,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @forelse($data as $item)
+                    @forelse($department as $item)
                         <tr>
                             <td>{{ $loop->iteration }}</td>
                             <td class="fw-semibold">{{ $item->name }}</td>
